@@ -11,7 +11,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.media.MediaView?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
    <bottom>
@@ -22,7 +23,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
             </JFXButton>
-            <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Pause">
+            <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
@@ -61,12 +62,19 @@
    <top>
       <HBox prefHeight="40.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </top>
-   <center>
+   <right>
       <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn prefWidth="75.0" text="C1" />
           <TableColumn prefWidth="75.0" text="C2" />
         </columns>
       </TableView>
+   </right>
+   <center>
+      <Pane fx:id="mediaPane" BorderPane.alignment="CENTER">
+         <children>
+            <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
+         </children>
+      </Pane>
    </center>
 </BorderPane>

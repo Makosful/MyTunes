@@ -2,19 +2,19 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.media.Media;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
+import javafx.scene.media.Media;
+import java.io.File;
 /**
  *
  * @author Axl
@@ -33,14 +33,28 @@ public class MainWindowController implements Initializable
     private Label lblTimer;
     @FXML
     private Slider progressSlider;
-    
+    @FXML
+    private Pane mediaPane;
+    @FXML
+    private MediaView mediaView;
+    private MediaView mView;
+    private MediaPlayer mPlayer;
+
     private boolean isPlaying;
 // </editor-fold>
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb)
+        @Override
+    public void initialize(URL location, ResourceBundle resources)
     {
-        isPlaying = !true;
+        isPlaying = true;
+        
+        String musicFile = "media/testmusic.mp3";
+        Media song = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer player = new MediaPlayer(song);
+        player.play();
+        
+        mView = new MediaView(mPlayer);
+        mediaPane.getChildren().add(mView);
     }
 
     @FXML
@@ -50,23 +64,21 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void musicPlayPause(ActionEvent event) throws FileNotFoundException 
+    private void musicPlayPause(ActionEvent event) 
     {
+        //Status status = mPlayer.getStatus();
+        
         if(isPlaying == true)
         {
             btnPlayPause.setText("Pause");
             isPlaying = !true;
-            
-            String filePath = new File("media/testmusic.mp3").toURI().toString();
-            Media mp3 = new Media(filePath.toString());
-            MediaPlayer mp3Player = new MediaPlayer(mp3);
-
+            mPlayer.play();
         }
         else 
         {
             btnPlayPause.setText("Play");
             isPlaying = true;
-            
+            mPlayer.pause();            
         }
     }
 
@@ -79,5 +91,4 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event) {
     }
-
 }
