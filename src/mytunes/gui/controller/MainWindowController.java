@@ -97,9 +97,17 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void volumeMixer(MouseEvent event) 
+    private void volumeMixerSetup(MouseEvent event) 
     {
-        //
+        JFXSlider volSlide = volumeSlider;
+        volSlide.setValue(mPlayer.getVolume() * 100);
+        
+        volSlide.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(javafx.beans.Observable observable) {
+                mPlayer.setVolume(volSlide.getValue() / 100);
+            }
+        });
     }
 
     @FXML
