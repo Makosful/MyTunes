@@ -47,6 +47,7 @@ public class MainWindowController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+
         isPlaying = false;
 
         MediaPlayerMethod();
@@ -56,6 +57,8 @@ public class MainWindowController implements Initializable
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
         mediaPane.getChildren().add(mediaView);
+
+        volumeSlider.getParent().getParent().toFront();
     }
 
     private void MediaPlayerMethod()
