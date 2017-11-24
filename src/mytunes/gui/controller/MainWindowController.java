@@ -54,8 +54,6 @@ public class MainWindowController implements Initializable
         Media song = new Media(new File(musicFile).toURI().toString());
         mPlayer = new MediaPlayer(song);
         
-        mPlayer.play();
-        
         mediaView = new MediaView(mPlayer);
         mediaPane.getChildren().add(mediaView);
     }
