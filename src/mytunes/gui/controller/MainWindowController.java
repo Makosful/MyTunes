@@ -52,17 +52,16 @@ public class MainWindowController implements Initializable
 
         MediaPlayerMethod();
 
-        String musicFile = "src/mytunes/media/testmusic.mp3";
-        Media song = new Media(new File(musicFile).toURI().toString());
-        mPlayer = new MediaPlayer(song);
-        mediaView = new MediaView(mPlayer);
-        mediaPane.getChildren().add(mediaView);
-
         volumeSlider.getParent().getParent().toFront();
     }
 
     private void MediaPlayerMethod()
     {
+        String musicFile = "src/mytunes/media/testmusic.mp3";
+        Media song = new Media(new File(musicFile).toURI().toString());
+        mPlayer = new MediaPlayer(song);
+        mediaView = new MediaView(mPlayer);
+        mediaPane.getChildren().add(mediaView);
     }
 
     @FXML
