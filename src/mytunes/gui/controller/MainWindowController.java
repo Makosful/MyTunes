@@ -51,7 +51,6 @@ public class MainWindowController implements Initializable
         isPlaying = false;
 
         mediaPlayerSetup();
-
         volumeSlider.getParent().getParent().toFront();
     }
 
@@ -101,6 +100,7 @@ public class MainWindowController implements Initializable
     private void volumeMixer(MouseEvent event) 
     {
         JFXSlider volSlide = volumeSlider;
+        volSlide.setValue(50);
         volSlide.setValue(mPlayer.getVolume() * 100);
         
         volSlide.valueProperty().addListener(new InvalidationListener() {
