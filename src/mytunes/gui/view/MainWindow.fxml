@@ -5,76 +5,96 @@
 <?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.media.MediaView?>
 
-<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
-   <bottom>
-      <HBox prefHeight="40.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+   <children>
+      <FlowPane prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <JFXButton fx:id="btnStop" buttonType="RAISED" onAction="#songStop" prefHeight="25.0" prefWidth="50.0" text="Stop">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </JFXButton>
-            <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </JFXButton>
-            <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixer" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
-               <HBox.margin>
-                  <Insets right="25.0" />
-               </HBox.margin>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </JFXSlider>
-            <Label fx:id="lblTimer" alignment="CENTER" contentDisplay="TOP" prefHeight="40.0" prefWidth="80.0" text="00:00 / 13:37" textAlignment="RIGHT">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </Label>
-            <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="425.0">
-               <HBox.margin>
+              <HBox fillHeight="false" maxHeight="40.0">
+                  <children>
+                      <JFXButton fx:id="btnStop" buttonType="RAISED" onAction="#songStop" prefHeight="25.0" prefWidth="50.0" text="Stop">
+                          <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </HBox.margin>
+                      </JFXButton>
+                      <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
+                          <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </HBox.margin>
+                      </JFXButton>
+                      <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixer" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
+                          <HBox.margin>
+                              <Insets right="25.0" />
+                          </HBox.margin>
+                          <padding>
+                              <Insets left="10.0" />
+                          </padding>
+                      </JFXSlider>
+                      <Label fx:id="lblTimer" alignment="CENTER" contentDisplay="TOP" prefHeight="40.0" prefWidth="80.0" text="00:00 / 13:37" textAlignment="RIGHT">
+                          <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </HBox.margin>
+                      </Label>
+                      <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="1220.0">
+                          <HBox.margin>
+                              <Insets />
+                          </HBox.margin>
+                      </Slider>
+                  </children>
+               <FlowPane.margin>
                   <Insets />
-               </HBox.margin>
-            </Slider>
+               </FlowPane.margin>
+              </HBox>
          </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
-   <left>
-      <ScrollPane BorderPane.alignment="CENTER">
-         <content>
-            <JFXListView prefHeight="520.0" prefWidth="266.0" />
-         </content>
-      </ScrollPane>
-   </left>
-   <top>
-      <HBox prefHeight="40.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
-   </top>
-   <right>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
-   </right>
-   <center>
-      <Pane fx:id="mediaPane" BorderPane.alignment="CENTER">
+      </FlowPane>
+      <Pane layoutX="101.0" layoutY="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
+            <MenuBar prefWidth="1600.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
          </children>
       </Pane>
-   </center>
-</BorderPane>
+        <TableView layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
+            <columns>
+                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn prefWidth="75.0" text="C2" />
+            </columns>
+        </TableView>
+          <JFXListView layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" />
+      <Pane fx:id="mediaPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
+         <children>
+                <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
+            <JFXListView prefHeight="250.0" prefWidth="370.0" />
+         </children>
+      </Pane>
+      <JFXListView layoutX="1265.0" layoutY="426.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
+   </children>
+</AnchorPane>
