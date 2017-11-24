@@ -47,8 +47,3 @@ and open the template in the editor.
     -fx-background-insets: 0;
     -fx-background-radius: 1;
 }
-
-.root {
-    -fx-focus-color: #1B537D;
-}
-
