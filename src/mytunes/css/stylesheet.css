@@ -1,0 +1,54 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 24, 2017, 4:05:04 PM
+    Author     : Storm
+*/
+/*
+    Created on : Nov 9, 2017, 2:33:07 PM
+    Author     : Storm
+*/
+/***************************************/
+/* THE FOLLOWING IS FOR Main Window fxml*/
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(#848484 0%, #666666 100%);
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: white;
+}
+
+.table-row-cell:even {
+    -fx-background-color: -fx-table-cell-border-color, #666666;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -fx-table-cell-border-color, #848484;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:selected {
+    -fx-text-fill: gray;
+    -fx-background-color: #1B537D;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.root {
+    -fx-focus-color: #1B537D;
+}
+

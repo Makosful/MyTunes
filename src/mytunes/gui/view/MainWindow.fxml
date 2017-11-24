@@ -17,8 +17,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.media.MediaView?>
 
-
-<AnchorPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
    <children>
       <FlowPane prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
