@@ -109,11 +109,45 @@ public class MainWindowController implements Initializable
     @FXML
     private void playbackAction(ActionEvent event) 
     {
-        ObservableList<String> items = playbackSpeed.getItems();
-            for(String item : items)
-                {
-                    System.out.println(item.toString());
-                }
+        int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
+        // Creating a list starting from 0+1 (convert index to number in list)    
+        System.out.println("the line is #: " + (playbackIndex + 1));
+        
+        if(playbackIndex == 0)
+        {
+            System.out.println("50%");
+            mPlayer.setRate(0.5);
+        }
+        else if(playbackIndex == 1)
+        {
+            System.out.println("75%");
+            mPlayer.setRate(0.75);
+        }
+        else if(playbackIndex == 2)
+        {
+            System.out.println("100%");
+            mPlayer.setRate(1.0);
+        }
+        else if(playbackIndex == 3)
+        {
+            System.out.println("125%");
+            mPlayer.setRate(1.25);
+        }
+        else if(playbackIndex == 4)
+        {
+            System.out.println("150%");
+            mPlayer.setRate(1.5);
+        }
+        else if(playbackIndex == 5)
+        {
+            System.out.println("175%");
+            mPlayer.setRate(1.75);
+        }
+        else if(playbackIndex == 6)
+        {
+            System.out.println("200%");
+            mPlayer.setRate(2.0);
+        }
     }
     
     @FXML
