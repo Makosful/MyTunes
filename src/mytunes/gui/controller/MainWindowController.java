@@ -57,6 +57,7 @@ public class MainWindowController implements Initializable
 
     private void mediaPlayerSetup() {
         String musicFile = "src/mytunes/media/testmusic.mp3";
+        
         Media song = new Media(new File(musicFile).toURI().toString());
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
@@ -72,7 +73,7 @@ public class MainWindowController implements Initializable
     private void songStop(ActionEvent event) 
     {
         mPlayer.stop();
-        System.out.println("Music Stopped...");
+        System.out.println("Music Stopped");
     }
 
     @FXML
@@ -83,14 +84,14 @@ public class MainWindowController implements Initializable
         if (isPlaying == false) 
         {
             mPlayer.play();
-            System.out.println("Music Playing...");
+            System.out.println("Music Playing");
             isPlaying = true;
             btnPlayPause.setText("Pause");
         } 
         else 
         {
             mPlayer.pause();
-            System.out.println("Music Paused...");
+            System.out.println("Music Paused");
             isPlaying = false;
             btnPlayPause.setText("Play");
         }
