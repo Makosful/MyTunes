@@ -35,50 +35,57 @@ public class MainWindowController implements Initializable
     private Slider progressSlider;
     @FXML
     private Pane mediaPane;
-    @FXML
-    private MediaView mediaView;
-    private MediaView mView;
+    //private MediaView mView;
     private MediaPlayer mPlayer;
 
     private boolean isPlaying;
 // </editor-fold>
+    @FXML
+    private MediaView mediaView;
 
         @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        isPlaying = true;
+        isPlaying = false;
+       
+        MediaPlayerMethod();
         
-        String musicFile = "media/testmusic.mp3";
+        String musicFile = "src/mytunes/media/testmusic.mp3";
         Media song = new Media(new File(musicFile).toURI().toString());
-        MediaPlayer player = new MediaPlayer(song);
-        player.play();
+        mPlayer = new MediaPlayer(song);
         
-        mView = new MediaView(mPlayer);
-        mediaPane.getChildren().add(mView);
+        mPlayer.play();
+        
+        mediaView = new MediaView(mPlayer);
+        mediaPane.getChildren().add(mediaView);
+    }
+    
+        private void MediaPlayerMethod()
+    {
     }
 
     @FXML
     private void songStop(ActionEvent event) 
     {
-        
+        mPlayer.stop();
+        System.out.println("Music Stopped");
     }
 
     @FXML
     private void musicPlayPause(ActionEvent event) 
     {
         //Status status = mPlayer.getStatus();
+        isPlaying = !isPlaying;
         
-        if(isPlaying == true)
+        if(isPlaying == false)
         {
-            btnPlayPause.setText("Pause");
-            isPlaying = !true;
             mPlayer.play();
+            btnPlayPause.setText("Pause");
         }
         else 
         {
-            btnPlayPause.setText("Play");
-            isPlaying = true;
-            mPlayer.pause();            
+            mPlayer.pause(); 
+            btnPlayPause.setText("Play");     
         }
     }
 
@@ -89,6 +96,8 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void progressDrag(MouseEvent event) {
+    private void progressDrag(MouseEvent event) 
+    {
+        
     }
 }
