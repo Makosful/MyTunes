@@ -33,7 +33,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                           </HBox.margin>
                       </JFXButton>
-                      <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixerSetup" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
+                      <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixer" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
                           <HBox.margin>
                               <Insets right="25.0" />
                           </HBox.margin>
