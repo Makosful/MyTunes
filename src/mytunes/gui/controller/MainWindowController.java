@@ -4,7 +4,9 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import java.io.File;
 import java.net.URL;
+import java.util.Observable;
 import java.util.ResourceBundle;
+import javafx.beans.InvalidationListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,9 +22,8 @@ import javafx.scene.media.MediaView;
  *
  * @author Axl
  */
-public class MainWindowController implements Initializable
+public class MainWindowController implements Initializable 
 {
-
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
     private JFXButton btnPlayPause;
@@ -45,18 +46,16 @@ public class MainWindowController implements Initializable
     // </editor-fold>
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)
+    public void initialize(URL location, ResourceBundle resources) 
     {
-
         isPlaying = false;
 
-        MediaPlayerMethod();
+        mediaPlayerSetup();
 
         volumeSlider.getParent().getParent().toFront();
     }
 
-    private void MediaPlayerMethod()
-    {
+    private void mediaPlayerSetup() {
         String musicFile = "src/mytunes/media/testmusic.mp3";
         Media song = new Media(new File(musicFile).toURI().toString());
         mPlayer = new MediaPlayer(song);
@@ -65,25 +64,30 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void songStop(ActionEvent event)
+    private void progressBarSetup() 
+    {
+        //
+    }
+    @FXML
+    private void songStop(ActionEvent event) 
     {
         mPlayer.stop();
         System.out.println("Music Stopped...");
     }
 
     @FXML
-    private void musicPlayPause(ActionEvent event)
+    private void musicPlayPause(ActionEvent event) 
     {
         //Status status = mPlayer.getStatus();
 
-        if (isPlaying == false)
+        if (isPlaying == false) 
         {
             mPlayer.play();
             System.out.println("Music Playing...");
             isPlaying = true;
             btnPlayPause.setText("Pause");
-        }
-        else
+        } 
+        else 
         {
             mPlayer.pause();
             System.out.println("Music Paused...");
@@ -93,14 +97,14 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void volumeMixer(MouseEvent event)
+    private void volumeMixer(MouseEvent event) 
     {
-
+        //
     }
 
     @FXML
-    private void progressDrag(MouseEvent event)
+    private void progressDrag(MouseEvent event) 
     {
-
+        //
     }
 }
