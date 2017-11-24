@@ -54,13 +54,6 @@ public class MainWindowController implements Initializable
         String musicFile = "src/mytunes/media/testmusic.mp3";
         Media song = new Media(new File(musicFile).toURI().toString());
         mPlayer = new MediaPlayer(song);
-<<<<<<< HEAD
-        
-=======
-
-        mPlayer.play();
-
->>>>>>> fbdef6cbbe90ac86b82ed22d6de1589792fb0f14
         mediaView = new MediaView(mPlayer);
         mediaPane.getChildren().add(mediaView);
     }
