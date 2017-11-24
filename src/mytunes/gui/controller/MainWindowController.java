@@ -66,23 +66,26 @@ public class MainWindowController implements Initializable
     private void songStop(ActionEvent event)
     {
         mPlayer.stop();
-        System.out.println("Music Stopped");
+        System.out.println("Music Stopped...");
     }
 
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
         //Status status = mPlayer.getStatus();
-        isPlaying = !isPlaying;
 
         if (isPlaying == false)
         {
             mPlayer.play();
+            System.out.println("Music Playing...");
+            isPlaying = true;
             btnPlayPause.setText("Pause");
         }
         else
         {
             mPlayer.pause();
+            System.out.println("Music Paused...");
+            isPlaying = false;
             btnPlayPause.setText("Play");
         }
     }
