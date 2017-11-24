@@ -7,9 +7,14 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.ResourceBundle;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
@@ -39,8 +44,9 @@ public class MainWindowController implements Initializable
     private Pane mediaPane;
     @FXML
     private MediaView mediaView;
+    @FXML
+    private ComboBox<String> playbackSpeed;
 
-    //private MediaView mView;
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     // </editor-fold>
@@ -51,6 +57,7 @@ public class MainWindowController implements Initializable
         isPlaying = false;
 
         mediaPlayerSetup();
+        playbackSettings();
         volumeSlider.getParent().getParent().toFront();
     }
 
@@ -63,11 +70,6 @@ public class MainWindowController implements Initializable
         mediaPane.getChildren().add(mediaView);
     }
 
-    @FXML
-    private void progressBarSetup() 
-    {
-        //
-    }
     @FXML
     private void songStop(ActionEvent event) 
     {
@@ -96,6 +98,24 @@ public class MainWindowController implements Initializable
         }
     }
 
+    private void playbackSettings()
+    {   
+        //creating possible choices
+        playbackSpeed.getItems().addAll("50% speed", "75% speed", "100% speed", "125% speed", "150% speed", "175% speed", "200% speed");
+        //setting default value of the choicebox
+        playbackSpeed.setValue("Play speed");
+    }
+    
+    @FXML
+    private void playbackAction(ActionEvent event) 
+    {
+        ObservableList<String> items = playbackSpeed.getItems();
+            for(String item : items)
+                {
+                    System.out.println(item.toString());
+                }
+    }
+    
     @FXML
     private void volumeMixer(MouseEvent event) 
     {
@@ -116,4 +136,5 @@ public class MainWindowController implements Initializable
     {
         //
     }
+
 }

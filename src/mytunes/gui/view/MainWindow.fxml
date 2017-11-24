@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -35,20 +36,25 @@
                       </JFXButton>
                       <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixer" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
                           <HBox.margin>
-                              <Insets right="25.0" />
+                              <Insets right="10.0" />
                           </HBox.margin>
                           <padding>
                               <Insets left="10.0" />
                           </padding>
                       </JFXSlider>
-                      <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="1220.0">
+                  <ComboBox fx:id="playbackSpeed" onAction="#playbackAction" prefWidth="100.0">
+                     <HBox.margin>
+                        <Insets right="10.0" top="7.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                      <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="1000.0">
                           <HBox.margin>
                               <Insets />
                           </HBox.margin>
                       </Slider>
                       <Label fx:id="lblTimer" alignment="CENTER" contentDisplay="TOP" prefHeight="40.0" prefWidth="80.0" text="00:00 / 13:37" textAlignment="RIGHT">
                           <HBox.margin>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              <Insets />
                           </HBox.margin>
                       </Label>
                   </children>
@@ -60,7 +66,7 @@
       </FlowPane>
       <Pane layoutX="101.0" layoutY="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <MenuBar prefWidth="1600.0">
+            <MenuBar prefHeight="25.0" prefWidth="1600.0">
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
