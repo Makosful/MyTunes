@@ -122,11 +122,11 @@ public class MainWindowController implements Initializable
     }
 
     private void playbackSettings()
-    {   
-        //creating possible choices
-        playbackSpeed.getItems().addAll("50% speed", "75% speed", "100% speed", "125% speed", "150% speed", "175% speed", "200% speed");
+    {           
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
+        //creating possible choices
+        playbackSpeed.getItems().addAll("50% speed", "75% speed", "100% speed", "125% speed", "150% speed", "175% speed", "200% speed");
     }
     
     @FXML
@@ -178,7 +178,7 @@ public class MainWindowController implements Initializable
             btnLoop.setText("Loop: ON");
             mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             isLooping = false;
-            System.out.println("Looping");
+            System.out.println("Looping on");
         }
         else if(btnLoop.isSelected() != true)
         {
