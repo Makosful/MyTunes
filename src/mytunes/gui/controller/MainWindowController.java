@@ -221,7 +221,7 @@ public class MainWindowController implements Initializable
         }
         else
         {
-            System.out.println("Invalid file / Not found");
+            System.out.println("Invalid file / Not selected");
         }
     }
 
@@ -241,7 +241,7 @@ public class MainWindowController implements Initializable
         }
         else
         {
-            System.out.println("One or more invalid file(s) / Not found");
+            System.out.println("One or more invalid file(s) / None selected");
         }
     }
 
