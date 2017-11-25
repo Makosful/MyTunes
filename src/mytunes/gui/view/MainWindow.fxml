@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -37,6 +38,11 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                           </HBox.margin>
                       </JFXButton>
+                  <JFXToggleButton fx:id="btnLoop" depthTest="DISABLE" graphicTextGap="0.0" minHeight="40.0" minWidth="100.0" mnemonicParsing="false" onAction="#LoopAction" pickOnBounds="false" prefHeight="40.0" prefWidth="125.0" text="Loop">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXToggleButton>
                       <JFXSlider fx:id="volumeSlider" blockIncrement="1.0" minorTickCount="4" onDragDetected="#volumeMixer" prefHeight="40.0" prefWidth="125.0" showTickMarks="true" snapToTicks="true">
                           <HBox.margin>
                               <Insets right="10.0" />

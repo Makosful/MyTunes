@@ -4,11 +4,14 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +26,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.Duration;
+import static javax.xml.datatype.DatatypeConstants.DURATION;
 /**
  *
  * @author Axl
@@ -58,11 +63,15 @@ public class MainWindowController implements Initializable
     @FXML
     private MediaView mediaView;
     @FXML
+    private JFXToggleButton btnLoop;
+    @FXML
     private ComboBox<String> playbackSpeed;
 
     private MediaPlayer mPlayer;
     private boolean isPlaying;
+    private boolean isLooping;
     // </editor-fold>
+
 
 
     @Override
@@ -76,8 +85,8 @@ public class MainWindowController implements Initializable
     }
 
     private void mediaPlayerSetup() {
-        String musicFile = "src/mytunes/media/testmusic.mp3";
-        Media song = new Media(new File(musicFile).toURI().toString());
+        String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
         
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
@@ -158,6 +167,24 @@ public class MainWindowController implements Initializable
                 break;
             default:
                 break;
+        }
+    }
+    
+        @FXML
+    private void LoopAction(ActionEvent event) 
+    {
+        if(btnLoop.isSelected() == true)
+        {
+            btnLoop.setText("Loop: ON");
+            mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            isLooping = false;
+            System.out.println("Looping");
+        }
+        else if(btnLoop.isSelected() != true)
+        {
+            btnLoop.setText("Loop: OFF");
+            isLooping = true;
+            System.out.println("Looping off");
         }
     }
     
