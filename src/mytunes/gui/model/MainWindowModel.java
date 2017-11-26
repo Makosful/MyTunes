@@ -2,7 +2,7 @@ package mytunes.gui.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import mytunes.be.Song;
+import mytunes.be.Music;
 
 /**
  *
@@ -11,9 +11,11 @@ import mytunes.be.Song;
 public class MainWindowModel
 {
 
-    public ObservableList<Song> getSongList()
+    private ObservableList<Music> list;
+
+    public ObservableList<Music> getSongList()
     {
-        ObservableList<Song> list = FXCollections.observableArrayList();
+        list = FXCollections.observableArrayList();
 
         return list;
     }

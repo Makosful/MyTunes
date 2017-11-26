@@ -16,7 +16,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import mytunes.be.Song;
+import mytunes.be.Music;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -60,7 +60,7 @@ public class MainWindowController implements Initializable
     @FXML
     private ComboBox<String> playbackSpeed;
     @FXML
-    private TableView<Song> tblSongList;
+    private TableView<Music> tblSongList;
 
     private Pane mediaPane;
     private MediaPlayer mPlayer;
