@@ -52,6 +52,8 @@ public class MainWindowController implements Initializable
     @FXML
     private Slider progressSlider;
     @FXML
+    private JFXListView<?> listMetaData;
+    @FXML
     private MediaView mediaView;
     @FXML
     private JFXToggleButton btnLoop;
@@ -89,7 +91,9 @@ public class MainWindowController implements Initializable
 
     private void mediaPlayerSetup()
     {
-        String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        //String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        //SKAL FLYTTES
+        String musicFile = listLoadedMP3.getItems().get(0);
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
@@ -155,6 +159,7 @@ public class MainWindowController implements Initializable
     private void playbackAction(ActionEvent event)
     {
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
+
         // Creating a list starting from 0+1 (convert index to number in list)
         System.out.println("the line is #: " + (playbackIndex + 1));
 
