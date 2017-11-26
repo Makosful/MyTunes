@@ -15,8 +15,6 @@ public class MainWindowModel
     {
         ObservableList<Song> list = FXCollections.observableArrayList();
 
-        list.get(0);
-
         return list;
     }
 
