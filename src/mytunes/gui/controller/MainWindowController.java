@@ -156,8 +156,13 @@ public class MainWindowController implements Initializable
     {
         //Status status = mPlayer.getStatus();
 
-        if (listLoadedMP3.getItems().isEmpty())
-            System.out.println("List of Loaded MP3's is empty.");
+        if (listLoadedMP3.getItems().isEmpty() && isPlaying == false)
+            //System.out.println("List of Loaded MP3's is empty.");
+            randomFiller();
+        else if (listLoadedMP3.getItems().isEmpty() && isPlaying == true)
+        {
+            //Do nothing
+        }
         else if (isPlaying == false)
         {
             mPlayer.play();
@@ -322,5 +327,27 @@ public class MainWindowController implements Initializable
             progressSlider.setValue(1.0 * mPlayer.getCurrentTime().toMillis() / mPlayer.getTotalDuration().toMillis());
         };
         mPlayer.currentTimeProperty().addListener(progressChangeListener);
+    }
+
+    private void randomFiller()
+    {
+        String music;
+
+        double rand = Math.random();
+        if (rand > 0.66)
+            music = "./src/myTunes/media/Elevator (Control).mp3";
+        else if (rand > 0.33)
+            music = "./src/myTunes/media/Elevator (Caverns).mp3";
+        else
+            music = "./src/myTunes/media/elevatormusic.mp3";
+
+        Media song = new Media(new File(music.toLowerCase()).toURI().toString());
+
+        mPlayer = new MediaPlayer(song);
+
+        mPlayer.play();
+        mediaView = new MediaView(mPlayer);
+        isPlaying = true;
+        isLooping = true;
     }
 }
