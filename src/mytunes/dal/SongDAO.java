@@ -20,7 +20,7 @@ public class SongDAO
         List<Music> songs = new ArrayList<>();
 
         Music song = new Music();
-        song.setID(1212);
+        song.setId(1212);
         song.setTitle("Hulla balloo");
         song.setArtist("Mikal Jaeson");
         song.setAlbum("Hits for Kids");

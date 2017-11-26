@@ -94,12 +94,12 @@ public class MainWindowController implements Initializable
         //mediaPlayerSetup();
         playbackSettings();
 
-        setSongList();
+        setUpSongList();
 
         volumeSlider.getParent().getParent().toFront();
     }
 
-    private void setSongList()
+    private void setUpSongList()
     {
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
