@@ -28,6 +28,7 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
+
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
     private JFXButton btnStop;
@@ -310,14 +311,16 @@ public class MainWindowController implements Initializable
     {
         listLoadedMP3.getItems().clear();
     }
-    
-    private void setCurrentlyPlaying(final MediaPlayer mPlayer) {
-    mPlayer.seek(Duration.ZERO);
 
-    progressSlider.setValue(0);
-    progressChangeListener = (ObservableValue<? extends Duration> observableValue, Duration oldValue, Duration newValue) -> {
-        progressSlider.setValue(1.0 * mPlayer.getCurrentTime().toMillis() / mPlayer.getTotalDuration().toMillis());
-    };
-    mPlayer.currentTimeProperty().addListener(progressChangeListener);
+    private void setCurrentlyPlaying(final MediaPlayer mPlayer)
+    {
+        mPlayer.seek(Duration.ZERO);
+
+        progressSlider.setValue(0);
+        progressChangeListener = (ObservableValue<? extends Duration> observableValue, Duration oldValue, Duration newValue) ->
+        {
+            progressSlider.setValue(1.0 * mPlayer.getCurrentTime().toMillis() / mPlayer.getTotalDuration().toMillis());
+        };
+        mPlayer.currentTimeProperty().addListener(progressChangeListener);
     }
 }
