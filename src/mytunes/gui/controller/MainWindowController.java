@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -22,7 +23,8 @@ import mytunes.gui.model.MainWindowModel;
  *
  * @author Axl
  */
-public class MainWindowController implements Initializable {
+public class MainWindowController implements Initializable
+{
 
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
@@ -59,6 +61,16 @@ public class MainWindowController implements Initializable {
     private ComboBox<String> playbackSpeed;
     @FXML
     private TableView<Music> tblSongList;
+    @FXML
+    private TableColumn<Music, String> clmNr;
+    @FXML
+    private TableColumn<Music, String> clmTitle;
+    @FXML
+    private TableColumn<Music, String> clmCover;
+    @FXML
+    private TableColumn<Music, String> clmArtist;
+    @FXML
+    private TableColumn<Music, String> clmYear;
 
     private Pane mediaPane;
     private MediaPlayer mPlayer;
@@ -75,18 +87,36 @@ public class MainWindowController implements Initializable {
      * @param resources
      */
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
         isPlaying = false;
 
         //mediaPlayerSetup();
         playbackSettings();
 
-        tblSongList.setItems(wm.getSongList());
+        setSongList();
 
         volumeSlider.getParent().getParent().toFront();
     }
 
-    private void mediaPlayerSetup() {
+    private void setSongList()
+    {
+        clmNr.setCellValueFactory(new PropertyValueFactory("id"));
+        clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
+        clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
+        clmCover.setCellValueFactory(new PropertyValueFactory("album"));
+        clmYear.setCellValueFactory(new PropertyValueFactory("year"));
+
+        tblSongList.setItems(wm.getSongList());
+
+        tblSongList.getSortOrder().add(clmCover);
+        tblSongList.getSortOrder().add(clmNr);
+
+        wm.loadSongList();
+    }
+
+    private void mediaPlayerSetup()
+    {
         //String musicFile = "src/mytunes/media/elevatormusic.mp3";
 
         String musicFile = listLoadedMP3.getItems().get(0);
@@ -103,7 +133,8 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void songStop(ActionEvent event) {
+    private void songStop(ActionEvent event)
+    {
         mPlayer.stop();
         isPlaying = false;
         btnPlayPause.setText("Play");
@@ -117,30 +148,33 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void musicPlayPause(ActionEvent event) {
+    private void musicPlayPause(ActionEvent event)
+    {
         //Status status = mPlayer.getStatus();
 
-        if (listLoadedMP3.getItems().isEmpty()) {
+        if (listLoadedMP3.getItems().isEmpty())
             System.out.println("List of Loaded MP3's is empty.");
-        } else {
-            if (isPlaying == false) {
-                mPlayer.play();
-                System.out.println("Music Playing");
-                isPlaying = true;
-                btnPlayPause.setText("Pause");
-            } else {
-                mPlayer.pause();
-                System.out.println("Music Paused");
-                isPlaying = false;
-                btnPlayPause.setText("Play");
-            }
+        else if (isPlaying == false)
+        {
+            mPlayer.play();
+            System.out.println("Music Playing");
+            isPlaying = true;
+            btnPlayPause.setText("Pause");
+        }
+        else
+        {
+            mPlayer.pause();
+            System.out.println("Music Paused");
+            isPlaying = false;
+            btnPlayPause.setText("Play");
         }
     }
 
     /**
      * Handle the settings for the playback
      */
-    private void playbackSettings() {
+    private void playbackSettings()
+    {
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
         //creating possible choices
@@ -153,13 +187,15 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void playbackAction(ActionEvent event) {
+    private void playbackAction(ActionEvent event)
+    {
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
 
         // Creating a list starting from 0+1 (convert index to number in list)
         System.out.println("the line is #: " + (playbackIndex + 1));
 
-        switch (playbackIndex) {
+        switch (playbackIndex)
+        {
             case 0:
                 System.out.println("50%");
                 mPlayer.setRate(0.5);
@@ -199,13 +235,17 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void LoopAction(ActionEvent event) {
-        if (btnLoop.isSelected() == true) {
+    private void LoopAction(ActionEvent event)
+    {
+        if (btnLoop.isSelected() == true)
+        {
             btnLoop.setText("Loop: ON");
             mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             isLooping = false;
             System.out.println("Looping on");
-        } else if (btnLoop.isSelected() != true) {
+        }
+        else if (btnLoop.isSelected() != true)
+        {
             btnLoop.setText("Loop: OFF");
             isLooping = true;
             System.out.println("Looping off");
@@ -218,12 +258,14 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void volumeMixer(MouseEvent event) {
+    private void volumeMixer(MouseEvent event)
+    {
         JFXSlider volSlide = volumeSlider;
         volSlide.setValue(50);
         volSlide.setValue(mPlayer.getVolume() * 100);
 
-        volSlide.valueProperty().addListener((javafx.beans.Observable observable) -> {
+        volSlide.valueProperty().addListener((javafx.beans.Observable observable) ->
+        {
             mPlayer.setVolume(volSlide.getValue() / 100);
         });
     }
@@ -234,7 +276,8 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void progressDrag(MouseEvent event) {
+    private void progressDrag(MouseEvent event)
+    {
         //
     }
 
@@ -244,26 +287,23 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void LoadMP3Multi(ActionEvent event) {
+    private void LoadMP3Multi(ActionEvent event)
+    {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
-        if (chosenFiles != null) {
-            for (int i = 0; i < chosenFiles.size(); i++) {
+        if (chosenFiles != null)
+            for (int i = 0; i < chosenFiles.size(); i++)
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
-            }
-        } else {
+        else
             System.out.println("One or more invalid file(s) / None selected");
-        }
-            mediaPlayerSetup();
+        mediaPlayerSetup();
     }
 
     @FXML
-        private void clearLoadedMP3(ActionEvent event) 
+    private void clearLoadedMP3(ActionEvent event)
     {
         listLoadedMP3.getItems().clear();
     }
 }
-
-
