@@ -86,6 +86,8 @@ public class MainWindowController implements Initializable {
 
     private final MainWindowModel wm = new MainWindowModel();
     // </editor-fold>
+    @FXML
+    private MenuButton btnSettings;
 
     /**
      * Constructor, for all intends and purposes
