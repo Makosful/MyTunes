@@ -5,6 +5,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +18,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.gui.model.MainWindowModel;
 
@@ -25,7 +28,6 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
-
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
     private JFXButton btnStop;
@@ -76,6 +78,7 @@ public class MainWindowController implements Initializable
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     private boolean isLooping;
+    private ChangeListener<Duration> progressChangeListener;
 
     private final MainWindowModel wm = new MainWindowModel();
     // </editor-fold>
@@ -262,6 +265,7 @@ public class MainWindowController implements Initializable
     {
         JFXSlider volSlide = volumeSlider;
         volSlide.setValue(50);
+        //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
         volSlide.valueProperty().addListener((javafx.beans.Observable observable) ->
@@ -305,5 +309,15 @@ public class MainWindowController implements Initializable
     private void clearLoadedMP3(ActionEvent event)
     {
         listLoadedMP3.getItems().clear();
+    }
+    
+    private void setCurrentlyPlaying(final MediaPlayer mPlayer) {
+    mPlayer.seek(Duration.ZERO);
+
+    progressSlider.setValue(0);
+    progressChangeListener = (ObservableValue<? extends Duration> observableValue, Duration oldValue, Duration newValue) -> {
+        progressSlider.setValue(1.0 * mPlayer.getCurrentTime().toMillis() / mPlayer.getTotalDuration().toMillis());
+    };
+    mPlayer.currentTimeProperty().addListener(progressChangeListener);
     }
 }
