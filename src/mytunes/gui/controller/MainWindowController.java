@@ -91,9 +91,9 @@ public class MainWindowController implements Initializable
 
     private void mediaPlayerSetup()
     {
-        //String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        String musicFile = "src/mytunes/media/elevatormusic.mp3";
         //SKAL FLYTTES
-        String musicFile = listLoadedMP3.getItems().get(0);
+        //String musicFile = listLoadedMP3.getItems().get(0);
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
