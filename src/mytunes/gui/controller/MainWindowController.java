@@ -10,8 +10,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,9 +23,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Duration;
-import static javax.xml.datatype.DatatypeConstants.DURATION;
+
 /**
  *
  * @author Axl
@@ -59,18 +55,21 @@ public class MainWindowController implements Initializable
     private Label lblTimer;
     @FXML
     private Slider progressSlider;
-    private Pane mediaPane;
+    @FXML
+    private JFXListView<?> listMetaData;
     @FXML
     private MediaView mediaView;
     @FXML
     private JFXToggleButton btnLoop;
     @FXML
     private ComboBox<String> playbackSpeed;
-
+    
+    private Pane mediaPane;
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     private boolean isLooping;
     // </editor-fold>
+
 
 
 
@@ -85,7 +84,9 @@ public class MainWindowController implements Initializable
     }
 
     private void mediaPlayerSetup() {
-        String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        //String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        //SKAL FLYTTES
+        String musicFile = listLoadedMP3.getItems().get(0);
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
         
         mPlayer = new MediaPlayer(song);
@@ -134,7 +135,7 @@ public class MainWindowController implements Initializable
     {
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
         // Creating a list starting from 0+1 (convert index to number in list)    
-        System.out.println("the line is #: " + (playbackIndex + 1));
+        System.out.println("the line is # " + (playbackIndex + 1));
         
         switch (playbackIndex) {
             case 0:
@@ -170,7 +171,7 @@ public class MainWindowController implements Initializable
         }
     }
     
-        @FXML
+    @FXML
     private void LoopAction(ActionEvent event) 
     {
         if(btnLoop.isSelected() == true)
