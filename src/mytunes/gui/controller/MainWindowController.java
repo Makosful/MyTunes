@@ -1,39 +1,31 @@
 package mytunes.gui.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTabPane;
-import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.*;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Duration;
-import static javax.xml.datatype.DatatypeConstants.DURATION;
+import mytunes.be.Song;
+import mytunes.gui.model.MainWindowModel;
+
 /**
  *
  * @author Axl
  */
-public class MainWindowController implements Initializable 
+public class MainWindowController implements Initializable
 {
+
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
     private JFXButton btnStop;
@@ -59,60 +51,82 @@ public class MainWindowController implements Initializable
     private Label lblTimer;
     @FXML
     private Slider progressSlider;
-    private Pane mediaPane;
     @FXML
     private MediaView mediaView;
     @FXML
     private JFXToggleButton btnLoop;
     @FXML
     private ComboBox<String> playbackSpeed;
+    @FXML
+    private TableView<Song> tblSongList;
 
+    private Pane mediaPane;
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     private boolean isLooping;
+
+    private final MainWindowModel wm = new MainWindowModel();
     // </editor-fold>
 
-
-
+    /**
+     * Constructor, for all intends and purpuses
+     *
+     * @param location
+     * @param resources
+     */
     @Override
-    public void initialize(URL location, ResourceBundle resources) 
+    public void initialize(URL location, ResourceBundle resources)
     {
         isPlaying = false;
 
         mediaPlayerSetup();
         playbackSettings();
+
+        tblSongList.setItems(wm.getSongList());
+
         volumeSlider.getParent().getParent().toFront();
     }
 
-    private void mediaPlayerSetup() {
+    private void mediaPlayerSetup()
+    {
         String musicFile = "src/mytunes/media/elevatormusic.mp3";
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
-        
+
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
         //mediaPane.getChildren().add(mediaView);
     }
 
+    /**
+     * Tells the playback to stop entirely
+     *
+     * @param event
+     */
     @FXML
-    private void songStop(ActionEvent event) 
+    private void songStop(ActionEvent event)
     {
         mPlayer.stop();
         System.out.println("Music Stopped");
     }
 
+    /**
+     * Tells the playback to pause
+     *
+     * @param event
+     */
     @FXML
-    private void musicPlayPause(ActionEvent event) 
+    private void musicPlayPause(ActionEvent event)
     {
         //Status status = mPlayer.getStatus();
 
-        if (isPlaying == false) 
+        if (isPlaying == false)
         {
             mPlayer.play();
             System.out.println("Music Playing");
             isPlaying = true;
             btnPlayPause.setText("Pause");
-        } 
-        else 
+        }
+        else
         {
             mPlayer.pause();
             System.out.println("Music Paused");
@@ -121,22 +135,31 @@ public class MainWindowController implements Initializable
         }
     }
 
+    /**
+     * Handle the settings for the playback
+     */
     private void playbackSettings()
-    {           
+    {
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
         //creating possible choices
         playbackSpeed.getItems().addAll("50% speed", "75% speed", "100% speed", "125% speed", "150% speed", "175% speed", "200% speed");
     }
-    
+
+    /**
+     * Handles the playback itself
+     *
+     * @param event
+     */
     @FXML
-    private void playbackAction(ActionEvent event) 
+    private void playbackAction(ActionEvent event)
     {
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
-        // Creating a list starting from 0+1 (convert index to number in list)    
+        // Creating a list starting from 0+1 (convert index to number in list)
         System.out.println("the line is #: " + (playbackIndex + 1));
-        
-        switch (playbackIndex) {
+
+        switch (playbackIndex)
+        {
             case 0:
                 System.out.println("50%");
                 mPlayer.setRate(0.5);
@@ -169,80 +192,97 @@ public class MainWindowController implements Initializable
                 break;
         }
     }
-    
-        @FXML
-    private void LoopAction(ActionEvent event) 
+
+    /**
+     * Sets the current song to loop
+     *
+     * @param event
+     */
+    @FXML
+    private void LoopAction(ActionEvent event)
     {
-        if(btnLoop.isSelected() == true)
+        if (btnLoop.isSelected() == true)
         {
             btnLoop.setText("Loop: ON");
             mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             isLooping = false;
             System.out.println("Looping on");
         }
-        else if(btnLoop.isSelected() != true)
+        else if (btnLoop.isSelected() != true)
         {
             btnLoop.setText("Loop: OFF");
             isLooping = true;
             System.out.println("Looping off");
         }
     }
-    
+
+    /**
+     * Handles the volume
+     *
+     * @param event
+     */
     @FXML
-    private void volumeMixer(MouseEvent event) 
+    private void volumeMixer(MouseEvent event)
     {
         JFXSlider volSlide = volumeSlider;
         volSlide.setValue(50);
         volSlide.setValue(mPlayer.getVolume() * 100);
-        
-        volSlide.valueProperty().addListener(new InvalidationListener() {
+
+        volSlide.valueProperty().addListener(new InvalidationListener()
+        {
             @Override
-            public void invalidated(javafx.beans.Observable observable) {
+            public void invalidated(javafx.beans.Observable observable)
+            {
                 mPlayer.setVolume(volSlide.getValue() / 100);
             }
         });
     }
 
+    /**
+     * Will handle the playback duration
+     *
+     * @param event
+     */
     @FXML
-    private void progressDrag(MouseEvent event) 
+    private void progressDrag(MouseEvent event)
     {
         //
     }
 
+    /**
+     * Loads a single MP3 file
+     *
+     * @param event
+     */
     @FXML
-    private void LoadMP3Single(ActionEvent event) 
+    private void LoadMP3Single(ActionEvent event)
     {
         FileChooser fc = new FileChooser();
         File chosenFile = fc.showOpenDialog(null);
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-        if(chosenFile != null)
-        {
+        if (chosenFile != null)
             listLoadedMP3.getItems().add(chosenFile.getAbsolutePath());
-        }
         else
-        {
             System.out.println("Invalid file / Not selected");
-        }
     }
 
+    /**
+     * Loads multiple MP3 files
+     *
+     * @param event
+     */
     @FXML
-    private void LoadMP3Multi(ActionEvent event) 
+    private void LoadMP3Multi(ActionEvent event)
     {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-        
+
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
-        if(chosenFiles != null)
-        {
+        if (chosenFiles != null)
             for (int i = 0; i < chosenFiles.size(); i++)
-            {
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
-            }
-        }
         else
-        {
             System.out.println("One or more invalid file(s) / None selected");
-        }
     }
 
 }

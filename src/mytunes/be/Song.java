@@ -9,6 +9,6 @@ package mytunes.be;
  *
  * @author Storm
  */
-public class NewClass {
+public class Song {
     
 }
