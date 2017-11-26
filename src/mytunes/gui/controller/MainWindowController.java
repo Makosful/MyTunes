@@ -335,6 +335,7 @@ public class MainWindowController implements Initializable {
                     }
                 }
 
+                //COPY PASTED CODE FROM https://docs.oracle.com/javase/8/javafx/media-tutorial/playercontrol.htm
                 private String formatTime(Duration elapsed, Duration mpduration) {
                     int intElapsed = (int) Math.floor(elapsed.toSeconds());
                     int elapsedHours = intElapsed / (60 * 60);
