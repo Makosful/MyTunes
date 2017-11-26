@@ -15,7 +15,7 @@ public class MainWindowModel
 
     public ObservableList<Music> getSongList()
     {
-        list = FXCollections.observableArrayList();
+        this.list = FXCollections.observableArrayList();
 
         return list;
     }
