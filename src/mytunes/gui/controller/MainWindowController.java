@@ -34,7 +34,7 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXButton btnStop;
     @FXML
-    private JFXButton btnLoadMP3;
+    private JFXButton btnClearMP3;
     @FXML
     private JFXButton btnLoadMP3Multi;
     @FXML
@@ -70,23 +70,19 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     // </editor-fold>
 
-
-
-
     @Override
     public void initialize(URL location, ResourceBundle resources) 
     {
         isPlaying = false;
 
-        mediaPlayerSetup();
+        //mediaPlayerSetup();
         playbackSettings();
         volumeSlider.getParent().getParent().toFront();
     }
 
     private void mediaPlayerSetup() {
-        String musicFile = "src/mytunes/media/elevatormusic.mp3";
-        //SKAL FLYTTES
-        //String musicFile = listLoadedMP3.getItems().get(0);
+        //String musicFile = "src/mytunes/media/elevatormusic.mp3";
+        String musicFile = listLoadedMP3.getItems().get(0);
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
         
         mPlayer = new MediaPlayer(song);
@@ -98,6 +94,9 @@ public class MainWindowController implements Initializable
     private void songStop(ActionEvent event) 
     {
         mPlayer.stop();
+        isPlaying = false;
+        btnPlayPause.setText("Play");
+        
         System.out.println("Music Stopped");
     }
 
@@ -106,7 +105,13 @@ public class MainWindowController implements Initializable
     {
         //Status status = mPlayer.getStatus();
 
-        if (isPlaying == false) 
+        if(listLoadedMP3.getItems().isEmpty())
+            {
+                System.out.println("List of Loaded MP3's is empty.");
+            }
+        else 
+        {
+            if (isPlaying == false) 
         {
             mPlayer.play();
             System.out.println("Music Playing");
@@ -120,6 +125,7 @@ public class MainWindowController implements Initializable
             isPlaying = false;
             btnPlayPause.setText("Play");
         }
+      }   
     }
 
     private void playbackSettings()
@@ -211,22 +217,6 @@ public class MainWindowController implements Initializable
     }
 
     @FXML
-    private void LoadMP3Single(ActionEvent event) 
-    {
-        FileChooser fc = new FileChooser();
-        File chosenFile = fc.showOpenDialog(null);
-        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
-        if(chosenFile != null)
-        {
-            listLoadedMP3.getItems().add(chosenFile.getAbsolutePath());
-        }
-        else
-        {
-            System.out.println("Invalid file / Not selected");
-        }
-    }
-
-    @FXML
     private void LoadMP3Multi(ActionEvent event) 
     {
         FileChooser fc = new FileChooser();
@@ -244,6 +234,12 @@ public class MainWindowController implements Initializable
         {
             System.out.println("One or more invalid file(s) / None selected");
         }
+        mediaPlayerSetup();
     }
 
+    @FXML
+    private void clearLoadedMP3(ActionEvent event) 
+    {
+        listLoadedMP3.getItems().clear();
+    }
 }

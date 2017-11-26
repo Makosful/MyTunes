@@ -115,14 +115,14 @@
                                  <children>
                                     <HBox prefHeight="27.0" prefWidth="370.0">
                                        <children>
-                                          <JFXButton fx:id="btnLoadMP3" onAction="#LoadMP3Single" prefHeight="27.0" prefWidth="149.0" text="Load single MP3">
+                                          <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMP3Multi" prefHeight="27.0" prefWidth="149.0" text="Load MP3 File(s)">
                                               <HBox.margin>
-                                                <Insets left="0" right="5.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </JFXButton>
-                                          <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMP3Multi" prefHeight="27.0" prefWidth="149.0" text="Load multiple MP3">
+                                          <JFXButton fx:id="btnClearMP3" onAction="#clearLoadedMP3" prefHeight="27.0" prefWidth="149.0" text="Clear MP3 Files">
                                               <HBox.margin>
-                                                <Insets left="10.0" right="5.0" />
+                                                <Insets left="0" right="5.0" />
                                              </HBox.margin>
                                           </JFXButton>
                                        </children>
