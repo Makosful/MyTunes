@@ -168,7 +168,6 @@ public class MainWindowController implements Initializable
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
-//        mPlayer = new MediaPlayer(randomFiller());
         mediaView = new MediaView(mPlayer);
         progressSliderSetup(mPlayer);
 

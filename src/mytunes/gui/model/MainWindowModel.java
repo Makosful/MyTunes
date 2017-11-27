@@ -109,7 +109,7 @@ public class MainWindowModel
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
 
-        //writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
+        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
         for (int i = 0; i < chosenFiles.size(); i++)
 
             System.out.println(chosenFiles.get(i).getName());
