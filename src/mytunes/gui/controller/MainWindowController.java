@@ -5,9 +5,13 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
@@ -57,8 +61,6 @@ public class MainWindowController implements Initializable
     @FXML
     private Pane queuePanel;
     @FXML
-    private Pane menuPanel;
-    @FXML
     private FlowPane playbackPanel;
     @FXML
     private Label lblTimer;
@@ -85,6 +87,8 @@ public class MainWindowController implements Initializable
     @FXML
     private MenuItem loadMP3;
     @FXML
+    private MenuBar menuBar;
+    @FXML
     private Menu menuFile;
     @FXML
     private Menu menuSettings;
@@ -98,8 +102,11 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     private Duration mpduration;
 
+    Media currentlyPlaying;
+
     // Model
     private MainWindowModel wm;
+    private List<File> pathNames;
 
     /**
      * Constructor, for all intends and purposes
@@ -110,17 +117,19 @@ public class MainWindowController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        // Nothing will play when the app first start
+        wm = new MainWindowModel();
+
         isPlaying = false;
 
         //instantiates our Model class
         wm = new MainWindowModel();
 
-        //mediaPlayerSetup();
         // Sets up and connects the various lists to the model
         setUpSongList();
         setUpQueueList();
         setUpPlaybackSettings();
+        setUpMediaPlayer();
+        progressSliderSetup(mPlayer);
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -159,12 +168,14 @@ public class MainWindowController implements Initializable
      */
     private void setUpMediaPlayer()
     {
-        String musicFile = wm.getQueueList().get(0);
-        Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
+        Media song;
+        if (currentlyPlaying == null)
+            song = elevatorMusic();
+        else
+            song = currentlyPlaying;
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
 
         mpduration = mPlayer.getMedia().getDuration();
 
@@ -267,7 +278,7 @@ public class MainWindowController implements Initializable
     }
     
     //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
-    private void randomFiller()
+    private Media elevatorMusic()
     {
         String music;
 
@@ -279,14 +290,7 @@ public class MainWindowController implements Initializable
         else
             music = "./src/myTunes/media/elevatormusic.mp3";
 
-        Media song = new Media(new File(music.toLowerCase()).toURI().toString());
-
-        mPlayer = new MediaPlayer(song);
-
-        mPlayer.play();
-        mediaView = new MediaView(mPlayer);
-        isPlaying = true;
-        isLooping = true;
+        return new Media(new File(music.toLowerCase()).toURI().toString());
     }
 
     //<editor-fold defaultstate="collapsed" desc="FXML Methods">
@@ -315,17 +319,17 @@ public class MainWindowController implements Initializable
     {
         //if our queue (list) is empty and our boolean is false we will use the random filler music listed above.
         if (listQueue.getItems().isEmpty() && isPlaying == false)
-            randomFiller();
+            elevatorMusic();
         //if the queue is empty but the boolean is currently playing (no future songs, but one playing) then do nothing.
         else if (listQueue.getItems().isEmpty() && isPlaying == true)
         {
             //Do nothing
         }
         //if the boolean is false we shall start playing, reverse the boolean and edit the buttons text.
-        else if (isPlaying == false)
+        if (isPlaying == false)
+
         {
             mPlayer.play();
-            System.out.println("Music Playing");
             isPlaying = true;
             btnPlayPause.setText("Pause");
         }
@@ -333,7 +337,6 @@ public class MainWindowController implements Initializable
         else
         {
             mPlayer.pause();
-            System.out.println("Music Paused");
             isPlaying = false;
             btnPlayPause.setText("Play");
         }
@@ -469,15 +472,43 @@ public class MainWindowController implements Initializable
                 new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+
+        try
+        {
+            wm.setPathAndName(chosenFiles);
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+
         if (chosenFiles != null)
             for (int i = 0; i < chosenFiles.size(); i++)
-                listQueue.getItems().add(chosenFiles.get(i).getAbsolutePath());
+                wm.getQueueList().add(chosenFiles.get(i).getAbsolutePath());
         else
         {
             System.out.println("One or more invalid file(s) / None selected");
             return;
         }
-        setUpMediaPlayer();
+
+        if (!wm.getQueueList().isEmpty())
+        {
+            String source = wm.getQueueList().get(0);
+            currentlyPlaying = new Media(new File(source.toLowerCase()).toURI().toString());
+            setUpMediaPlayer();
+
+        }
+        pathNames = chosenFiles;
+
+        try
+        {
+            savePath();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @FXML
@@ -490,6 +521,17 @@ public class MainWindowController implements Initializable
 
         // Clears the queue list
         wm.clearQueueList();
+
+        currentlyPlaying = elevatorMusic();
+    }
+
+    // Saves songs name to database.
+    private void savePath() throws SQLException
+    {
+        List<String> songNamePaths = wm.getPath(pathNames);
+
+        for (int i = 0; i < songNamePaths.size(); i++)
+            wm.createSongPath(songNamePaths.get(i));
     }
     //</editor-fold>
 }
