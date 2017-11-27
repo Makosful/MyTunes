@@ -102,6 +102,8 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     private Duration mpduration;
 
+    Media currentlyPlaying;
+
     // Model
     private MainWindowModel wm;
     private List<File> pathNames;
@@ -121,11 +123,12 @@ public class MainWindowController implements Initializable
 
         wm = new MainWindowModel();
 
-        //mediaPlayerSetup();
         // Sets up and connects the various lists to the model
         setUpSongList();
         setUpQueueList();
         setUpPlaybackSettings();
+        setUpMediaPlayer();
+        progressSliderSetup(mPlayer);
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -164,12 +167,14 @@ public class MainWindowController implements Initializable
      */
     private void setUpMediaPlayer()
     {
-        String musicFile = wm.getQueueList().get(0);
-        Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
+        Media song;
+        if (currentlyPlaying == null)
+            song = elevatorMusic();
+        else
+            song = currentlyPlaying;
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
 
         mpduration = mPlayer.getMedia().getDuration();
 
@@ -264,7 +269,7 @@ public class MainWindowController implements Initializable
             });
     }
 
-    private Media randomFiller()
+    private Media elevatorMusic()
     {
         String music;
 
@@ -276,13 +281,7 @@ public class MainWindowController implements Initializable
         else
             music = "./src/myTunes/media/elevatormusic.mp3";
 
-        Media song = new Media(new File(music.toLowerCase()).toURI().toString());
-
-        mPlayer = new MediaPlayer(song);
-
-        mediaView = new MediaView(mPlayer);
-
-        return null;
+        return new Media(new File(music.toLowerCase()).toURI().toString());
     }
 
     //<editor-fold defaultstate="collapsed" desc="FXML Methods">
@@ -309,28 +308,15 @@ public class MainWindowController implements Initializable
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
-        if (listQueue.getItems().isEmpty() && isPlaying == false)
-        {
-            randomFiller();
-            mPlayer.play();
-            isPlaying = true;
-            isLooping = true;
-        }
-        else if (listQueue.getItems().isEmpty() && isPlaying == true)
-        {
-            //Do nothing
-        }
-        else if (isPlaying == false)
+        if (isPlaying == false)
         {
             mPlayer.play();
-            System.out.println("Music Playing");
             isPlaying = true;
             btnPlayPause.setText("Pause");
         }
         else
         {
             mPlayer.pause();
-            System.out.println("Music Paused");
             isPlaying = false;
             btnPlayPause.setText("Play");
         }
@@ -463,14 +449,22 @@ public class MainWindowController implements Initializable
 
         if (chosenFiles != null)
             for (int i = 0; i < chosenFiles.size(); i++)
-                listQueue.getItems().add(chosenFiles.get(i).getAbsolutePath());
+                wm.getQueueList().add(chosenFiles.get(i).getAbsolutePath());
         else
         {
             System.out.println("One or more invalid file(s) / None selected");
             return;
         }
-        setUpMediaPlayer();
+
+        if (!wm.getQueueList().isEmpty())
+        {
+            String source = wm.getQueueList().get(0);
+            currentlyPlaying = new Media(new File(source.toLowerCase()).toURI().toString());
+            setUpMediaPlayer();
+
+        }
         pathNames = chosenFiles;
+
         try
         {
             savePath();
@@ -479,6 +473,7 @@ public class MainWindowController implements Initializable
         {
             Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     @FXML
@@ -491,6 +486,8 @@ public class MainWindowController implements Initializable
 
         // Clears the queue list
         wm.clearQueueList();
+
+        currentlyPlaying = elevatorMusic();
     }
 
     // Saves songs name to database.
