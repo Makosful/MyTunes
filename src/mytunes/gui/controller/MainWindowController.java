@@ -2,9 +2,13 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
@@ -95,7 +99,9 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     private Duration mpduration;
 
-    private final MainWindowModel wm = new MainWindowModel();
+    private MainWindowModel wm;
+    
+    private List<File> pathNames;
     // </editor-fold>
 
     /**
@@ -107,6 +113,14 @@ public class MainWindowController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
+        try 
+        {
+            wm = new MainWindowModel();
+        } catch (IOException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
+        
         isPlaying = false;
 
         //mediaPlayerSetup();
@@ -325,12 +339,13 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
-    private void LoadMP3Multi(ActionEvent event)
+    private void LoadMP3Multi(ActionEvent event) throws IOException, SQLException
     {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+        
         if (chosenFiles != null)
             for (int i = 0; i < chosenFiles.size(); i++)
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
@@ -340,6 +355,8 @@ public class MainWindowController implements Initializable
             return;
         }
         mediaPlayerSetup();
+        pathNames = chosenFiles;
+        savePath();
     }
 
     @FXML
@@ -434,5 +451,17 @@ public class MainWindowController implements Initializable
         mediaView = new MediaView(mPlayer);
         isPlaying = true;
         isLooping = true;
+    }
+
+     // Saves songs name to database.
+    
+    private void savePath() throws SQLException 
+    {
+        List<String> songNamePaths = wm.getPath(pathNames);
+        
+        for (int i = 0;i<songNamePaths.size();i++)
+        {
+            wm.createSongPath(songNamePaths.get(i));
+        }
     }
 }
