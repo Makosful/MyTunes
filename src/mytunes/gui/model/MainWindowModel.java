@@ -12,25 +12,56 @@ import mytunes.bll.BLLManager;
 public class MainWindowModel
 {
 
-    private ObservableList<Music> list;
+    // Lists
+    private final ObservableList<Music> allSongs;
+    private final ObservableList<String> queue;
 
     // Objects
     private final BLLManager bllManager;
 
+    /**
+     * Constructor
+     */
     public MainWindowModel()
     {
         this.bllManager = new BLLManager();
-        this.list = FXCollections.observableArrayList();
+        this.allSongs = FXCollections.observableArrayList();
+        this.queue = FXCollections.observableArrayList();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Getters">
+    /**
+     * Gets the list containing all the songs
+     *
+     * @return a List containing all the registered songs
+     */
     public ObservableList<Music> getSongList()
     {
-        return list;
+        return allSongs;
     }
 
+    /**
+     * Gets the queue list
+     *
+     * @return The list containing the queues
+     */
+    public ObservableList<String> getQueueList()
+    {
+        return queue;
+    }
+    //</editor-fold>
+
+    /**
+     * Loads all the songs into the program
+     */
     public void loadSongList()
     {
-        list.clear();
-        list.addAll(bllManager.getSongList());
+        allSongs.clear();
+        allSongs.addAll(bllManager.getSongList());
+    }
+
+    public void clearQueueList()
+    {
+        this.queue.clear();
     }
 }

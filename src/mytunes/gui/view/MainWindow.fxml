@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
-<?import com.jfoenix.controls.JFXTabPane?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
@@ -13,7 +12,6 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -25,7 +23,7 @@
 
 <AnchorPane minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
-        <FlowPane prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
                 <HBox maxHeight="40.0">
                     <children>
@@ -74,13 +72,13 @@
                 </HBox>
             </children>
         </FlowPane>
-        <Pane layoutX="101.0" layoutY="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Pane fx:id="menuPanel" layoutX="101.0" layoutY="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <MenuBar prefHeight="25.0" prefWidth="1600.0">
                     <menus>
                         <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                             <items>
-                                <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Multi" text="Load MP3(s)" />
+                                <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
                             </items>
                         </Menu>
                         <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
@@ -106,64 +104,51 @@
                 <TableColumn fx:id="clmYear" prefWidth="75.0" text="Year" />
             </columns>
         </TableView>
-        <JFXListView layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0" />
+        <JFXListView fx:id="playlistPanel" layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0" />
         <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
             <children>
-                <JFXTabPane fx:id="tabPane" layoutX="1.0" prefHeight="250.0" prefWidth="370.0">
-                    <tabs>
-                        <Tab fx:id="tabLoadMP3" text="Load MP3 File(s)">
-                            <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="370.0">
-                                    <children>
-                                        <VBox layoutX="4.0" layoutY="6.0">
-                                            <children>
-                                                <HBox prefHeight="27.0" prefWidth="370.0">
-                                                    <children>
-                                                        <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMP3Multi" prefHeight="27.0" prefWidth="149.0" text="Load MP3 File(s)">
-                                                            <HBox.margin>
-                                                                <Insets left="5.0" right="5.0" />
-                                                            </HBox.margin>
-                                                        </JFXButton>
-                                                        <JFXButton fx:id="btnClearMP3" onAction="#clearLoadedMP3" prefHeight="27.0" prefWidth="149.0" text="Clear MP3 Files">
-                                                            <HBox.margin>
-                                                                <Insets left="0" right="5.0" />
-                                                            </HBox.margin>
-                                                        </JFXButton>
-                                                    </children>
-                                                </HBox>
-                                                <JFXListView fx:id="listLoadedMP3" prefHeight="175.0" prefWidth="353.0">
-                                                    <VBox.margin>
-                                                        <Insets top="5.0" />
-                                                    </VBox.margin>
-                                                </JFXListView>
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </AnchorPane>
-                            </content>
-                        </Tab>
-                        <Tab fx:id="tabEqualizer" text="Equalizer | Visualizer">
-                            <content>
-                                <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
-                            </content>
-                        </Tab>
-                    </tabs>
-                </JFXTabPane>
+                <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
             </children>
         </Pane>
         <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
-      <MenuButton fx:id="btnSettings" layoutX="28.0" layoutY="54.0" mnemonicParsing="false">
-        <items>
-          <MenuItem mnemonicParsing="false" text="Option 1" />
-          <MenuItem mnemonicParsing="false" text="Option 2" />
-            <MenuItem mnemonicParsing="false" text="Option 3" />
-            <MenuItem mnemonicParsing="false" text="Option 4" />
-        </items>
-      </MenuButton>
-      <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
-         <children>
-            <JFXListView fx:id="listQueue" prefHeight="250.0" prefWidth="370.0" />
-         </children>
-      </Pane>
+        <MenuButton fx:id="btnSettings" layoutX="28.0" layoutY="54.0" mnemonicParsing="false">
+            <items>
+                <MenuItem mnemonicParsing="false" text="Option 1" />
+                <MenuItem mnemonicParsing="false" text="Option 2" />
+                <MenuItem mnemonicParsing="false" text="Option 3" />
+                <MenuItem mnemonicParsing="false" text="Option 4" />
+            </items>
+        </MenuButton>
+        <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+            <children>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="370.0">
+                    <children>
+                        <VBox layoutX="4.0" layoutY="6.0">
+                            <children>
+                                <HBox prefHeight="27.0" prefWidth="370.0">
+                                    <children>
+                                        <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMP3Files" prefHeight="27.0" prefWidth="149.0" text="Load MP3 File(s)">
+                                            <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                            </HBox.margin>
+                                        </JFXButton>
+                                        <JFXButton fx:id="btnClearMP3" onAction="#clearQueue" prefHeight="27.0" prefWidth="149.0" text="Clear MP3 Files">
+                                            <HBox.margin>
+                                                <Insets left="0" right="5.0" />
+                                            </HBox.margin>
+                                        </JFXButton>
+                                    </children>
+                                </HBox>
+                                <JFXListView fx:id="listQueue" prefHeight="175.0" prefWidth="353.0">
+                                    <VBox.margin>
+                                        <Insets top="5.0" />
+                                    </VBox.margin>
+                                </JFXListView>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </children>
+        </Pane>
     </children>
 </AnchorPane>
