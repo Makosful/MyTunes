@@ -168,10 +168,13 @@ public class MainWindowController implements Initializable
     private void setUpMediaPlayer()
     {
         Media song;
-        if (currentlyPlaying == null)
-            song = elevatorMusic();
+        if (wm.getQueueList().isEmpty())
+        {
+            addElevatorMusic();
+            song = new Media(new File(wm.getQueueList().get(0).toLowerCase()).toURI().toString());
+        }
         else
-            song = currentlyPlaying;
+            song = new Media(new File(wm.getQueueList().get(0).toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
@@ -269,7 +272,7 @@ public class MainWindowController implements Initializable
             });
     }
 
-    private Media elevatorMusic()
+    private void addElevatorMusic()
     {
         String music;
 
@@ -281,7 +284,8 @@ public class MainWindowController implements Initializable
         else
             music = "./src/myTunes/media/elevatormusic.mp3";
 
-        return new Media(new File(music.toLowerCase()).toURI().toString());
+        File file = new File(music);
+        wm.getQueueList().add(file.getAbsolutePath());
     }
 
     //<editor-fold defaultstate="collapsed" desc="FXML Methods">
@@ -296,7 +300,6 @@ public class MainWindowController implements Initializable
         mPlayer.stop();
         isPlaying = false;
         btnPlayPause.setText("Play");
-
         System.out.println("Music Stopped");
     }
 
@@ -308,6 +311,8 @@ public class MainWindowController implements Initializable
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
+        setUpMediaPlayer();
+
         if (isPlaying == false)
         {
             mPlayer.play();
@@ -487,7 +492,8 @@ public class MainWindowController implements Initializable
         // Clears the queue list
         wm.clearQueueList();
 
-        currentlyPlaying = elevatorMusic();
+        isPlaying = false;
+        btnPlayPause.setText("Play");
     }
 
     // Saves songs name to database.
