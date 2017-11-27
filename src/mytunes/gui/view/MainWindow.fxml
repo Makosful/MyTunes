@@ -55,15 +55,18 @@
                                 <Insets right="10.0" top="7.0" />
                             </HBox.margin>
                         </ComboBox>
-                        <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="1000.0">
+                        <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="950.0">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
                         </Slider>
-                        <Label fx:id="lblTimer" alignment="CENTER" contentDisplay="TOP" prefHeight="40.0" prefWidth="80.0" text="00:00 / 13:37" textAlignment="RIGHT">
+                        <Label fx:id="lblTimer" contentDisplay="TOP" prefHeight="40.0" prefWidth="135.0" text="00:00 / 13:37" textAlignment="RIGHT">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
                         </Label>
                     </children>
                     <FlowPane.margin>

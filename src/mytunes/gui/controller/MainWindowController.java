@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -217,67 +218,32 @@ public class MainWindowController implements Initializable
             if (progressSlider.isValueChanging())
                 mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
+        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
+        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) -> {
+        mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+        });
     }
 
     private void updateProgressSlider()
     {
-        //If our timer label & slider is !null we create a task that controls the progressSlider & timer label
-        if (lblTimer != null && progressSlider != null && volumeSlider != null)
-            Platform.runLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    //grabs the current time of the mPlayer and adjusts the current duration to it so we can update it over time.
-                    Duration currentTime = mPlayer.getCurrentTime();
-                    //sets the label to the currenttime which we determined above.
-                    lblTimer.setText(formatTime(currentTime, mpduration));
-                    //Disable the slider until we run the "is this songs length unknown?" method
-                    progressSlider.setDisable(mpduration.isUnknown());
-                    //if the slider is not disabled and the duration is > 0 milliseconds and the value is not currently changing, then set the value to the current time
-                    if (!progressSlider.isDisabled()
-                        && mpduration.greaterThan(Duration.ZERO)
-                        && !progressSlider.isValueChanging())
-                        progressSlider.setValue(currentTime.divide(mpduration).toSeconds() * 100.0);
-                }
+        double currentTime = mPlayer.getCurrentTime().toSeconds();
+        double totalTime = mPlayer.getTotalDuration().toSeconds();
+        
+        
+        double cTMinutes = (currentTime / 60);
+        double cTSeconds = currentTime;
+        
+        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
+        
+        double tTMinutes = (totalTime / 60);
+        double tTSeconds = totalTime;
+        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
 
-                //COPY PASTED CODE FROM https://docs.oracle.com/javase/8/javafx/media-tutorial/playercontrol.htm
-                private String formatTime(Duration elapsed, Duration mpduration)
-                {
-                    int intElapsed = (int) Math.floor(elapsed.toSeconds());
-                    int elapsedHours = intElapsed / (60 * 60);
-                    if (elapsedHours > 0)
-                        intElapsed -= elapsedHours * 60 * 60;
-                    int elapsedMinutes = intElapsed / 60;
-                    int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
-                                         - elapsedMinutes * 60;
-
-                    if (mpduration.greaterThan(Duration.ZERO))
-                    {
-                        int intDuration = (int) Math.floor(mpduration.toSeconds());
-                        int durationHours = intDuration / (60 * 60);
-                        if (durationHours > 0)
-                            intDuration -= durationHours * 60 * 60;
-                        int durationMinutes = intDuration / 60;
-                        int durationSeconds = intDuration - durationHours * 60 * 60
-                                              - durationMinutes * 60;
-                        if (durationHours > 0)
-                            return String.format("%d:%02d:%02d/%d:%02d:%02d",
-                                                 elapsedHours, elapsedMinutes, elapsedSeconds,
-                                                 durationHours, durationMinutes, durationSeconds);
-                        else
-                            return String.format("%02d:%02d/%02d:%02d",
-                                                 elapsedMinutes, elapsedSeconds, durationMinutes,
-                                                 durationSeconds);
-                    }
-                    else if (elapsedHours > 0)
-                        return String.format("%d:%02d:%02d", elapsedHours,
-                                             elapsedMinutes, elapsedSeconds);
-                    else
-                        return String.format("%02d:%02d", elapsedMinutes,
-                                             elapsedSeconds);
-                }
-            });
+        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
+        //FOR TESTING
+        System.out.println("duration in minutes:" + mpduration.toMinutes());
+        System.out.println("duration in seconds:" + mpduration.toSeconds());
+        System.out.println("duration in milliseconds:" + mpduration.toMillis());
     }
 
     //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
@@ -309,6 +275,7 @@ public class MainWindowController implements Initializable
         mPlayer.stop();
         isPlaying = false;
         btnPlayPause.setText("Play");
+        progressSlider.setValue(0);
     }
 
     /**
