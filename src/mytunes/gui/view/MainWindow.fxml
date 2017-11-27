@@ -72,29 +72,25 @@
                 </HBox>
             </children>
         </FlowPane>
-        <Pane fx:id="menuPanel" layoutX="101.0" layoutY="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <MenuBar prefHeight="25.0" prefWidth="1600.0">
-                    <menus>
-                        <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-                            <items>
-                                <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
-                            </items>
-                        </Menu>
-                        <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Delete" />
-                            </items>
-                        </Menu>
-                        <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="About" />
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
-            </children>
-        </Pane>
+          <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <menus>
+                  <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                      <items>
+                          <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
+                      </items>
+                  </Menu>
+                  <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
+                      <items>
+                          <MenuItem mnemonicParsing="false" text="Delete" />
+                      </items>
+                  </Menu>
+                  <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
+                      <items>
+                          <MenuItem mnemonicParsing="false" text="About" />
+                      </items>
+                  </Menu>
+              </menus>
+          </MenuBar>
         <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
             <columns>
                 <TableColumn fx:id="clmNr" prefWidth="75.0" text="Nr." />
@@ -107,7 +103,7 @@
         <JFXListView fx:id="playlistPanel" layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0" />
         <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
             <children>
-                <MediaView fx:id="mediaView" fitHeight="200.0" fitWidth="200.0" />
+                <MediaView fx:id="mediaView" fitHeight="250.0" fitWidth="370.0" />
             </children>
         </Pane>
         <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
@@ -121,11 +117,11 @@
         </MenuButton>
         <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="370.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
                     <children>
-                        <VBox layoutX="4.0" layoutY="6.0">
+                        <VBox>
                             <children>
-                                <HBox prefHeight="27.0" prefWidth="370.0">
+                                <HBox prefHeight="27.0" prefWidth="370.0" spacing="30.0">
                                     <children>
                                         <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMP3Files" prefHeight="27.0" prefWidth="149.0" text="Load MP3 File(s)">
                                             <HBox.margin>
@@ -138,8 +134,14 @@
                                             </HBox.margin>
                                         </JFXButton>
                                     </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets left="15.0" right="15.0" />
+                           </padding>
                                 </HBox>
-                                <JFXListView fx:id="listQueue" prefHeight="175.0" prefWidth="353.0">
+                                <JFXListView fx:id="listQueue" prefHeight="215.0" prefWidth="353.0">
                                     <VBox.margin>
                                         <Insets top="5.0" />
                                     </VBox.margin>

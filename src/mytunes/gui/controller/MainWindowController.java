@@ -57,8 +57,6 @@ public class MainWindowController implements Initializable
     @FXML
     private Pane queuePanel;
     @FXML
-    private Pane menuPanel;
-    @FXML
     private FlowPane playbackPanel;
     @FXML
     private Label lblTimer;
@@ -84,6 +82,8 @@ public class MainWindowController implements Initializable
     private MenuButton btnSettings;
     @FXML
     private MenuItem loadMP3;
+    @FXML
+    private MenuBar menuBar;
     @FXML
     private Menu menuFile;
     @FXML
@@ -162,6 +162,7 @@ public class MainWindowController implements Initializable
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
+        mPlayer = new MediaPlayer(randomFiller());
         mediaView = new MediaView(mPlayer);
         progressSliderSetup(mPlayer);
 
@@ -258,7 +259,7 @@ public class MainWindowController implements Initializable
             });
     }
 
-    private void randomFiller()
+    private Media randomFiller()
     {
         String music;
 
@@ -274,10 +275,9 @@ public class MainWindowController implements Initializable
 
         mPlayer = new MediaPlayer(song);
 
-        mPlayer.play();
         mediaView = new MediaView(mPlayer);
-        isPlaying = true;
-        isLooping = true;
+
+        return null;
     }
 
     //<editor-fold defaultstate="collapsed" desc="FXML Methods">
@@ -305,8 +305,12 @@ public class MainWindowController implements Initializable
     private void musicPlayPause(ActionEvent event)
     {
         if (listQueue.getItems().isEmpty() && isPlaying == false)
+        {
             randomFiller();
-
+            mPlayer.play();
+            isPlaying = true;
+            isLooping = true;
+        }
         else if (listQueue.getItems().isEmpty() && isPlaying == true)
         {
             //Do nothing
