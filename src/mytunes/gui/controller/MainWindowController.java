@@ -344,7 +344,7 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
         
-
+        wm.setMetaData(chosenFiles);
         try {
             wm.setPathAndName(chosenFiles);
         } catch (IOException ex) {

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.MapChangeListener;
@@ -37,7 +38,7 @@ public class MetaData {
     *  Adds the mp3's metadata to music objects, then adds them to an arraylist and sends it to bllManager
     * @param chosenFiles 
     */
-    public MetaData(List<File> chosenFiles){
+    public void MetaData(List<File> chosenFiles){
         
         
         List<Music> tracks = new ArrayList();
@@ -46,10 +47,10 @@ public class MetaData {
             
             Music track = new Music();
             
-            String fileString = chosenFiles.get(0).getAbsolutePath();
+            String fileString = chosenFiles.get(i).getAbsolutePath();
             
             Media song = new Media(new File(fileString.toLowerCase()).toURI().toString());
-              
+            
             song.getMetadata().addListener((MapChangeListener<String, Object>) change -> {
                
                 if (change.wasAdded()) {
