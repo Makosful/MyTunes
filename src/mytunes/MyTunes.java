@@ -20,6 +20,7 @@ public class MyTunes extends Application
 
         Scene scene = new Scene(root);
 
+        stage.setTitle("MyTunes - The superior way to listen to music");
         stage.setScene(scene);
         stage.show();
     }
