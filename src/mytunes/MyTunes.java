@@ -1,9 +1,11 @@
 package mytunes;
 
+import java.io.File;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -20,6 +22,10 @@ public class MyTunes extends Application
 
         Scene scene = new Scene(root);
 
+        File file = new File("./res/icon/Music-icon.png");
+        Image icon = new Image(file.toURI().toString());
+
+        stage.getIcons().add(icon);
         stage.setTitle("MyTunes - The superior way to listen to music");
         stage.setScene(scene);
         stage.show();
