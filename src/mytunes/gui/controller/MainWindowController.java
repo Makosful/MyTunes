@@ -116,11 +116,10 @@ public class MainWindowController implements Initializable
         wm = new MainWindowModel();
 
         //mediaPlayerSetup();
-        setUpPlaybackSettings();
-
         // Sets up and connects the various lists to the model
         setUpSongList();
         setUpQueueList();
+        setUpPlaybackSettings();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -170,13 +169,10 @@ public class MainWindowController implements Initializable
 
         mpduration = mPlayer.getMedia().getDuration();
 
-        mPlayer.setOnReady(new Runnable()
+        mPlayer.setOnReady(() ->
         {
-            public void run()
-            {
-                mpduration = mPlayer.getMedia().getDuration();
-                updateProgressSlider();
-            }
+            mpduration = mPlayer.getMedia().getDuration();
+            updateProgressSlider();
         });
 
         //mediaPane.getChildren().add(mediaView);
