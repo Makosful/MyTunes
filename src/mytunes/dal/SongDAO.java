@@ -1,8 +1,16 @@
 package mytunes.dal;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.be.Path;
 
 /**
  *
@@ -10,9 +18,10 @@ import mytunes.be.Music;
  */
 public class SongDAO
 {
-
-    public SongDAO()
+    DataBaseConnector db;
+    public SongDAO() throws IOException
     {
+        db = new DataBaseConnector();
     }
 
     public List<Music> getAllSongs()
@@ -32,5 +41,28 @@ public class SongDAO
         songs.add(song);
 
         return songs;
+    }
+    
+    public Path createSongPath(String pathname) throws SQLServerException, SQLException 
+    {
+        try (Connection con = db.getConnection()) 
+        {
+            String sql = "INSERT INTO Path VALUES (?);";
+
+            PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, pathname);
+
+            if (statement.executeUpdate() == 1) 
+            {
+                ResultSet rs = statement.getGeneratedKeys();
+                rs.next();
+                int id = rs.getInt(1);
+                Path path = new Path(pathname);
+                return path;
+            }
+            throw new RuntimeException("Song path was not created");
+
+        }
+
     }
 }

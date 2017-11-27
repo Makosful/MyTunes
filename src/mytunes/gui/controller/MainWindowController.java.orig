@@ -10,8 +10,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
@@ -102,9 +100,15 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     private Duration mpduration;
 
+<<<<<<< HEAD
     // Model
     private MainWindowModel wm;
+=======
+    private MainWindowModel wm;
+    
     private List<File> pathNames;
+    // </editor-fold>
+>>>>>>> origin/roccat
 
     /**
      * Constructor, for all intends and purposes
@@ -115,8 +119,18 @@ public class MainWindowController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        wm = new MainWindowModel();
-
+<<<<<<< HEAD
+        // Nothing will play when the app first start
+=======
+        try 
+        {
+            wm = new MainWindowModel();
+        } catch (IOException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
+        
+>>>>>>> origin/roccat
         isPlaying = false;
 
         wm = new MainWindowModel();
@@ -445,41 +459,51 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
+<<<<<<< HEAD
     private void LoadMP3Files(ActionEvent event)
+=======
+    private void LoadMP3Multi(ActionEvent event) throws IOException, SQLException
+>>>>>>> origin/roccat
     {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+        
 
-        try
-        {
+        try {
             wm.setPathAndName(chosenFiles);
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-
+        
         if (chosenFiles != null)
+<<<<<<< HEAD
             for (int i = 0; i < chosenFiles.size(); i++)
                 listQueue.getItems().add(chosenFiles.get(i).getAbsolutePath());
         else
+=======
+            for (int i = 0; i < chosenFiles.size(); i++){
+               
+              
+        
+              
+                listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
+                
+        }else
+>>>>>>> origin/roccat
         {
             System.out.println("One or more invalid file(s) / None selected");
             return;
         }
+<<<<<<< HEAD
         setUpMediaPlayer();
+=======
+        mediaPlayerSetup();
         pathNames = chosenFiles;
-        try
-        {
-            savePath();
-        }
-        catch (SQLException ex)
-        {
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        savePath();
+>>>>>>> origin/roccat
     }
 
     @FXML
@@ -493,14 +517,20 @@ public class MainWindowController implements Initializable
         // Clears the queue list
         wm.clearQueueList();
     }
+<<<<<<< HEAD
+    //</editor-fold>
+=======
 
-    // Saves songs name to database.
-    private void savePath() throws SQLException
+     // Saves songs name to database.
+    
+    private void savePath() throws SQLException 
     {
         List<String> songNamePaths = wm.getPath(pathNames);
-
-        for (int i = 0; i < songNamePaths.size(); i++)
+        
+        for (int i = 0;i<songNamePaths.size();i++)
+        {
             wm.createSongPath(songNamePaths.get(i));
+        }
     }
-    //</editor-fold>
+>>>>>>> origin/roccat
 }
