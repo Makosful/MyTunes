@@ -306,20 +306,22 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Tells the playback to pause
+     * Tells the playback to pause or play depending on a booleans value.
      *
      * @param event
      */
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
+        //if our queue (list) is empty and our boolean is false we will use the random filler music listed above.
         if (listQueue.getItems().isEmpty() && isPlaying == false)
             randomFiller();
-
+        //if the queue is empty but the boolean is currently playing (no future songs, but one playing) then do nothing.
         else if (listQueue.getItems().isEmpty() && isPlaying == true)
         {
             //Do nothing
         }
+        //if the boolean is false we shall start playing, reverse the boolean and edit the buttons text.
         else if (isPlaying == false)
         {
             mPlayer.play();
@@ -327,6 +329,7 @@ public class MainWindowController implements Initializable
             isPlaying = true;
             btnPlayPause.setText("Pause");
         }
+        //if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
         else
         {
             mPlayer.pause();
@@ -344,13 +347,18 @@ public class MainWindowController implements Initializable
     @FXML
     private void playbackAction(ActionEvent event)
     {
+        //an int to see where we are in the combobox' index.
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
 
-        // Creating a list starting from 0+1 (convert index to number in list)
+        // Creating a list starting from 0 + 1 (convert index to number in list)
         System.out.println("the line is #: " + (playbackIndex + 1));
 
+        /*  switch case for all the possible playback speeds
+            MAYBE convert to a slider in future instead (free choice and set the speed to the value of the bar) 
+        */
         switch (playbackIndex)
         {
+            //in the first case we set the text to 50% and set the play back rate to 0.5 (0 being 0% --> 2 being 200%)
             case 0:
                 System.out.println("50%");
                 mPlayer.setRate(0.5);
@@ -392,6 +400,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoopAction(ActionEvent event)
     {
+        //if our loop slide-button is enabled we change the text, set the cycle count to indefinite and reverse the boolean
         if (btnLoop.isSelected() == true)
         {
             btnLoop.setText("Loop: ON");
@@ -415,11 +424,13 @@ public class MainWindowController implements Initializable
     @FXML
     private void volumeMixer(MouseEvent event)
     {
+        //Creates a new volume slider and sets the default value to 50%
         JFXSlider volSlide = volumeSlider;
         volSlide.setValue(50);
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
+        //Adds a listener on an observable in the volume slider, which allows users to tweak the volume of the player.
         volSlide.valueProperty().addListener((javafx.beans.Observable observable)
                 ->
         {
@@ -446,6 +457,13 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoadMP3Files(ActionEvent event)
     {
+        /*
+        Firstly we create a new FileChooser and add an mp3 filter to disable all other file formats (saves a lot of time troubleshooting what went wrong)
+        then followingly we create a LIST of files rather than just a file, so we can load in multiple mp3 files.
+        If the list contains items then we will determine their path and put them in the queue. Otherwise the list of files is empty and we determine that there was an error 
+        or that none were selected.
+        Lastly we setup the mediaplayer so that we can play the now selected song(s)
+        */
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
