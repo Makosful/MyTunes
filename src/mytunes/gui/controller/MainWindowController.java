@@ -113,6 +113,7 @@ public class MainWindowController implements Initializable
         // Nothing will play when the app first start
         isPlaying = false;
 
+        //instantiates our Model class
         wm = new MainWindowModel();
 
         //mediaPlayerSetup();
@@ -127,7 +128,7 @@ public class MainWindowController implements Initializable
 
     //<editor-fold defaultstate="collapsed" desc="Functionality Setups">
     /**
-     * Sets up the list containing all the songs
+     * Sets up the table & list containing all the songs
      */
     private void setUpSongList()
     {
@@ -146,7 +147,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Sets the the list qith the queue
+     * Sets the list with the queue
      */
     private void setUpQueueList()
     {
@@ -167,6 +168,7 @@ public class MainWindowController implements Initializable
 
         mpduration = mPlayer.getMedia().getDuration();
 
+        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
             mpduration = mPlayer.getMedia().getDuration();
@@ -194,8 +196,10 @@ public class MainWindowController implements Initializable
 
     private void progressSliderSetup(MediaPlayer mPlayer)
     {
+        //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
         {
+            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
             if (progressSlider.isValueChanging())
                 mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
@@ -203,20 +207,24 @@ public class MainWindowController implements Initializable
 
     private void updateProgressSlider()
     {
+        //If our timer label & slider is !null we create a task that controls the progressSlider & timer label
         if (lblTimer != null && progressSlider != null && volumeSlider != null)
             Platform.runLater(new Runnable()
             {
                 @Override
                 public void run()
                 {
+                    //grabs the current time of the mPlayer and adjusts the current duration to it so we can update it over time.
                     Duration currentTime = mPlayer.getCurrentTime();
+                    //sets the label to the currenttime which we determined above.
                     lblTimer.setText(formatTime(currentTime, mpduration));
+                    //Disable the slider until we run the "is this songs length unknown?" method
                     progressSlider.setDisable(mpduration.isUnknown());
+                    //if the slider is not disabled and the duration is > 0 milliseconds and the value is not currently changing, then set the value to the current time
                     if (!progressSlider.isDisabled()
                         && mpduration.greaterThan(Duration.ZERO)
                         && !progressSlider.isValueChanging())
-                        progressSlider.setValue(currentTime.divide(mpduration).toMillis()
-                                                * 100.0);
+                        progressSlider.setValue(currentTime.divide(mpduration).toSeconds()* 100.0);
                 }
 
                 //COPY PASTED CODE FROM https://docs.oracle.com/javase/8/javafx/media-tutorial/playercontrol.htm
@@ -257,7 +265,8 @@ public class MainWindowController implements Initializable
                 }
             });
     }
-
+    
+    //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
     private void randomFiller()
     {
         String music;
