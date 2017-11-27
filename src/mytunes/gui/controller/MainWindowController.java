@@ -2,9 +2,12 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
@@ -115,6 +118,8 @@ public class MainWindowController implements Initializable
         setUpSongList();
 
         volumeSlider.getParent().getParent().toFront();
+        
+
     }
 
     private void setUpSongList()
@@ -331,10 +336,22 @@ public class MainWindowController implements Initializable
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+        
+        try {
+            wm.setPathAndName(chosenFiles);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
         if (chosenFiles != null)
-            for (int i = 0; i < chosenFiles.size(); i++)
+            for (int i = 0; i < chosenFiles.size(); i++){
+               
+              
+        
+              
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
-        else
+                
+        }else
         {
             System.out.println("One or more invalid file(s) / None selected");
             return;
