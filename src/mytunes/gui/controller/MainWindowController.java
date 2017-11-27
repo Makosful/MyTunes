@@ -80,6 +80,14 @@ public class MainWindowController implements Initializable
     private JFXListView<?> listQueue;
     @FXML
     private Pane queuePanel;
+    @FXML
+    private Menu menuFile;
+    @FXML
+    private MenuItem loadMP3;
+    @FXML
+    private Menu menuSettings;
+    @FXML
+    private Menu menuAbout;
 
     private Pane mediaPane;
     private MediaPlayer mPlayer;
@@ -327,7 +335,10 @@ public class MainWindowController implements Initializable
             for (int i = 0; i < chosenFiles.size(); i++)
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
         else
+        {
             System.out.println("One or more invalid file(s) / None selected");
+            return;
+        }
         mediaPlayerSetup();
     }
 
@@ -351,6 +362,7 @@ public class MainWindowController implements Initializable
         if (lblTimer != null && progressSlider != null && volumeSlider != null)
             Platform.runLater(new Runnable()
             {
+                @Override
                 public void run()
                 {
                     Duration currentTime = mPlayer.getCurrentTime();
