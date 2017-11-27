@@ -6,11 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,7 +26,8 @@ import mytunes.gui.model.MainWindowModel;
  *
  * @author Axl
  */
-public class MainWindowController implements Initializable {
+public class MainWindowController implements Initializable
+{
 
     // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
     @FXML
@@ -77,6 +74,12 @@ public class MainWindowController implements Initializable {
     private TableColumn<Music, String> clmArtist;
     @FXML
     private TableColumn<Music, String> clmYear;
+    @FXML
+    private MenuButton btnSettings;
+    @FXML
+    private JFXListView<?> listQueue;
+    @FXML
+    private Pane queuePanel;
 
     private Pane mediaPane;
     private MediaPlayer mPlayer;
@@ -86,8 +89,6 @@ public class MainWindowController implements Initializable {
 
     private final MainWindowModel wm = new MainWindowModel();
     // </editor-fold>
-    @FXML
-    private MenuButton btnSettings;
 
     /**
      * Constructor, for all intends and purposes
@@ -96,7 +97,8 @@ public class MainWindowController implements Initializable {
      * @param resources
      */
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
         isPlaying = false;
 
         //mediaPlayerSetup();
@@ -107,7 +109,8 @@ public class MainWindowController implements Initializable {
         volumeSlider.getParent().getParent().toFront();
     }
 
-    private void setUpSongList() {
+    private void setUpSongList()
+    {
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
         clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
@@ -122,7 +125,8 @@ public class MainWindowController implements Initializable {
         wm.loadSongList();
     }
 
-    private void mediaPlayerSetup() {
+    private void mediaPlayerSetup()
+    {
         //String musicFile = "src/mytunes/media/elevatormusic.mp3";
 
         String musicFile = listLoadedMP3.getItems().get(0);
@@ -134,8 +138,10 @@ public class MainWindowController implements Initializable {
 
         mpduration = mPlayer.getMedia().getDuration();
 
-        mPlayer.setOnReady(new Runnable() {
-            public void run() {
+        mPlayer.setOnReady(new Runnable()
+        {
+            public void run()
+            {
                 mpduration = mPlayer.getMedia().getDuration();
                 updateProgressSlider();
             }
@@ -150,7 +156,8 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void songStop(ActionEvent event) {
+    private void songStop(ActionEvent event)
+    {
         mPlayer.stop();
         isPlaying = false;
         btnPlayPause.setText("Play");
@@ -164,20 +171,26 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void musicPlayPause(ActionEvent event) {
+    private void musicPlayPause(ActionEvent event)
+    {
         //Status status = mPlayer.getStatus();
 
         if (listLoadedMP3.getItems().isEmpty() && isPlaying == false) //System.out.println("List of Loaded MP3's is empty.");
-        {
+
             randomFiller();
-        } else if (listLoadedMP3.getItems().isEmpty() && isPlaying == true) {
+        else if (listLoadedMP3.getItems().isEmpty() && isPlaying == true)
+        {
             //Do nothing
-        } else if (isPlaying == false) {
+        }
+        else if (isPlaying == false)
+        {
             mPlayer.play();
             System.out.println("Music Playing");
             isPlaying = true;
             btnPlayPause.setText("Pause");
-        } else {
+        }
+        else
+        {
             mPlayer.pause();
             System.out.println("Music Paused");
             isPlaying = false;
@@ -188,7 +201,8 @@ public class MainWindowController implements Initializable {
     /**
      * Handle the settings for the playback
      */
-    private void playbackSettings() {
+    private void playbackSettings()
+    {
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
         //creating possible choices
@@ -201,13 +215,15 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void playbackAction(ActionEvent event) {
+    private void playbackAction(ActionEvent event)
+    {
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
 
         // Creating a list starting from 0+1 (convert index to number in list)
         System.out.println("the line is #: " + (playbackIndex + 1));
 
-        switch (playbackIndex) {
+        switch (playbackIndex)
+        {
             case 0:
                 System.out.println("50%");
                 mPlayer.setRate(0.5);
@@ -247,13 +263,17 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void LoopAction(ActionEvent event) {
-        if (btnLoop.isSelected() == true) {
+    private void LoopAction(ActionEvent event)
+    {
+        if (btnLoop.isSelected() == true)
+        {
             btnLoop.setText("Loop: ON");
             mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             isLooping = false;
             System.out.println("Looping on");
-        } else if (btnLoop.isSelected() != true) {
+        }
+        else if (btnLoop.isSelected() != true)
+        {
             btnLoop.setText("Loop: OFF");
             isLooping = true;
             System.out.println("Looping off");
@@ -266,14 +286,16 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void volumeMixer(MouseEvent event) {
+    private void volumeMixer(MouseEvent event)
+    {
         JFXSlider volSlide = volumeSlider;
         volSlide.setValue(50);
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
         volSlide.valueProperty().addListener((javafx.beans.Observable observable)
-                -> {
+                ->
+        {
             mPlayer.setVolume(volSlide.getValue() / 100);
         });
     }
@@ -284,7 +306,8 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void progressDrag(MouseEvent event) {
+    private void progressDrag(MouseEvent event)
+    {
         //
     }
 
@@ -294,103 +317,102 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void LoadMP3Multi(ActionEvent event) {
+    private void LoadMP3Multi(ActionEvent event)
+    {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
-        if (chosenFiles != null) {
-            for (int i = 0; i < chosenFiles.size(); i++) {
+        if (chosenFiles != null)
+            for (int i = 0; i < chosenFiles.size(); i++)
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
-            }
-        } else {
+        else
             System.out.println("One or more invalid file(s) / None selected");
-        }
         mediaPlayerSetup();
     }
 
     @FXML
-    private void clearLoadedMP3(ActionEvent event) {
+    private void clearLoadedMP3(ActionEvent event)
+    {
         listLoadedMP3.getItems().clear();
     }
 
-    private void progressSliderSetup(MediaPlayer mPlayer) {
-        progressSlider.valueProperty().addListener((Observable ov) -> {
-            if (progressSlider.isValueChanging()) {
+    private void progressSliderSetup(MediaPlayer mPlayer)
+    {
+        progressSlider.valueProperty().addListener((Observable ov) ->
+        {
+            if (progressSlider.isValueChanging())
                 mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-            }
         });
     }
 
-    private void updateProgressSlider() {
-        if (lblTimer != null && progressSlider != null && volumeSlider != null) {
-            Platform.runLater(new Runnable() {
-                public void run() {
+    private void updateProgressSlider()
+    {
+        if (lblTimer != null && progressSlider != null && volumeSlider != null)
+            Platform.runLater(new Runnable()
+            {
+                public void run()
+                {
                     Duration currentTime = mPlayer.getCurrentTime();
                     lblTimer.setText(formatTime(currentTime, mpduration));
                     progressSlider.setDisable(mpduration.isUnknown());
                     if (!progressSlider.isDisabled()
-                            && mpduration.greaterThan(Duration.ZERO)
-                            && !progressSlider.isValueChanging()) {
+                        && mpduration.greaterThan(Duration.ZERO)
+                        && !progressSlider.isValueChanging())
                         progressSlider.setValue(currentTime.divide(mpduration).toMillis()
-                                * 100.0);
-                    }
+                                                * 100.0);
                 }
 
                 //COPY PASTED CODE FROM https://docs.oracle.com/javase/8/javafx/media-tutorial/playercontrol.htm
-                private String formatTime(Duration elapsed, Duration mpduration) {
+                private String formatTime(Duration elapsed, Duration mpduration)
+                {
                     int intElapsed = (int) Math.floor(elapsed.toSeconds());
                     int elapsedHours = intElapsed / (60 * 60);
-                    if (elapsedHours > 0) {
+                    if (elapsedHours > 0)
                         intElapsed -= elapsedHours * 60 * 60;
-                    }
                     int elapsedMinutes = intElapsed / 60;
                     int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
-                            - elapsedMinutes * 60;
+                                         - elapsedMinutes * 60;
 
-                    if (mpduration.greaterThan(Duration.ZERO)) {
+                    if (mpduration.greaterThan(Duration.ZERO))
+                    {
                         int intDuration = (int) Math.floor(mpduration.toSeconds());
                         int durationHours = intDuration / (60 * 60);
-                        if (durationHours > 0) {
+                        if (durationHours > 0)
                             intDuration -= durationHours * 60 * 60;
-                        }
                         int durationMinutes = intDuration / 60;
                         int durationSeconds = intDuration - durationHours * 60 * 60
-                                - durationMinutes * 60;
-                        if (durationHours > 0) {
+                                              - durationMinutes * 60;
+                        if (durationHours > 0)
                             return String.format("%d:%02d:%02d/%d:%02d:%02d",
-                                    elapsedHours, elapsedMinutes, elapsedSeconds,
-                                    durationHours, durationMinutes, durationSeconds);
-                        } else {
+                                                 elapsedHours, elapsedMinutes, elapsedSeconds,
+                                                 durationHours, durationMinutes, durationSeconds);
+                        else
                             return String.format("%02d:%02d/%02d:%02d",
-                                    elapsedMinutes, elapsedSeconds, durationMinutes,
-                                    durationSeconds);
-                        }
-                    } else {
-                        if (elapsedHours > 0) {
-                            return String.format("%d:%02d:%02d", elapsedHours,
-                                    elapsedMinutes, elapsedSeconds);
-                        } else {
-                            return String.format("%02d:%02d", elapsedMinutes,
-                                    elapsedSeconds);
-                        }
+                                                 elapsedMinutes, elapsedSeconds, durationMinutes,
+                                                 durationSeconds);
                     }
+                    else if (elapsedHours > 0)
+                        return String.format("%d:%02d:%02d", elapsedHours,
+                                             elapsedMinutes, elapsedSeconds);
+                    else
+                        return String.format("%02d:%02d", elapsedMinutes,
+                                             elapsedSeconds);
                 }
             });
-        }
     }
 
-    private void randomFiller() {
+    private void randomFiller()
+    {
         String music;
 
         double rand = Math.random();
-        if (rand > 0.66) {
+        if (rand > 0.66)
             music = "./src/myTunes/media/Elevator (Control).mp3";
-        } else if (rand > 0.33) {
+        else if (rand > 0.33)
             music = "./src/myTunes/media/Elevator (Caverns).mp3";
-        } else {
+        else
             music = "./src/myTunes/media/elevatormusic.mp3";
-        }
 
         Media song = new Media(new File(music.toLowerCase()).toURI().toString());
 

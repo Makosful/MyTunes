@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
 
-<AnchorPane prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
@@ -106,7 +106,7 @@
                 <TableColumn fx:id="clmYear" prefWidth="75.0" text="Year" />
             </columns>
         </TableView>
-        <JFXListView layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" />
+        <JFXListView layoutX="20.0" layoutY="40.0" prefHeight="540.0" prefWidth="370.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0" />
         <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
             <children>
                 <JFXTabPane fx:id="tabPane" layoutX="1.0" prefHeight="250.0" prefWidth="370.0">
@@ -151,7 +151,7 @@
                 </JFXTabPane>
             </children>
         </Pane>
-        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
+        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
       <MenuButton fx:id="btnSettings" layoutX="28.0" layoutY="54.0" mnemonicParsing="false">
         <items>
           <MenuItem mnemonicParsing="false" text="Option 1" />
@@ -160,5 +160,10 @@
             <MenuItem mnemonicParsing="false" text="Option 4" />
         </items>
       </MenuButton>
+      <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <JFXListView fx:id="listQueue" prefHeight="250.0" prefWidth="370.0" />
+         </children>
+      </Pane>
     </children>
 </AnchorPane>
