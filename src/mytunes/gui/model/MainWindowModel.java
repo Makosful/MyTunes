@@ -1,5 +1,9 @@
 package mytunes.gui.model;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,9 +24,9 @@ public class MainWindowModel
     private ObservableList<Music> list;
 
     // Objects
-    private final BLLManager bllManager;
+    private BLLManager bllManager;
 
-    public MainWindowModel()
+    public MainWindowModel() throws IOException
     {
         this.bllManager = new BLLManager();
         this.list = FXCollections.observableArrayList();
@@ -38,6 +42,32 @@ public class MainWindowModel
         list.clear();
         list.addAll(bllManager.getSongList());
     }
+   /**
+    * Saves song name to database.
+    * @param setPath
+    * @throws SQLException 
+    */
+    public void createSongPath(String setPath) throws SQLException
+    {
+        bllManager.createSongPath(setPath);
+    }
+    /**
+     * Goes through song files, and gets their name.
+     * Returns a list with their name.
+     * @param chosenFiles
+     * @return
+     * @throws SQLException 
+     */
+    public List<String> getPath(List<File> chosenFiles) throws SQLException
+    {
+        List<String> songPath = new ArrayList();
+        for (int i = 0; i < chosenFiles.size(); i++) 
+        {
+            songPath.add(chosenFiles.get(i).getName());
+        }
+        return songPath;
+    }
+    
 
     public void setPathAndName(List<File> chosenFiles) throws IOException {
         
