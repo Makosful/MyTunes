@@ -118,24 +118,26 @@ public class MainWindowController implements Initializable
     public void initialize(URL location, ResourceBundle resources)
     {
         isPlaying = false;
+        volumeSlider.setValue(50);
+        volumeSlider.setDisable(true);
 
         //instantiates our Model class
         wm = new MainWindowModel();
 
         // Sets up and connects the various lists to the model
-        setUpSongList();
-        setUpQueueList();
-        setUpPlaybackSettings();
+        setupSongList();
+        setupQueueList();
+        setupPlaybackSettings();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Functionality Setups">
+    //<editor-fold defaultstate="collapsed" desc="SETUP code blocks">
     /**
      * Sets up the table & list containing all the songs
      */
-    private void setUpSongList()
+    private void setupSongList()
     {
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
@@ -154,7 +156,7 @@ public class MainWindowController implements Initializable
     /**
      * Sets the list with the queue
      */
-    private void setUpQueueList()
+    private void setupQueueList()
     {
         listQueue.setItems(wm.getQueueList());
     }
@@ -162,7 +164,7 @@ public class MainWindowController implements Initializable
     /**
      * Sets up the Media Player
      */
-    private void setUpMediaPlayer()
+    private void setupMediaPlayer()
     {
         File file;
         if (wm.getQueueList().isEmpty())
@@ -184,6 +186,7 @@ public class MainWindowController implements Initializable
         //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
+            progressSliderSetup(mPlayer);
             mpduration = mPlayer.getMedia().getDuration();
             updateProgressSlider();
         });
@@ -192,7 +195,7 @@ public class MainWindowController implements Initializable
     /**
      * Handle the settings for the playback
      */
-    private void setUpPlaybackSettings()
+    private void setupPlaybackSettings()
     {
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
@@ -318,10 +321,11 @@ public class MainWindowController implements Initializable
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
+        if (volumeSlider.isDisabled())
+            volumeSlider.setDisable(false);
 
         if (wm.getQueueList().isEmpty() && !isPlaying)
-            setUpMediaPlayer();
-
+            setupMediaPlayer();
         if (isPlaying == false)
         {
             mPlayer.play();
@@ -401,6 +405,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoopAction(ActionEvent event)
     {
+        isLooping = !isLooping;
         //if our loop slide-button is enabled we change the text, set the cycle count to indefinite and reverse the boolean
         if (btnLoop.isSelected() == true)
         {
@@ -427,7 +432,7 @@ public class MainWindowController implements Initializable
     {
         //Creates a new volume slider and sets the default value to 50%
         JFXSlider volSlide = volumeSlider;
-        volSlide.setValue(50);
+        //volSlide.setValue(50);
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
@@ -496,7 +501,7 @@ public class MainWindowController implements Initializable
         {
             String source = wm.getQueueList().get(0);
             currentlyPlaying = new Media(new File(source.toLowerCase()).toURI().toString());
-            setUpMediaPlayer();
+            setupMediaPlayer();
 
         }
         pathNames = chosenFiles;
