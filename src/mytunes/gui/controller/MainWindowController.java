@@ -346,10 +346,22 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
         
+
+        try {
+            wm.setPathAndName(chosenFiles);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
         if (chosenFiles != null)
-            for (int i = 0; i < chosenFiles.size(); i++)
+            for (int i = 0; i < chosenFiles.size(); i++){
+               
+              
+        
+              
                 listLoadedMP3.getItems().add(chosenFiles.get(i).getAbsolutePath());
-        else
+                
+        }else
         {
             System.out.println("One or more invalid file(s) / None selected");
             return;
