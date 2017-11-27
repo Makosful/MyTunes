@@ -117,8 +117,6 @@ public class MainWindowController implements Initializable
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        wm = new MainWindowModel();
-
         isPlaying = false;
 
         //instantiates our Model class
@@ -128,8 +126,6 @@ public class MainWindowController implements Initializable
         setUpSongList();
         setUpQueueList();
         setUpPlaybackSettings();
-        //setUpMediaPlayer();
-        progressSliderSetup(mPlayer);
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -168,17 +164,20 @@ public class MainWindowController implements Initializable
      */
     private void setUpMediaPlayer()
     {
-        Media song;
+        File file;
         if (wm.getQueueList().isEmpty())
         {
             addElevatorMusic();
-            song = new Media(new File(wm.getQueueList().get(0).toLowerCase()).toURI().toString());
+            file = new File(wm.getQueueList().get(0).toLowerCase());
         }
         else
-            song = new Media(new File(wm.getQueueList().get(0).toLowerCase()).toURI().toString());
+            file = new File(wm.getQueueList().get(0).toLowerCase());
+
+        Media song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
+        progressSliderSetup(mPlayer);
 
         mpduration = mPlayer.getMedia().getDuration();
 
@@ -319,7 +318,9 @@ public class MainWindowController implements Initializable
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
-        setUpMediaPlayer();
+
+        if (wm.getQueueList().isEmpty() && !isPlaying)
+            setUpMediaPlayer();
 
         if (isPlaying == false)
         {
