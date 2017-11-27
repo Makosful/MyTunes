@@ -158,9 +158,7 @@ public class MainWindowController implements Initializable
      */
     private void setUpMediaPlayer()
     {
-        //String musicFile = "src/mytunes/media/elevatormusic.mp3";
-
-        String musicFile = listQueue.getItems().get(0);
+        String musicFile = wm.getQueueList().get(0);
         Media song = new Media(new File(musicFile.toLowerCase()).toURI().toString());
 
         mPlayer = new MediaPlayer(song);
@@ -174,8 +172,6 @@ public class MainWindowController implements Initializable
             mpduration = mPlayer.getMedia().getDuration();
             updateProgressSlider();
         });
-
-        //mediaPane.getChildren().add(mediaView);
     }
 
     /**
@@ -308,11 +304,9 @@ public class MainWindowController implements Initializable
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
-        //Status status = mPlayer.getStatus();
-
-        if (listQueue.getItems().isEmpty() && isPlaying == false) //System.out.println("List of Loaded MP3's is empty.");
-
+        if (listQueue.getItems().isEmpty() && isPlaying == false)
             randomFiller();
+
         else if (listQueue.getItems().isEmpty() && isPlaying == true)
         {
             //Do nothing
@@ -444,7 +438,8 @@ public class MainWindowController implements Initializable
     private void LoadMP3Files(ActionEvent event)
     {
         FileChooser fc = new FileChooser();
-        fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
         if (chosenFiles != null)
