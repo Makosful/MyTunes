@@ -128,7 +128,7 @@ public class MainWindowController implements Initializable
         setUpSongList();
         setUpQueueList();
         setUpPlaybackSettings();
-        setUpMediaPlayer();
+        //setUpMediaPlayer();
         progressSliderSetup(mPlayer);
 
         // Places the playback functionality at the very front of the application
@@ -309,7 +309,6 @@ public class MainWindowController implements Initializable
         mPlayer.stop();
         isPlaying = false;
         btnPlayPause.setText("Play");
-        System.out.println("Music Stopped");
     }
 
     /**
@@ -323,13 +322,13 @@ public class MainWindowController implements Initializable
         setUpMediaPlayer();
 
         if (isPlaying == false)
-
         {
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
         }
-        //if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
+        // if the boolean is true we shall stop playing, reverse the boolean and
+        // edit the buttons text.
         else
         {
             mPlayer.pause();
