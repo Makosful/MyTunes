@@ -325,57 +325,7 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
-    private void updateProgressSlider()
-    {
-        double currentTime = mPlayer.getCurrentTime().toSeconds();
-        double totalTime = mPlayer.getTotalDuration().toSeconds();
-
-        double cTMinutes = (currentTime / 60);
-        double cTSeconds = currentTime;
-
-        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
-
-        double tTMinutes = (totalTime / 60);
-        double tTSeconds = totalTime;
-        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
-
-        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
-        //FOR TESTING
-        System.out.println("duration in minutes:" + mpduration.toMinutes());
-        System.out.println("duration in seconds:" + mpduration.toSeconds());
-        System.out.println("duration in milliseconds:" + mpduration.toMillis());
-    }
-
-    /**
-     * Sets up a random filler with one of x music files if our mediaplayer has
-     * no selected audio to play, thus never getting a nullpointer & also adding
-     * some fun (elevator music)
-     */
-    private void addElevatorMusic()
-    {
-        String music;
-
-        Random rnd = new Random();
-
-        int r = rnd.nextInt(2) + 2;
-        System.out.println(r);
-        if (r > 2)
-        {
-            music = "./src/myTunes/media/Elevator (Control).mp3";
-        }
-        else if (r > 3)
-        {
-            music = "./src/myTunes/media/Elevator (Caverns).mp3";
-        }
-        else
-        {
-            music = "./src/myTunes/media/elevatormusic.mp3";
-        }
-
-        File file = new File(music);
-        wm.getQueueList().add(file.getAbsolutePath());
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="FXML Methods">
     /**
      * Tells the playback to stop entirely
      *
@@ -603,6 +553,11 @@ public class MainWindowController implements Initializable
 
     }
 
+    /**
+     * Clears the queue from all songs
+     *
+     * @param event
+     */
     @FXML
     private void clearQueue(ActionEvent event)
     {
@@ -619,33 +574,6 @@ public class MainWindowController implements Initializable
         isPlaying = false;
         btnPlayPause.setText("Play");
     }
-
-    // Saves songs name to database.
-    private void savePath() throws SQLException
-    {
-        List<String> dataBaseSongNames = wm.checkIfIsInDatabase();
-
-        List<String> songNamePaths = wm.getPath(pathNames);
-
-        if (!dataBaseSongNames.isEmpty())
-        {
-            for (String pathString : songNamePaths)
-            {
-                if (!dataBaseSongNames.contains(pathString))
-                {
-                    wm.createSongPath(pathString);
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < songNamePaths.size(); i++)
-            {
-                wm.createSongPath(songNamePaths.get(i));
-            }
-        }
-    }
-    //</editor-fold>
 
     /**
      * Creates a new playlist and adds it to the list of playlists
@@ -669,6 +597,58 @@ public class MainWindowController implements Initializable
         ObservableList<Playlist> selectedItems = playlistPanel
                 .getSelectionModel().getSelectedItems();
         wm.deletePlaylists(selectedItems);
+    }
+    //</editor-fold>
+
+    private void updateProgressSlider()
+    {
+        double currentTime = mPlayer.getCurrentTime().toSeconds();
+        double totalTime = mPlayer.getTotalDuration().toSeconds();
+
+        double cTMinutes = (currentTime / 60);
+        double cTSeconds = currentTime;
+
+        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
+
+        double tTMinutes = (totalTime / 60);
+        double tTSeconds = totalTime;
+        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
+
+        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
+        //FOR TESTING
+        System.out.println("duration in minutes:" + mpduration.toMinutes());
+        System.out.println("duration in seconds:" + mpduration.toSeconds());
+        System.out.println("duration in milliseconds:" + mpduration.toMillis());
+    }
+
+    /**
+     * Sets up a random filler with one of x music files if our mediaplayer has
+     * no selected audio to play, thus never getting a nullpointer & also adding
+     * some fun (elevator music)
+     */
+    private void addElevatorMusic()
+    {
+        String music;
+
+        Random rnd = new Random();
+
+        int r = rnd.nextInt(2) + 2;
+        System.out.println(r);
+        if (r > 2)
+        {
+            music = "./src/myTunes/media/Elevator (Control).mp3";
+        }
+        else if (r > 3)
+        {
+            music = "./src/myTunes/media/Elevator (Caverns).mp3";
+        }
+        else
+        {
+            music = "./src/myTunes/media/elevatormusic.mp3";
+        }
+
+        File file = new File(music);
+        wm.getQueueList().add(file.getAbsolutePath());
     }
 
     /**
@@ -703,5 +683,35 @@ public class MainWindowController implements Initializable
             updateProgressSlider();
         });
         mPlayer.play();
+    }
+
+    /**
+     * Saves a song name to the database
+     *
+     * @throws SQLException
+     */
+    private void savePath() throws SQLException
+    {
+        List<String> dataBaseSongNames = wm.checkIfIsInDatabase();
+
+        List<String> songNamePaths = wm.getPath(pathNames);
+
+        if (!dataBaseSongNames.isEmpty())
+        {
+            for (String pathString : songNamePaths)
+            {
+                if (!dataBaseSongNames.contains(pathString))
+                {
+                    wm.createSongPath(pathString);
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < songNamePaths.size(); i++)
+            {
+                wm.createSongPath(songNamePaths.get(i));
+            }
+        }
     }
 }
