@@ -26,30 +26,6 @@ public class SongDAO
     {
         List<Music> songs = new ArrayList<>();
 
-        Music song = new Music();
-        song.setId(1212);
-        song.setTitle("Hulla balloo");
-        song.setArtist("Mikal Jaeson");
-        song.setAlbum("Hits for Kids");
-        song.setYear(6969);
-        song.setDuration(9001);
-        song.SetDescription("Look at ma horse. Ma horse is amazing");
-        song.SetLocation("Ze Cloud");
-
-        songs.add(song);
-
-        Music song2 = new Music();
-        song2.setId(2121);
-        song2.setTitle("Cotten Eye John");
-        song2.setArtist("Pelvis");
-        song2.setAlbum("Red Neck Hits");
-        song2.setYear(1111);
-        song2.setDuration(10);
-        song2.SetDescription("All time hits from your red neck backyard");
-        song2.SetLocation("Ze Cloud");
-
-        songs.add(song2);
-
         return songs;
     }
 

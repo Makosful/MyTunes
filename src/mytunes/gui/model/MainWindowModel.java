@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
+import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
 
 /**
@@ -24,6 +23,7 @@ public class MainWindowModel
     // Lists
     private ObservableList<Music> allSongs;
     private ObservableList<String> queue;
+    private ObservableList<Playlist> playlists;
 
     // Objects
     private BLLManager bllManager;
@@ -38,10 +38,11 @@ public class MainWindowModel
             this.bllManager = new BLLManager();
             this.allSongs = FXCollections.observableArrayList();
             this.queue = FXCollections.observableArrayList();
+            this.playlists = FXCollections.observableArrayList();
         }
         catch (IOException ex)
         {
-            Logger.getLogger(MainWindowModel.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -72,8 +73,15 @@ public class MainWindowModel
      */
     public void loadSongList()
     {
-        allSongs.clear();
-        allSongs.addAll(bllManager.getSongList());
+        try
+        {
+            allSongs.clear();
+            allSongs.addAll(bllManager.getSongList());
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -102,7 +110,9 @@ public class MainWindowModel
     {
         List<String> songPath = new ArrayList();
         for (int i = 0; i < chosenFiles.size(); i++)
+        {
             songPath.add(chosenFiles.get(i).getName());
+        }
         return songPath;
     }
 
@@ -112,7 +122,9 @@ public class MainWindowModel
         writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
         for (int i = 0; i < chosenFiles.size(); i++)
 
+        {
             System.out.println(chosenFiles.get(i).getName());
+        }
     }
 
     public void writeMusicFolderPath(String path) throws IOException
@@ -127,5 +139,15 @@ public class MainWindowModel
     public void clearQueueList()
     {
         this.queue.clear();
+    }
+
+    public ObservableList<Playlist> getPlaylists()
+    {
+        return playlists;
+    }
+
+    public void loadPlaylists()
+    {
+        playlists = bllManager.getPlaylists();
     }
 }

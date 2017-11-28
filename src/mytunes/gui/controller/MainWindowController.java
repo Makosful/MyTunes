@@ -13,9 +13,13 @@ import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -24,8 +28,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import mytunes.be.Music;
+import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -53,7 +60,7 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXButton btnClearMP3;
     @FXML
-    private JFXListView<?> playlistPanel;
+    private JFXListView<Playlist> playlistPanel;
     @FXML
     private Pane bottomPane;
     @FXML
@@ -107,6 +114,10 @@ public class MainWindowController implements Initializable
     private List<File> pathNames;
     @FXML
     private MenuItem clearQueueMenu;
+    @FXML
+    private JFXButton btnCreatePlaylist;
+    @FXML
+    private JFXButton btnDeletePlaylist;
 
     /**
      * Constructor, for all intends and purposes
@@ -129,6 +140,7 @@ public class MainWindowController implements Initializable
         setupQueueList();
         setupPlaybackSettings();
         setupTableContextMenu();
+        setupPlaylistPanel();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -278,7 +290,12 @@ public class MainWindowController implements Initializable
 
         }); // END of table row factory
 
-    } // END of method
+    }
+
+    private void setupPlaylistPanel()
+    {
+        playlistPanel.setItems(wm.getPlaylists());
+    }
     //</editor-fold>
 
     private void progressSliderSetup(MediaPlayer mPlayer)
@@ -597,4 +614,48 @@ public class MainWindowController implements Initializable
         }
     }
     //</editor-fold>
+
+    @FXML
+    private void createPlaylist(ActionEvent event)
+    {
+        try
+        {
+            // Declares variables to use afterwards
+            String title = "Nameless";
+
+            // Gets a hold of the FXML and controller
+            File fxml = new File("./src/MyTunes/gui/view/CreatePlaylistWindow.fxml");
+            FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
+
+            // Loads the window
+            Parent root = fxLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            CreatePlaylistWindowController plCont = fxLoader.getController();
+
+            File ico = new File("./res/icon/TrollTunes56x56.png");
+            Image icon = new Image(ico.toURI().toString());
+
+            stage.getIcons().add(icon);
+            stage.setTitle("Create Playlist");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.showAndWait();
+            // Waits for the user to give the playlist a name
+
+            // Creates the playlist
+            Playlist pl = new Playlist(plCont.getTitle());
+            wm.getPlaylists().add(pl);
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    @FXML
+    private void deletePlaylist(ActionEvent event)
+    {
+    }
 }
