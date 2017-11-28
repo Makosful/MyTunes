@@ -21,4 +21,13 @@ public class PlaylistDAO
 
         return list;
     }
+
+    /**
+     * Adds a new playlist to the database
+     *
+     * @param playlist
+     */
+    public void addPlaylist(Playlist playlist)
+    {
+    }
 }
