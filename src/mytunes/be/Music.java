@@ -21,6 +21,15 @@ public class Music
     private String description;
     private String location;
 
+    public Music(int id, String title, String album, String artist, int year)
+    {
+        this.id = id;
+        this.title = title;
+        this.album = album;
+        this.artist = artist;
+        this.year = year;
+    }
+
     public int getId()
     {
         return id;

@@ -3,7 +3,11 @@ package mytunes.bll;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import javafx.collections.ObservableList;
 import mytunes.be.Music;
+import mytunes.be.Playlist;
+import mytunes.dal.MockMusic;
+import mytunes.dal.PlaylistDAO;
 import mytunes.dal.SongDAO;
 
 /**
@@ -14,17 +18,21 @@ public class BLLManager
 {
 
     private final SongDAO songDAO;
+    private final PlaylistDAO plDAO;
+    private final MockMusic mm;
 
     public BLLManager() throws IOException
     {
         this.songDAO = new SongDAO();
+        this.plDAO = new PlaylistDAO();
+        this.mm = new MockMusic();
     }
 
-    public List<Music> getSongList()
+    public List<Music> getSongList() throws IOException
     {
-        return songDAO.getAllSongs();
+        return mm.getAllSongs();
     }
-    
+
     public void createSongPath(String setPath) throws SQLException
     {
         songDAO.createSongPath(setPath);
@@ -33,5 +41,19 @@ public class BLLManager
     public List<String> checkIfIsInDatabase() throws SQLException
     {
         return songDAO.checkIfIsInDatabase();
+    }
+    public ObservableList<Playlist> getPlaylists()
+    {
+        return plDAO.getPlaylists();
+    }
+
+    /**
+     * Adds a new playlist to the storage
+     *
+     * @param playlist
+     */
+    public void addPlaylist(Playlist playlist)
+    {
+        plDAO.addPlaylist(playlist);
     }
 }
