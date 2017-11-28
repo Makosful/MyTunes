@@ -96,6 +96,12 @@ public class MainWindowController implements Initializable
     private Menu menuSettings;
     @FXML
     private Menu menuAbout;
+    @FXML
+    private MenuItem clearQueueMenu;
+    @FXML
+    private JFXButton btnCreatePlaylist;
+    @FXML
+    private JFXButton btnDeletePlaylist;
     // </editor-fold>
 
     // Instance variables
@@ -110,12 +116,6 @@ public class MainWindowController implements Initializable
     // Model
     private MainWindowModel wm;
     private List<File> pathNames;
-    @FXML
-    private MenuItem clearQueueMenu;
-    @FXML
-    private JFXButton btnCreatePlaylist;
-    @FXML
-    private JFXButton btnDeletePlaylist;
 
     /**
      * Constructor, for all intends and purposes
@@ -625,15 +625,15 @@ public class MainWindowController implements Initializable
 
         if (!dataBaseSongNames.isEmpty())
         {
-            for (String pathString : songNamePaths) 
+            for (String pathString : songNamePaths)
             {
-                if (!dataBaseSongNames.contains(pathString)) 
+                if (!dataBaseSongNames.contains(pathString))
                 {
                     wm.createSongPath(pathString);
                 }
             }
-        } 
-        else 
+        }
+        else
         {
             for (int i = 0; i < songNamePaths.size(); i++)
             {
@@ -666,6 +666,7 @@ public class MainWindowController implements Initializable
                 .getSelectionModel().getSelectedItems();
         wm.deletePlaylists(selectedItems);
     }
+
     /**
      * Plays the next song.
      */
@@ -698,5 +699,5 @@ public class MainWindowController implements Initializable
             updateProgressSlider();
         });
         mPlayer.play();
-    }  
+    }
 }
