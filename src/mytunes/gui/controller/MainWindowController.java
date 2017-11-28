@@ -169,29 +169,22 @@ public class MainWindowController implements Initializable
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
         // Defines the context menu for the table
-        setupTableContextMenu();
+        createTableContextMenu();
     }
 
-    /**
-     * Sets up the context menu for the table list of songs
-     */
-    private void setupTableContextMenu()
+    private void createTableContextMenu()
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
-
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
         cm.getItems().add(play);
-
         // Creates a new item for the menu and puts it in
         MenuItem addQueue = new MenuItem("Add to queue");
         cm.getItems().add(addQueue);
-
         // Creates a new item for the menu and puts it in
         MenuItem loadSong = new MenuItem("Load Song");
         cm.getItems().add(loadSong);
-
         // Creates a new item for the menu and puts it in
         MenuItem clearQueueContext = new MenuItem("Clear Queue");
         cm.getItems().add(clearQueueContext);
@@ -207,26 +200,30 @@ public class MainWindowController implements Initializable
                     cm.show(tblSongList, event.getScreenX(), event.getScreenY());
                 }
 
-                // Sets the actions that'll happen when the Play function has
-                // been picked
                 play.setOnAction(action ->
                 {
-                    if (!row.isEmpty())
+                    ObservableList<Music> selectedItems = tblSongList
+                            .getSelectionModel().getSelectedItems();
+
+                    if (!selectedItems.isEmpty())
                     {
-                        System.out.println(row.getItem().getTitle());
+                        for (Music item : selectedItems)
+                        {
+                            System.out.println(item.getTitle());
+                        }
                     }
                 });
 
-                // Sets the actions that'll happen when the Add to Queue function
-                // has been picked
                 addQueue.setOnAction(action ->
                 {
                     System.out.println("Adds to queue");
                 });
+
                 loadSong.setOnAction(action ->
                 {
-                    LoadMP3Files(action);
+                    //LoadMP3Files(action);
                 });
+
                 clearQueueContext.setOnAction(action ->
                 {
                     clearQueue(action);
@@ -237,7 +234,6 @@ public class MainWindowController implements Initializable
             return row;
 
         }); // END of table row factory
-
     }
 
     /**
