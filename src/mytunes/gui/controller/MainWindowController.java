@@ -128,6 +128,8 @@ public class MainWindowController implements Initializable
         isPlaying = false;
         volumeSlider.setValue(50);
         volumeSlider.setDisable(true);
+        btnLoop.setDisable(true);
+        playbackSpeed.setDisable(true);
 
         //instantiates our Model class
         wm = new MainWindowModel();
@@ -168,57 +170,6 @@ public class MainWindowController implements Initializable
     private void setupQueueList()
     {
         listQueue.setItems(wm.getQueueList());
-    }
-
-    /**
-     * Sets up the Media Player
-     */
-    private void setupMediaPlayer()
-    {
-        File file;
-        if (wm.getQueueList().isEmpty())
-        {
-            addElevatorMusic();
-            file = new File(wm.getQueueList().get(0).toLowerCase());
-        }
-        else
-        {
-            file = new File(wm.getQueueList().get(0).toLowerCase());
-        }
-
-        song = new Media(file.toURI().toString());
-
-        mPlayer = new MediaPlayer(song);
-        mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
-
-        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
-        mPlayer.setOnReady(() ->
-        {
-            mpduration = mPlayer.getMedia().getDuration();
-            progressSliderSetup(mPlayer);
-            updateProgressSlider();
-            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
-                    () -> mpduration.toSeconds(),
-                    mPlayer.totalDurationProperty()));
-        });
-    }
-
-    /**
-     * Handle the settings for the playback
-     */
-    private void setupPlaybackSettings()
-    {
-        //setting default value of the choicebox
-        playbackSpeed.setValue("Play speed");
-        //creating possible choices
-        playbackSpeed.getItems().addAll("50% speed",
-                                        "75% speed",
-                                        "100% speed",
-                                        "125% speed",
-                                        "150% speed",
-                                        "175% speed",
-                                        "200% speed");
     }
 
     /**
@@ -293,119 +244,24 @@ public class MainWindowController implements Initializable
     {
         playlistPanel.setItems(wm.getPlaylists());
     }
-    //</editor-fold>
-
-    private void progressSliderSetup(MediaPlayer mPlayer)
-    {
-        //adds a listener to the value, allowing it to determine where to play from when the user drags.
-        progressSlider.valueProperty().addListener((Observable ov) ->
-        {
-            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
-            if (progressSlider.isValueChanging())
-            {
-                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-            }
-        });
-        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
-        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
-        {
-            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-        });
-    }
-
-    private void updateProgressSlider()
-    {
-        double currentTime = mPlayer.getCurrentTime().toSeconds();
-        double totalTime = mPlayer.getTotalDuration().toSeconds();
-
-        double cTMinutes = (currentTime / 60);
-        double cTSeconds = currentTime;
-
-        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
-
-        double tTMinutes = (totalTime / 60);
-        double tTSeconds = totalTime;
-        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
-
-        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
-        //FOR TESTING
-        System.out.println("duration in minutes:" + mpduration.toMinutes());
-        System.out.println("duration in seconds:" + mpduration.toSeconds());
-        System.out.println("duration in milliseconds:" + mpduration.toMillis());
-    }
-
-    //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
-    private void addElevatorMusic()
-    {
-        String music;
-
-        Random rnd = new Random();
-
-        int r = rnd.nextInt(2) + 2;
-        System.out.println(r);
-        if (r > 2)
-        {
-            music = "./src/myTunes/media/Elevator (Control).mp3";
-        }
-        else if (r > 3)
-        {
-            music = "./src/myTunes/media/Elevator (Caverns).mp3";
-        }
-        else
-        {
-            music = "./src/myTunes/media/elevatormusic.mp3";
-        }
-
-        File file = new File(music);
-        wm.getQueueList().add(file.getAbsolutePath());
-    }
 
     /**
-     * Tells the playback to stop entirely
-     *
-     * @param event
+     * Handle the settings for the playback
      */
-    @FXML
-    private void songStop(ActionEvent event)
+    private void setupPlaybackSettings()
     {
-        mPlayer.stop();
-        isPlaying = false;
-        btnPlayPause.setText("Play");
-        progressSlider.setValue(0);
+        //setting default value of the choicebox
+        playbackSpeed.setValue("Play speed");
+        //creating possible choices
+        playbackSpeed.getItems().addAll("50% speed",
+                                        "75% speed",
+                                        "100% speed",
+                                        "125% speed",
+                                        "150% speed",
+                                        "175% speed",
+                                        "200% speed");
     }
-
-    /**
-     * Tells the playback to pause or play depending on a booleans value.
-     *
-     * @param event
-     */
-    @FXML
-    private void musicPlayPause(ActionEvent event)
-    {
-        if (volumeSlider.isDisabled())
-        {
-            volumeSlider.setDisable(false);
-        }
-
-        if (wm.getQueueList().isEmpty() && !isPlaying)
-        {
-            setupMediaPlayer();
-        }
-        if (isPlaying == false)
-        {
-            mPlayer.play();
-            isPlaying = true;
-            btnPlayPause.setText("Pause");
-        } // if the boolean is true we shall stop playing, reverse the boolean and
-        // edit the buttons text.
-        else
-        {
-            mPlayer.pause();
-            isPlaying = false;
-            btnPlayPause.setText("Play");
-        }
-    }
-
+    
     /**
      * Handles the playback itself
      *
@@ -462,6 +318,170 @@ public class MainWindowController implements Initializable
     }
 
     /**
+     * Sets up the Media Player
+     */
+    private void setupMediaPlayer()
+    {
+        File file;
+        if (wm.getQueueList().isEmpty())
+        {
+            addElevatorMusic();
+            file = new File(wm.getQueueList().get(0).toLowerCase());
+        }
+        else
+        {
+            file = new File(wm.getQueueList().get(0).toLowerCase());
+        }
+
+        song = new Media(file.toURI().toString());
+
+        mPlayer = new MediaPlayer(song);
+        mediaView = new MediaView(mPlayer);
+        progressSliderSetup(mPlayer);
+
+        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
+        mPlayer.setOnReady(() ->
+        {
+            enableSettings();
+            mpduration = mPlayer.getMedia().getDuration();
+            progressSliderSetup(mPlayer);
+            updateProgressSlider();
+            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
+                    () -> mpduration.toSeconds(),
+                    mPlayer.totalDurationProperty()));
+        });
+    }
+    
+    private void enableSettings()
+    {
+        if (volumeSlider.isDisabled() && btnLoop.isDisabled() && playbackSpeed.isDisabled())
+        {
+            volumeSlider.setDisable(false);
+            btnLoop.setDisable(false);
+            playbackSpeed.setDisable(false);
+            progressSlider.setStyle("-fx-control-inner-background:  #0E9654;");
+        }
+    }
+
+    @FXML
+    private void musicPlayPause(ActionEvent event)
+    {
+
+        if (wm.getQueueList().isEmpty() && !isPlaying)
+        {
+            setupMediaPlayer();
+        }
+        if (isPlaying == false)
+        {
+            mPlayer.play();
+            isPlaying = true;
+            btnPlayPause.setText("Pause");
+        } // if the boolean is true we shall stop playing, reverse the boolean and
+        // edit the buttons text.
+        else
+        {
+            mPlayer.pause();
+            isPlaying = false;
+            btnPlayPause.setText("Play");
+        }
+    }
+
+    private void progressSliderSetup(MediaPlayer mPlayer)
+    {
+        //adds a listener to the value, allowing it to determine where to play from when the user drags.
+        progressSlider.valueProperty().addListener((Observable ov) ->
+        {
+            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
+            if (progressSlider.isValueChanging())
+            {
+                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+                updateProgressSlider();
+                //updateSliders();
+            }
+        });
+        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
+        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
+        {
+            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+            updateProgressSlider();
+            //updateSliders();
+            
+        });
+    }
+    
+    
+//    private void updateSliders()
+//    {
+//        if (mpduration != null && progressSlider != null && volumeSlider != null && duration != null) {
+//        Platform.runLater(new Runnable() {
+//            public void run() {
+//                Duration currentTime = mp.getCurrentTime();
+//                playTime.setText(formatTime(currentTime, duration));
+//                timeSlider.setDisable(duration.isUnknown());
+//                if (!timeSlider.isDisabled() && duration.greaterThan(Duration.ZERO) && !timeSlider.isValueChanging()) {
+//                    timeSlider.setValue(currentTime.divide(duration).toMillis() * 100.0);
+//                }
+//                if (!volumeSlider.isValueChanging()) {
+//                    volumeSlider.setValue((int) Math.round(mp.getVolume() * 100));
+//                }
+//            }
+//        });
+//    }
+//    }
+
+    private void updateProgressSlider()
+    {
+        double currentTime = mPlayer.getCurrentTime().toSeconds();
+        double totalTime = mPlayer.getTotalDuration().toSeconds();
+
+        double cTMinutes = (currentTime / 60);
+        double cTSeconds = currentTime;
+
+        String cTimeFormat = String.format("%.01f:%.01f", cTMinutes, cTSeconds);
+
+        double tTMinutes = (totalTime / 60);
+        double tTSeconds = totalTime;
+        String tTimeFormat = String.format("%.01f:%.01f", tTMinutes, tTSeconds);
+
+        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
+
+        mPlayer.setOnEndOfMedia(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                System.out.println("Song has finished");
+                resetToDefault();
+            }
+
+            private void resetToDefault()
+            {
+                
+            }
+        });
+        
+        
+        //FOR TESTING
+        System.out.println("duration in minutes:" + mpduration.toMinutes());
+        System.out.println("duration in seconds:" + mpduration.toSeconds());
+        System.out.println("duration in milliseconds:" + mpduration.toMillis());
+    }
+    
+    /**
+     * Tells the playback to stop entirely
+     *
+     * @param event
+     */
+    @FXML
+    private void songStop(ActionEvent event)
+    {
+        mPlayer.stop();
+        isPlaying = false;
+        btnPlayPause.setText("Play");
+        progressSlider.setValue(0);
+    }
+
+    /**
      * Sets the current song to loop
      *
      * @param event
@@ -513,12 +533,6 @@ public class MainWindowController implements Initializable
      *
      * @param event
      */
-    @FXML
-    private void progressDrag(MouseEvent event)
-    {
-        //
-    }
-
     /**
      * Loads multiple MP3 files
      *
@@ -585,6 +599,32 @@ public class MainWindowController implements Initializable
 
     }
 
+    //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
+    private void addElevatorMusic()
+    {
+        String music;
+
+        Random rnd = new Random();
+
+        int r = rnd.nextInt(2) + 2;
+        System.out.println(r);
+        if (r > 2)
+        {
+            music = "./src/myTunes/media/Elevator (Control).mp3";
+        }
+        else if (r > 3)
+        {
+            music = "./src/myTunes/media/Elevator (Caverns).mp3";
+        }
+        else
+        {
+            music = "./src/myTunes/media/elevatormusic.mp3";
+        }
+
+        File file = new File(music);
+        wm.getQueueList().add(file.getAbsolutePath());
+    }
+
     @FXML
     private void clearQueue(ActionEvent event)
     {
@@ -626,7 +666,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Gets ahold of the new song in que.
+     * Gets ahold of the new song in queue.
      */
     private void getNewSongInQue()
     {
@@ -646,5 +686,11 @@ public class MainWindowController implements Initializable
             updateProgressSlider();
         });
         mPlayer.play();
+    }
+
+    @FXML
+    private void progressDrag(MouseEvent event)
+    {
+        
     }
 }

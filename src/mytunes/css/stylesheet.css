@@ -10,8 +10,16 @@ and open the template in the editor.
 
 /***************************************/
 /* THE FOLLOWING IS FOR Main Window fxml*/
+
+.root:focused {
+    -fx-background-color: #487597;
+}
 .table-view .column-header-background{
     -fx-background-color: linear-gradient(#848484 0%, #666666 100%);
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
 }
 
 .table-view .column-header-background .label{
@@ -38,6 +46,13 @@ and open the template in the editor.
     -fx-padding: 0.0em;
 }
 
+.table-row-cell:hover {
+    -fx-text-fill: gray;
+    -fx-background-color: #487597;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
 .table-row-cell:selected {
     -fx-text-fill: gray;
     -fx-background-color: #1B537D;
@@ -45,12 +60,61 @@ and open the template in the editor.
     -fx-background-radius: 1;
 }
 
+.list-view .list-cell:even {
+-fx-background-color: #666666;
+-fx-text-fill: white;
+}
+.list-view .list-cell:odd {
+-fx-background-color: #848484;
+-fx-text-fill: white;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #487597;
+    -fx-text-fill: -fx-text-inner-color;
+}
+.list-view .list-cell:filled:selected {
+    -fx-background-color: #1B537D;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+/*.list-view .list-cell:filled:hover { 
+    -fx-background-color: #00f;
+    -fx-text-fill: white;
+}*/
+
+.combo-box-popup .list-view .list-cell:even {
+    -fx-background-color: #666666;
+}    
+
+.combo-box-popup .list-view .list-cell:odd {
+    -fx-background-color: #848484;
+}    
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #487597;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #1B537D;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+#window {
+    -fx-background-color: #090a0c, linear-gradient(#38424b 0%, #22272c 100%);
+}
+
+.label {
+    -fx-text-fill: white;
+}
+
 .button {
     -fx-background-color: 
     #090a0c,
-    linear-gradient(#38424b 0%, #1f2429 20%, #22272c 100%),
-    linear-gradient(#526570, #191d22),
-    radial-gradient(center 50% 12.5%, radius 100%, rgba(102, 102, 102, 1), rgba(255, 255, 255, 0));
+    linear-gradient(#a1a3a3 0%, #636667 100%),
+    linear-gradient(#526570, #464a4e),
+    radial-gradient(center 50% 50%, radius 100%, #666666, #a1a3a3);
     -fx-background-radius: 5, 4, 4, 5;
     -fx-background-insets: 0, 1, 1, 0;
     -fx-text-fill: white;
@@ -73,6 +137,10 @@ and open the template in the editor.
 .jfx-tab-pane .tab-label {
     -fx-background-color: rgba(102,102,102,1);
     -fx-text-fill: white;
+}
+
+#menuBar {
+    -fx-background-color: #38424b;
 }
 
 #btnSettings{
