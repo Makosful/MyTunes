@@ -29,4 +29,9 @@ public class BLLManager
     {
         songDAO.createSongPath(setPath);
     }
+    
+    public List<String> checkIfIsInDatabase() throws SQLException
+    {
+        return songDAO.checkIfIsInDatabase();
+    }
 }

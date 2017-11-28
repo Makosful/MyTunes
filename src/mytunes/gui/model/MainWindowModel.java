@@ -128,4 +128,9 @@ public class MainWindowModel
     {
         this.queue.clear();
     }
+    
+    public List<String> checkIfIsInDatabase() throws SQLException
+    {
+       return bllManager.checkIfIsInDatabase();
+    }
 }
