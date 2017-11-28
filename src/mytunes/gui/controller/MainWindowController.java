@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -106,7 +108,8 @@ public class MainWindowController implements Initializable
     private boolean isPlaying;
     private boolean isLooping;
     private Duration mpduration;
-
+    private Media song;
+    private boolean pause;
     Media currentlyPlaying;
 
     // Model
@@ -190,20 +193,21 @@ public class MainWindowController implements Initializable
             file = new File(wm.getQueueList().get(0).toLowerCase());
         }
 
-        Media song = new Media(file.toURI().toString());
+        song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
         progressSliderSetup(mPlayer);
 
-        mpduration = mPlayer.getMedia().getDuration();
-
         //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
-            progressSliderSetup(mPlayer);
             mpduration = mPlayer.getMedia().getDuration();
+            progressSliderSetup(mPlayer);
             updateProgressSlider();
+            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
+                    () -> mpduration.toSeconds(),
+                    mPlayer.totalDurationProperty()));
         });
     }
 
@@ -342,12 +346,15 @@ public class MainWindowController implements Initializable
     {
         String music;
 
-        double rand = Math.random();
-        if (rand > 0.66)
+        Random rnd = new Random();
+
+        int r = rnd.nextInt(2) + 2;
+        System.out.println(r);
+        if (r > 2)
         {
             music = "./src/myTunes/media/Elevator (Control).mp3";
         }
-        else if (rand > 0.33)
+        else if (r > 3)
         {
             music = "./src/myTunes/media/Elevator (Caverns).mp3";
         }
@@ -657,5 +664,28 @@ public class MainWindowController implements Initializable
     @FXML
     private void deletePlaylist(ActionEvent event)
     {
+    }
+
+    /**
+     * Gets ahold of the new song in que.
+     */
+    private void getNewSongInQue()
+    {
+        mPlayer.stop();
+        File file = new File(wm.getQueueList().get(0));
+        song = new Media(file.toURI().toString());
+
+        mPlayer = new MediaPlayer(song);
+        mediaView = new MediaView(mPlayer);
+        progressSliderSetup(mPlayer);
+
+        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
+        mPlayer.setOnReady(() ->
+        {
+            progressSliderSetup(mPlayer);
+            mpduration = mPlayer.getMedia().getDuration();
+            updateProgressSlider();
+        });
+        mPlayer.play();
     }
 }
