@@ -393,6 +393,7 @@ public class MainWindowController implements Initializable
         }
         if (isPlaying == false)
         {
+            pause = false;
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
@@ -403,6 +404,7 @@ public class MainWindowController implements Initializable
             mPlayer.pause();
             isPlaying = false;
             btnPlayPause.setText("Play");
+            pause = true;
         }
     }
 
@@ -605,11 +607,26 @@ public class MainWindowController implements Initializable
     // Saves songs name to database.
     private void savePath() throws SQLException
     {
+        List<String> dataBaseSongNames = wm.checkIfIsInDatabase();
+
         List<String> songNamePaths = wm.getPath(pathNames);
 
-        for (int i = 0; i < songNamePaths.size(); i++)
+        if (!dataBaseSongNames.isEmpty())
         {
-            wm.createSongPath(songNamePaths.get(i));
+            for (String pathString : songNamePaths) 
+            {
+                if (!dataBaseSongNames.contains(pathString)) 
+                {
+                    wm.createSongPath(pathString);
+                }
+            }
+        } 
+        else 
+        {
+            for (int i = 0; i < songNamePaths.size(); i++)
+            {
+                wm.createSongPath(songNamePaths.get(i));
+            }
         }
     }
     //</editor-fold>
@@ -623,6 +640,16 @@ public class MainWindowController implements Initializable
     @FXML
     private void deletePlaylist(ActionEvent event)
     {
+    }
+    /**
+     * Plays the next song.
+     */
+    private void changeSongInQue()
+    {
+        if (!wm.getQueueList().isEmpty() && pause == false)
+        {
+            getNewSongInQue();
+        }
     }
 
     /**
@@ -646,5 +673,5 @@ public class MainWindowController implements Initializable
             updateProgressSlider();
         });
         mPlayer.play();
-    }
+    }  
 }
