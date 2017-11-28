@@ -144,6 +144,7 @@ public class MainWindowController implements Initializable
         volumeSlider.getParent().getParent().toFront();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="SETUP Methods">
     /**
      * Sets up the table & list containing all the songs
      */
@@ -290,6 +291,9 @@ public class MainWindowController implements Initializable
 
     }
 
+    /**
+     * Sets up the panel for the playlists
+     */
     private void setupPlaylistPanel()
     {
         // Allows for multiple selections to be made
@@ -301,7 +305,6 @@ public class MainWindowController implements Initializable
         // Loads the stores playlists
         wm.loadPlaylists();
     }
-    //</editor-fold>
 
     private void progressSliderSetup(MediaPlayer mPlayer)
     {
@@ -320,6 +323,7 @@ public class MainWindowController implements Initializable
             mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
     }
+    //</editor-fold>
 
     private void updateProgressSlider()
     {
