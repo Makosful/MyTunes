@@ -52,28 +52,7 @@ public class MainWindowModel
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Getters">
-    /**
-     * Gets the list containing all the songs
-     *
-     * @return a List containing all the registered songs
-     */
-    public ObservableList<Music> getSongList()
-    {
-        return allSongs;
-    }
-
-    /**
-     * Gets the queue list
-     *
-     * @return The list containing the queues
-     */
-    public ObservableList<String> getQueueList()
-    {
-        return queue;
-    }
-    //</editor-fold>
-
+    //<editor-fold defaultstate="collapsed" desc="Song List">
     /**
      * Loads all the songs into the program
      */
@@ -91,68 +70,35 @@ public class MainWindowModel
     }
 
     /**
-     * Saves song name to database.
+     * Gets the list containing all the songs
      *
-     * @param setPath
-     *
-     * @throws SQLException
+     * @return a List containing all the registered songs
      */
-    public void createSongPath(String setPath) throws SQLException
+    public ObservableList<Music> getSongList()
     {
-        bllManager.createSongPath(setPath);
+        return allSongs;
     }
-
-    /**
-     * Goes through song files, and gets their name. Returns a list with their
-     * name.
-     *
-     * @param chosenFiles
-     *
-     * @return
-     *
-     * @throws SQLException
-     */
-    public List<String> getPath(List<File> chosenFiles) throws SQLException
-    {
-        List<String> songPath = new ArrayList();
-        for (int i = 0; i < chosenFiles.size(); i++)
-        {
-            songPath.add(chosenFiles.get(i).getName());
-        }
-        return songPath;
-    }
-
-    public void setPathAndName(List<File> chosenFiles) throws IOException
-    {
-
-        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
-        for (int i = 0; i < chosenFiles.size(); i++)
-
-        {
-            System.out.println(chosenFiles.get(i).getName());
-        }
-    }
-
-    public void writeMusicFolderPath(String path) throws IOException
-    {
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
-        {
-            writer.write(path);
-        }
-    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Queue List">
+    /**
+     * Clears the Queue List entirely
+     */
     public void clearQueueList()
     {
         this.queue.clear();
     }
-    //</editor-fold>
 
-    public List<String> checkIfIsInDatabase() throws SQLException
+    /**
+     * Gets the queue list
+     *
+     * @return The list containing the queues
+     */
+    public ObservableList<String> getQueueList()
     {
-        return bllManager.checkIfIsInDatabase();
+        return queue;
     }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
     /**
@@ -239,5 +185,62 @@ public class MainWindowModel
         }
     }
     //</editor-fold>
+
+    public List<String> checkIfIsInDatabase() throws SQLException
+    {
+        return bllManager.checkIfIsInDatabase();
+    }
+
+    /**
+     * Saves song name to database.
+     *
+     * @param setPath
+     *
+     * @throws SQLException
+     */
+    public void createSongPath(String setPath) throws SQLException
+    {
+        bllManager.createSongPath(setPath);
+    }
+
+    /**
+     * Goes through song files, and gets their name. Returns a list with their
+     * name.
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public List<String> getPath(List<File> chosenFiles) throws SQLException
+    {
+        List<String> songPath = new ArrayList();
+        for (int i = 0; i < chosenFiles.size(); i++)
+        {
+            songPath.add(chosenFiles.get(i).getName());
+        }
+        return songPath;
+    }
+
+    public void setPathAndName(List<File> chosenFiles) throws IOException
+    {
+
+        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
+        for (int i = 0; i < chosenFiles.size(); i++)
+
+        {
+            System.out.println(chosenFiles.get(i).getName());
+        }
+    }
+
+    public void writeMusicFolderPath(String path) throws IOException
+    {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
+        {
+            writer.write(path);
+        }
+    }
 
 }
