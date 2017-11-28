@@ -6,20 +6,104 @@
 package mytunes.bll;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.MapChangeListener;
-import javafx.scene.media.Media;
 import mytunes.be.Music;
-import mytunes.dal.SongDAO;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.mp3.Mp3Parser;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 
 /**
  *
  * @author B
  */
 public class MetaData {
+       
     
+    public void MetaData(List<File> chosenFiles) throws FileNotFoundException, IOException, SAXException, TikaException{
+            
+            String name = "C:\\Users\\B\\Desktop\\Davids mappe\\datamatiker\\Javafx\\MetaData\\media\\Elevator (Control).mp3";
+            
+            List<Music> tracks = new ArrayList();
+
+         
+            
+            for(int i = 0; i < chosenFiles.size(); i++){
+                
+                Music track = new Music();
+                
+                String fileString = chosenFiles.get(i).getAbsolutePath();
+
+
+                Metadata meta;
+                try (InputStream input = new FileInputStream(new File(fileString))) {
+                    ContentHandler handler = (ContentHandler) new DefaultHandler();
+                    meta = new Metadata();
+                    Parser parser = new Mp3Parser();
+                    ParseContext parseCtx  = new ParseContext();
+                    parser.parse(input, handler, meta, parseCtx);
+                }
+
+              
+                track.setArtist(meta.get("xmpDM:artist"));
+                track.setTitle(meta.get("title"));
+                track.setAlbum(meta.get("xmpDM:album"));
+                track.setYear(Integer.parseInt(meta.get("xmpDM:releaseDate")));
+                track.setGenre(meta.get("xmpDM:genre"));
+                track.SetDescription(meta.get("xmpDM:logComment")); 
+                //track.setComposer(meta.get("xmpDM:composer"));
+              //  track.setDuration(Integer.parseInt(meta.get("xmpDM:duration")));
+                
+                
+                
+                //System.out.println("artist:"+meta.get("xmpDM:artist"));
+               // System.out.println("title:"+meta.get("title"));
+               // System.out.println("releasedate:"+meta.get("xmpDM:releaseDate"));
+               // System.out.println("genre:"+meta.get("xmpDM:genre"));
+               // System.out.println("composer:"+meta.get("xmpDM:composer"));
+               // System.out.println("genre:"+meta.get("xmpDM:logComment"));
+
+                
+                tracks.add(track);
+        
+            }
+            
+          System.out.println(tracks.get(0).getArtist()+"!!!Virker");  
+    
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    //OLD CODE
+    /*
     private String artist;
     private String title;
     private String album;
@@ -42,7 +126,7 @@ public class MetaData {
     /**
     *  Adds the mp3's metadata to music objects, then adds them to an arraylist and sends it to bllManager
     * @param chosenFiles 
-    */
+    
     public void MetaData(List<File> chosenFiles){
         
         
@@ -110,7 +194,7 @@ public class MetaData {
                 });
             
             }
-/**            
+         
             if(track.getArtist().isEmpty())
             {
 
@@ -120,7 +204,7 @@ public class MetaData {
                 }
 
             }
-**/
+
             
            
             
@@ -134,5 +218,5 @@ public class MetaData {
         
             System.out.println(tracks.get(0).getGenre());
      }
-    
+ **/   
 }

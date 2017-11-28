@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +17,8 @@ import javafx.scene.media.Media;
 import mytunes.be.Music;
 import mytunes.bll.BLLManager;
 import mytunes.bll.MetaData;
+import org.apache.tika.exception.TikaException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -98,7 +101,7 @@ public class MainWindowModel
      * Passes the chosenFiles to get the metadata from the mp3's in the metadata class
      * @param chosenFiles 
      */
-    public void setMetaData(List<File> chosenFiles)
+    public void setMetaData(List<File> chosenFiles) throws IOException, FileNotFoundException, SAXException, TikaException
     {
         metadata.MetaData(chosenFiles);
     }
