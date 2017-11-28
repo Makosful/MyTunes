@@ -8,10 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -106,6 +104,8 @@ public class MainWindowController implements Initializable
     // Model
     private MainWindowModel wm;
     private List<File> pathNames;
+    @FXML
+    private MenuItem clearQueue;
 
     /**
      * Constructor, for all intends and purposes
@@ -219,8 +219,9 @@ public class MainWindowController implements Initializable
                 mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
         //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
-        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) -> {
-        mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
+        {
+            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
     }
 
@@ -228,13 +229,12 @@ public class MainWindowController implements Initializable
     {
         double currentTime = mPlayer.getCurrentTime().toSeconds();
         double totalTime = mPlayer.getTotalDuration().toSeconds();
-        
-        
+
         double cTMinutes = (currentTime / 60);
         double cTSeconds = currentTime;
-        
+
         String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
-        
+
         double tTMinutes = (totalTime / 60);
         double tTSeconds = totalTime;
         String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
