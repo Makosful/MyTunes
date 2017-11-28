@@ -10,9 +10,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.media.Media;
 import mytunes.be.Music;
 import mytunes.bll.BLLManager;
+import mytunes.bll.MetaData;
 
 /**
  *
@@ -25,11 +28,13 @@ public class MainWindowModel
 
     // Objects
     private BLLManager bllManager;
-
+    private MetaData metadata;
+            
     public MainWindowModel() throws IOException
     {
         this.bllManager = new BLLManager();
         this.list = FXCollections.observableArrayList();
+        this.metadata = new MetaData();
     }
 
     public ObservableList<Music> getSongList()
@@ -88,4 +93,16 @@ public class MainWindowModel
             writer.write(path);
         }
     }
+    
+    /**
+     * Passes the chosenFiles to get the metadata from the mp3's in the metadata class
+     * @param chosenFiles 
+     */
+    public void setMetaData(List<File> chosenFiles)
+    {
+        metadata.MetaData(chosenFiles);
+    }
+    
+   
+ 
 }

@@ -65,4 +65,12 @@ public class SongDAO
         }
 
     }
+
+    /**
+    * TODO
+    * @param tracks 
+    */
+    public void setSongs(List<Music> tracks) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

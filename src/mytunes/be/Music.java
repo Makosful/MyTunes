@@ -20,6 +20,7 @@ public class Music
     private int duration;
     private String description;
     private String location;
+    private String genre;
 
     public int getId()
     {
@@ -100,11 +101,21 @@ public class Music
     {
         this.location = location;
     }
-
+    
+    public String getGenre() {
+        return genre;
+    }
+    
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+    
     @Override
     public String toString()
     {
         return "Metadata " + "id: " + id + ", Title: " + title + ", artist: " + artist + ", album: " + album + ", year: " + year
                + ", duration:" + duration + ", description: " + description + ", location: " + location;
     }
+
+   
 }
