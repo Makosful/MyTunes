@@ -111,11 +111,10 @@ public class MainWindowController implements Initializable
     private Duration mpduration;
     private Media song;
     private boolean pause;
-    Media currentlyPlaying;
+    private List<File> pathNames;
 
     // Model
     private MainWindowModel wm;
-    private List<File> pathNames;
 
     /**
      * Constructor, for all intends and purposes
@@ -137,7 +136,6 @@ public class MainWindowController implements Initializable
         setupSongList();
         setupQueueList();
         setupPlaybackSettings();
-        setupTableContextMenu();
         setupPlaylistPanel();
 
         // Places the playback functionality at the very front of the application
@@ -150,77 +148,28 @@ public class MainWindowController implements Initializable
      */
     private void setupSongList()
     {
+        // Sets the table colums ids
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
         clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
         clmCover.setCellValueFactory(new PropertyValueFactory("album"));
         clmYear.setCellValueFactory(new PropertyValueFactory("year"));
 
+        // Loads the list of saved songs from the storage
+        wm.loadSongList();
+        
+        // Fills the table with all loaded lists
         tblSongList.setItems(wm.getSongList());
 
+        // Defines the defautl sorted order
         tblSongList.getSortOrder().add(clmCover);
         tblSongList.getSortOrder().add(clmNr);
 
-        wm.loadSongList();
-    }
-
-    /**
-     * Sets the list with the queue
-     */
-    private void setupQueueList()
-    {
-        listQueue.setItems(wm.getQueueList());
-    }
-
-    /**
-     * Sets up the Media Player
-     */
-    private void setupMediaPlayer()
-    {
-        File file;
-        if (wm.getQueueList().isEmpty())
-        {
-            addElevatorMusic();
-            file = new File(wm.getQueueList().get(0).toLowerCase());
-        }
-        else
-        {
-            file = new File(wm.getQueueList().get(0).toLowerCase());
-        }
-
-        song = new Media(file.toURI().toString());
-
-        mPlayer = new MediaPlayer(song);
-        mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
-
-        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
-        mPlayer.setOnReady(() ->
-        {
-            mpduration = mPlayer.getMedia().getDuration();
-            progressSliderSetup(mPlayer);
-            updateProgressSlider();
-            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
-                    () -> mpduration.toSeconds(),
-                    mPlayer.totalDurationProperty()));
-        });
-    }
-
-    /**
-     * Handle the settings for the playback
-     */
-    private void setupPlaybackSettings()
-    {
-        //setting default value of the choicebox
-        playbackSpeed.setValue("Play speed");
-        //creating possible choices
-        playbackSpeed.getItems().addAll("50% speed",
-                                        "75% speed",
-                                        "100% speed",
-                                        "125% speed",
-                                        "150% speed",
-                                        "175% speed",
-                                        "200% speed");
+        // Allows for multiple entries to be selected at once
+        tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        
+        // Defines the context menu for the table
+        setupTableContextMenu();
     }
 
     /**
@@ -289,6 +238,65 @@ public class MainWindowController implements Initializable
 
         }); // END of table row factory
 
+    }
+
+    /**
+     * Sets the list with the queue
+     */
+    private void setupQueueList()
+    {
+        listQueue.setItems(wm.getQueueList());
+    }
+
+    /**
+     * Sets up the Media Player
+     */
+    private void setupMediaPlayer()
+    {
+        File file;
+        if (wm.getQueueList().isEmpty())
+        {
+            addElevatorMusic();
+            file = new File(wm.getQueueList().get(0).toLowerCase());
+        }
+        else
+        {
+            file = new File(wm.getQueueList().get(0).toLowerCase());
+        }
+
+        song = new Media(file.toURI().toString());
+
+        mPlayer = new MediaPlayer(song);
+        mediaView = new MediaView(mPlayer);
+        progressSliderSetup(mPlayer);
+
+        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
+        mPlayer.setOnReady(() ->
+        {
+            mpduration = mPlayer.getMedia().getDuration();
+            progressSliderSetup(mPlayer);
+            updateProgressSlider();
+            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
+                    () -> mpduration.toSeconds(),
+                    mPlayer.totalDurationProperty()));
+        });
+    }
+
+    /**
+     * Handle the settings for the playback
+     */
+    private void setupPlaybackSettings()
+    {
+        //setting default value of the choicebox
+        playbackSpeed.setValue("Play speed");
+        //creating possible choices
+        playbackSpeed.getItems().addAll("50% speed",
+                                        "75% speed",
+                                        "100% speed",
+                                        "125% speed",
+                                        "150% speed",
+                                        "175% speed",
+                                        "200% speed");
     }
 
     /**
@@ -536,7 +544,6 @@ public class MainWindowController implements Initializable
         if (!wm.getQueueList().isEmpty())
         {
             String source = wm.getQueueList().get(0);
-            currentlyPlaying = new Media(new File(source.toLowerCase()).toURI().toString());
             setupMediaPlayer();
 
         }
@@ -622,9 +629,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Sets up a random filler with one of x music files if our mediaplayer has
-     * no selected audio to play, thus never getting a nullpointer & also adding
-     * some fun (elevator music)
+     * Adds a random song to the playlist
      */
     private void addElevatorMusic()
     {

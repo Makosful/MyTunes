@@ -120,8 +120,7 @@ public class MainWindowModel
     }
 
     /**
-     * Handles everything about creating new playlists and adding them to the
-     * list
+     * Displays the window for creating new playlists
      */
     public void createPlaylistWindow()
     {
@@ -178,10 +177,7 @@ public class MainWindowModel
         }
         else
         {
-            for (int i = 0; i < playlists.size(); i++)
-            {
-                this.playlists.remove(playlists.get(i));
-            }
+            this.playlists.removeAll(playlists);
         }
     }
     //</editor-fold>
