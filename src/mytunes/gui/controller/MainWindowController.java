@@ -149,7 +149,6 @@ public class MainWindowController implements Initializable
         volumeSlider.getParent().getParent().toFront();
     }
 
-    //<editor-fold defaultstate="collapsed" desc="SETUP code blocks">
     /**
      * Sets up the table & list containing all the songs
      */
@@ -367,7 +366,6 @@ public class MainWindowController implements Initializable
         wm.getQueueList().add(file.getAbsolutePath());
     }
 
-    //<editor-fold defaultstate="collapsed" desc="FXML Methods">
     /**
      * Tells the playback to stop entirely
      *
