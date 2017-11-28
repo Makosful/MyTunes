@@ -42,4 +42,14 @@ public class BLLManager
     {
         return plDAO.getPlaylists();
     }
+
+    /**
+     * Adds a new playlist to the storage
+     *
+     * @param playlist
+     */
+    public void addPlaylist(Playlist playlist)
+    {
+        plDAO.addPlaylist(playlist);
+    }
 }

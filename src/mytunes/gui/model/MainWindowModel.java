@@ -9,9 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
+import mytunes.gui.controller.CreatePlaylistWindowController;
 
 /**
  *
@@ -149,5 +155,54 @@ public class MainWindowModel
     public void loadPlaylists()
     {
         playlists = bllManager.getPlaylists();
+    }
+
+    /**
+     * Handles everything about creating new playlists and adding them to the
+     * list
+     */
+    public void createPlaylistWindow()
+    {
+        try
+        {
+            // Declares variables to use afterwards
+            String title = "Nameless";
+
+            // Gets a hold of the FXML and controller
+            File fxml = new File("./src/MyTunes/gui/view/CreatePlaylistWindow.fxml");
+            FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
+
+            // Loads the window
+            Parent root = fxLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            // Gets the controller for the window, so we can retrieve data after
+            // it's been closed
+            CreatePlaylistWindowController plCont = fxLoader.getController();
+
+            // Sets the icon for the new window
+            File ico = new File("./res/icon/TrollTunes56x56.png");
+            Image icon = new Image(ico.toURI().toString());
+            stage.getIcons().add(icon);
+
+            // Sets the title for the new window
+            stage.setTitle("Create Playlist");
+
+            stage.setScene(scene);
+            stage.showAndWait();
+            // Waits for the user to give the playlist a name
+
+            // Adds the new playlist to the list of lists, dawg
+            Playlist pl = new Playlist(plCont.getTitle());
+            this.playlists.add(pl);
+
+            // Saves the playlist to storage
+            bllManager.addPlaylist(pl); // Not implimented yet
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 }
