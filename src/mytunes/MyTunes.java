@@ -22,11 +22,11 @@ public class MyTunes extends Application
 
         Scene scene = new Scene(root);
 
-        File file = new File("./res/icon/Music-icon.png");
+        File file = new File("./res/icon/TrollTunes56x56.png");
         Image icon = new Image(file.toURI().toString());
 
         stage.getIcons().add(icon);
-        stage.setTitle("MyTunes - The superior way to listen to music");
+        stage.setTitle("TrollTunes - The superior way to listen to music");
         stage.setScene(scene);
         stage.show();
     }
