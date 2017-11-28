@@ -2,11 +2,7 @@ package mytunes.dal;
 
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
@@ -18,7 +14,9 @@ import mytunes.be.Path;
  */
 public class SongDAO
 {
+
     DataBaseConnector db;
+
     public SongDAO() throws IOException
     {
         db = new DataBaseConnector();
@@ -40,19 +38,31 @@ public class SongDAO
 
         songs.add(song);
 
+        Music song2 = new Music();
+        song2.setId(2121);
+        song2.setTitle("Cotten Eye John");
+        song2.setArtist("Pelvis");
+        song2.setAlbum("Red Neck Hits");
+        song2.setYear(1111);
+        song2.setDuration(10);
+        song2.SetDescription("All time hits from your red neck backyard");
+        song2.SetLocation("Ze Cloud");
+
+        songs.add(song2);
+
         return songs;
     }
-    
-    public Path createSongPath(String pathname) throws SQLServerException, SQLException 
+
+    public Path createSongPath(String pathname) throws SQLServerException, SQLException
     {
-        try (Connection con = db.getConnection()) 
+        try (Connection con = db.getConnection())
         {
             String sql = "INSERT INTO Path VALUES (?);";
 
             PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, pathname);
 
-            if (statement.executeUpdate() == 1) 
+            if (statement.executeUpdate() == 1)
             {
                 ResultSet rs = statement.getGeneratedKeys();
                 rs.next();

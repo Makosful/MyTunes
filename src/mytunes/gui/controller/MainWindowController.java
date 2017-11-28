@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -108,7 +109,7 @@ public class MainWindowController implements Initializable
     private MainWindowModel wm;
     private List<File> pathNames;
     @FXML
-    private MenuItem clearQueue;
+    private MenuItem clearQueueMenu;
 
     /**
      * Constructor, for all intends and purposes
@@ -130,6 +131,7 @@ public class MainWindowController implements Initializable
         setupSongList();
         setupQueueList();
         setupPlaybackSettings();
+        setupTableContextMenu();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -213,6 +215,74 @@ public class MainWindowController implements Initializable
                                         "175% speed",
                                         "200% speed");
     }
+
+    /**
+     * Sets up the context menu for the table list of songs
+     */
+    private void setupTableContextMenu()
+    {
+        // Creates a new context menu
+        ContextMenu cm = new ContextMenu();
+
+        // Creates a new item for the menu and puts it in
+        MenuItem play = new MenuItem("Play");
+        cm.getItems().add(play);
+
+        // Creates a new item for the menu and puts it in
+        MenuItem addQueue = new MenuItem("Add to queue");
+        cm.getItems().add(addQueue);
+
+        // Creates a new item for the menu and puts it in
+        MenuItem loadSong = new MenuItem("Load Song");
+        cm.getItems().add(loadSong);
+
+        // Creates a new item for the menu and puts it in
+        MenuItem clearQueueContext = new MenuItem("Clear Queue");
+        cm.getItems().add(clearQueueContext);
+
+        tblSongList.setRowFactory(tv ->
+        {
+            TableRow<Music> row = new TableRow();
+            row.setOnMouseClicked(event ->
+            {
+
+                if (event.getButton() == MouseButton.SECONDARY)
+                {
+                    cm.show(tblSongList, event.getScreenX(), event.getScreenY());
+                }
+
+                // Sets the actions that'll happen when the Play function has
+                // been picked
+                play.setOnAction(action ->
+                {
+                    if (!row.isEmpty())
+                    {
+                        System.out.println(row.getItem().getTitle());
+                    }
+                });
+
+                // Sets the actions that'll happen when the Add to Queue function
+                // has been picked
+                addQueue.setOnAction(action ->
+                {
+                    System.out.println("Adds to queue");
+                });
+                loadSong.setOnAction(action ->
+                {
+                    LoadMP3Files(action);
+                });
+                clearQueueContext.setOnAction(action ->
+                {
+                    clearQueue(action);
+                });
+
+            }); // END of mouseClick Event
+
+            return row;
+
+        }); // END of table row factory
+
+    } // END of method
     //</editor-fold>
 
     private void progressSliderSetup(MediaPlayer mPlayer)
@@ -260,21 +330,15 @@ public class MainWindowController implements Initializable
         String music;
 
         Random rnd = new Random();
-
-        int r = rnd.nextInt(2) + 2;
+        
+        int r = rnd.nextInt(2)+2;
         System.out.println(r);
         if (r > 2)
-        {
             music = "./src/myTunes/media/Elevator (Control).mp3";
-        }
         else if (r > 3)
-        {
             music = "./src/myTunes/media/Elevator (Caverns).mp3";
-        }
         else
-        {
             music = "./src/myTunes/media/elevatormusic.mp3";
-        }
 
         File file = new File(music);
         wm.getQueueList().add(file.getAbsolutePath());
@@ -317,8 +381,7 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
-        }
-        // if the boolean is true we shall stop playing, reverse the boolean and
+        } // if the boolean is true we shall stop playing, reverse the boolean and
         // edit the buttons text.
         else
         {

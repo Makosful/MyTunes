@@ -80,7 +80,7 @@
                   <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
                       <items>
                           <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
-                  <MenuItem fx:id="clearQueue" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
+                  <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
                       </items>
                   </Menu>
                   <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
