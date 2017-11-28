@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -98,7 +100,8 @@ public class MainWindowController implements Initializable
     private boolean isPlaying;
     private boolean isLooping;
     private Duration mpduration;
-
+    private Media song;
+    private boolean pause;
     Media currentlyPlaying;
 
     // Model
@@ -172,22 +175,25 @@ public class MainWindowController implements Initializable
             file = new File(wm.getQueueList().get(0).toLowerCase());
         }
         else
+        {
             file = new File(wm.getQueueList().get(0).toLowerCase());
+        }
 
-        Media song = new Media(file.toURI().toString());
+        song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
         progressSliderSetup(mPlayer);
 
-        mpduration = mPlayer.getMedia().getDuration();
-
         //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
-            progressSliderSetup(mPlayer);
             mpduration = mPlayer.getMedia().getDuration();
+            progressSliderSetup(mPlayer);
             updateProgressSlider();
+            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
+                    () -> mpduration.toSeconds(),
+                    mPlayer.totalDurationProperty()));
         });
     }
 
@@ -216,7 +222,9 @@ public class MainWindowController implements Initializable
         {
             //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
             if (progressSlider.isValueChanging())
+            {
                 mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+            }
         });
         //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
         progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
@@ -251,13 +259,22 @@ public class MainWindowController implements Initializable
     {
         String music;
 
-        double rand = Math.random();
-        if (rand > 0.66)
+        Random rnd = new Random();
+
+        int r = rnd.nextInt(2) + 2;
+        System.out.println(r);
+        if (r > 2)
+        {
             music = "./src/myTunes/media/Elevator (Control).mp3";
-        else if (rand > 0.33)
+        }
+        else if (r > 3)
+        {
             music = "./src/myTunes/media/Elevator (Caverns).mp3";
+        }
         else
+        {
             music = "./src/myTunes/media/elevatormusic.mp3";
+        }
 
         File file = new File(music);
         wm.getQueueList().add(file.getAbsolutePath());
@@ -287,10 +304,14 @@ public class MainWindowController implements Initializable
     private void musicPlayPause(ActionEvent event)
     {
         if (volumeSlider.isDisabled())
+        {
             volumeSlider.setDisable(false);
+        }
 
         if (wm.getQueueList().isEmpty() && !isPlaying)
+        {
             setupMediaPlayer();
+        }
         if (isPlaying == false)
         {
             mPlayer.play();
@@ -454,8 +475,12 @@ public class MainWindowController implements Initializable
         }
 
         if (chosenFiles != null)
+        {
             for (int i = 0; i < chosenFiles.size(); i++)
+            {
                 wm.getQueueList().add(chosenFiles.get(i).getAbsolutePath());
+            }
+        }
         else
         {
             System.out.println("One or more invalid file(s) / None selected");
@@ -487,8 +512,10 @@ public class MainWindowController implements Initializable
     {
         // Checks if the queue is empty
         if (!wm.getQueueList().isEmpty())
-            // If it's not empty, stop all songs from playing
+        // If it's not empty, stop all songs from playing
+        {
             songStop(event);
+        }
 
         // Clears the queue list
         wm.clearQueueList();
@@ -503,7 +530,32 @@ public class MainWindowController implements Initializable
         List<String> songNamePaths = wm.getPath(pathNames);
 
         for (int i = 0; i < songNamePaths.size(); i++)
+        {
             wm.createSongPath(songNamePaths.get(i));
+        }
     }
     //</editor-fold>
+    
+    /**
+     * Gets ahold of the new song in que.
+     */
+    private void getNewSongInQue()
+    {
+        mPlayer.stop();
+        File file = new File(wm.getQueueList().get(0));
+         song = new Media(file.toURI().toString());
+
+        mPlayer = new MediaPlayer(song);
+        mediaView = new MediaView(mPlayer);
+        progressSliderSetup(mPlayer);
+
+        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
+        mPlayer.setOnReady(() ->
+        {
+            progressSliderSetup(mPlayer);
+            mpduration = mPlayer.getMedia().getDuration();
+            updateProgressSlider();
+        });
+        mPlayer.play();
+    }
 }
