@@ -19,6 +19,15 @@ public class PlaylistDAO
     {
         ObservableList<Playlist> list = FXCollections.observableArrayList();
 
+        Playlist fav = new Playlist("My favorites");
+        list.add(fav);
+
+        for (int i = 0; i < 10; i++)
+        {
+            Playlist pl = new Playlist("test" + i);
+            list.add(pl);
+        }
+
         return list;
     }
 
@@ -28,6 +37,15 @@ public class PlaylistDAO
      * @param playlist
      */
     public void addPlaylist(Playlist playlist)
+    {
+    }
+
+    /**
+     * Removes a playlist from the database
+     *
+     * @param playlist
+     */
+    public void removePlaylist(Playlist playlist)
     {
     }
 }

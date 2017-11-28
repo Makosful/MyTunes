@@ -52,4 +52,14 @@ public class BLLManager
     {
         plDAO.addPlaylist(playlist);
     }
+
+    /**
+     * Removes a playlist from the database
+     *
+     * @param playlist
+     */
+    public void removePlaylist(Playlist playlist)
+    {
+        plDAO.removePlaylist(playlist);
+    }
 }

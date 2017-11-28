@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -292,7 +293,14 @@ public class MainWindowController implements Initializable
 
     private void setupPlaylistPanel()
     {
+        // Allows for multiple selections to be made
+        playlistPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Puts the playlists into the view
         playlistPanel.setItems(wm.getPlaylists());
+
+        // Loads the stores playlists
+        wm.loadPlaylists();
     }
     //</editor-fold>
 
@@ -335,7 +343,11 @@ public class MainWindowController implements Initializable
         System.out.println("duration in milliseconds:" + mpduration.toMillis());
     }
 
-    //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
+    /**
+     * Sets up a random filler with one of x music files if our mediaplayer has
+     * no selected audio to play, thus never getting a nullpointer & also adding
+     * some fun (elevator music)
+     */
     private void addElevatorMusic()
     {
         String music;
@@ -616,15 +628,28 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
+    /**
+     * Creates a new playlist and adds it to the list of playlists
+     *
+     * @param event
+     */
     @FXML
     private void createPlaylist(ActionEvent event)
     {
         wm.createPlaylistWindow();
     }
 
+    /**
+     * Removes a playlist
+     *
+     * @param event
+     */
     @FXML
     private void deletePlaylist(ActionEvent event)
     {
+        ObservableList<Playlist> selectedItems = playlistPanel
+                .getSelectionModel().getSelectedItems();
+        wm.deletePlaylists(selectedItems);
     }
 
     /**

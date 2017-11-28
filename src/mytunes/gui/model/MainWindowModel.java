@@ -142,19 +142,30 @@ public class MainWindowModel
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Queue List">
     public void clearQueueList()
     {
         this.queue.clear();
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
+    /**
+     * Gets the list of playlists
+     *
+     * @return An Observeable Array list of all the Playlists
+     */
     public ObservableList<Playlist> getPlaylists()
     {
         return playlists;
     }
 
+    /**
+     * Loads the playlist from storage
+     */
     public void loadPlaylists()
     {
-        playlists = bllManager.getPlaylists();
+        playlists.addAll(bllManager.getPlaylists());
     }
 
     /**
@@ -165,9 +176,6 @@ public class MainWindowModel
     {
         try
         {
-            // Declares variables to use afterwards
-            String title = "Nameless";
-
             // Gets a hold of the FXML and controller
             File fxml = new File("./src/MyTunes/gui/view/CreatePlaylistWindow.fxml");
             FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
@@ -205,4 +213,26 @@ public class MainWindowModel
             System.out.println(ex.getMessage());
         }
     }
+
+    /**
+     * Deletes one or more playlists from the list
+     *
+     * @param playlists The playlist to delete
+     */
+    public void deletePlaylists(ObservableList<Playlist> playlists)
+    {
+        if (playlists.isEmpty())
+        {
+            // Do nothing
+        }
+        else
+        {
+            for (int i = 0; i < playlists.size(); i++)
+            {
+                this.playlists.remove(playlists.get(i));
+            }
+        }
+    }
+    //</editor-fold>
+
 }
