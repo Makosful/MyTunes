@@ -149,6 +149,11 @@ public class MainWindowModel
     }
     //</editor-fold>
 
+    public List<String> checkIfIsInDatabase() throws SQLException
+    {
+        return bllManager.checkIfIsInDatabase();
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
     /**
      * Gets the list of playlists

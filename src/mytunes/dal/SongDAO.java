@@ -12,14 +12,15 @@ import mytunes.be.Path;
  *
  * @author Axl
  */
-public class SongDAO
-{
-
+    public class SongDAO
+    {
     DataBaseConnector db;
+    List<String> dataBaseSongNames;
 
     public SongDAO() throws IOException
     {
         db = new DataBaseConnector();
+        dataBaseSongNames = new ArrayList();
     }
 
     public List<Music> getAllSongs()
@@ -32,6 +33,7 @@ public class SongDAO
     public Path createSongPath(String pathname) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
+
         {
             String sql = "INSERT INTO Path VALUES (?);";
 
@@ -49,6 +51,23 @@ public class SongDAO
             throw new RuntimeException("Song path was not created");
 
         }
+    }
+    
+    public List<String> checkIfIsInDatabase() throws SQLServerException, SQLException
+    {
+        dataBaseSongNames.clear();
+        try (Connection con = db.getConnection()) 
+        {
+            Statement st = con.createStatement();
+            String sqlGet = "SELECT * FROM Path;";
 
+            ResultSet rs = st.executeQuery(sqlGet);
+
+            while (rs.next()) 
+            {
+                dataBaseSongNames.add(rs.getString("pathname"));
+            }
+            return dataBaseSongNames;
+        }
     }
 }
