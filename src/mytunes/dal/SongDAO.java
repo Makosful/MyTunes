@@ -72,6 +72,44 @@ import mytunes.be.Path;
     }
     
     
+    
+    
+    
+    
+    /**
+     * 
+     * @param song
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public void setSong(Music song) throws SQLServerException, SQLException
+    {
+        int artistId = setArtist(song.getArtist());
+        int albumId = setAlbum(song.getAlbum());
+        int genreId = setGenre(song.getGenre());
+        int pathId = setPath();
+        
+        try (Connection con = db.getConnection())
+        {
+
+                String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                preparedStatementInsert.setString(1, song.getTitle());
+                preparedStatementInsert.setInt(2, artistId);
+                preparedStatementInsert.setInt(3, albumId);
+                preparedStatementInsert.setInt(4, genreId);
+                preparedStatementInsert.setInt(5, pathId);
+                preparedStatementInsert.executeUpdate();
+
+                ResultSet rs = preparedStatementInsert.getGeneratedKeys();
+
+        
+        }
+    }
+    
+    
+    
+    
     /**
      * Not finished yet, ...but if the artist already exsists in the artist table get the id, else insert the artist and get the artistId
      * @param artist
@@ -209,6 +247,12 @@ import mytunes.be.Path;
         }
         
         
+    }
+
+    private int setPath()
+    {
+        
+        return 0;
     }
     
     
