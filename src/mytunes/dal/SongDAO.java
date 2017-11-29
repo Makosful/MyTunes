@@ -92,7 +92,7 @@ import mytunes.be.Path;
         try (Connection con = db.getConnection())
         {
 
-                String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
+                String sqlInsert = "INSERT INTO Song VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
                 preparedStatementInsert.setString(1, song.getTitle());
                 preparedStatementInsert.setInt(2, artistId);

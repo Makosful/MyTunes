@@ -21,6 +21,8 @@ public class Music
     private String description;
     private String location;
     private String genre;
+    private String songPathName;
+
 
     public Music(int id, String title, String album, String artist, int year)
     {
@@ -125,11 +127,23 @@ public class Music
     {
         this.location = location;
     }
+    
+    
+    public String getSongPathName()
+    {
+        return songPathName;
+    }
+
+    public void setSongPathName(String songPathName)
+    {
+        this.songPathName = songPathName;
+    }
+
 
     @Override
     public String toString()
     {
-        return "Metadata " + "id: " + id + ", Title: " + title + ", artist: " + artist + ", album: " + album + ", year: " + year
-               + ", duration:" + duration + ", description: " + description + ", location: " + location;
+        return "Metadata " + "id: " + id + ", Title: " + title + ", artist: " + artist + ", Genre: " + genre + ", album: " + album + ", year: " + year
+               + ", duration:" + duration + ", description: " + description + ", location: " + location + ", SongPathName: " + songPathName;
     }
 }

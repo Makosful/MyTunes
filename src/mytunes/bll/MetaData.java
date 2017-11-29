@@ -38,7 +38,7 @@ public class MetaData {
     private String genre;
     private String duration;
     private String description;
-    private String location;
+    private String songPathName;
     
     
     SongDAO sDAO;
@@ -67,7 +67,7 @@ public class MetaData {
             for(int i = 0; i < chosenFiles.size(); i++){
 
 
-                setMetaData(chosenFiles.get(i).getAbsolutePath());
+                setMetaData(chosenFiles.get(i));
 
                 validateMetaData(chosenFiles.get(i));
 
@@ -105,12 +105,12 @@ public class MetaData {
          * @throws SAXException
          * @throws TikaException 
          */
-        private void setMetaData(String fileString)throws FileNotFoundException, IOException, SAXException, TikaException
+        private void setMetaData(File chosenFile)throws FileNotFoundException, IOException, SAXException, TikaException
         {
 
 
             Metadata meta;
-            try (InputStream input = new FileInputStream(new File(fileString))) {
+            try (InputStream input = new FileInputStream(new File(chosenFile.getAbsolutePath()))) {
                 ContentHandler handler = (ContentHandler) new DefaultHandler();
                 meta = new Metadata();
                 Parser parser = new Mp3Parser();
@@ -125,8 +125,9 @@ public class MetaData {
             year = meta.get("xmpDM:releaseDate");
             genre = meta.get("xmpDM:genre");
             description = meta.get("xmpDM:logComment"); 
-            duration = meta.get("xmpDM:duration");        
-
+            duration = meta.get("xmpDM:duration");     
+            
+            songPathName = chosenFile.getName();
             
         }
     
@@ -223,7 +224,8 @@ public class MetaData {
             track.SetDescription(description);
             track.setYear(Integer.parseInt(year));
             track.setDuration(Double.parseDouble(duration));
-
+            track.setSongPathName(songPathName);
+            
             return track;
         }
 
