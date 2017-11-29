@@ -87,9 +87,9 @@ import mytunes.be.Path;
         {
             int id = 0;
 
-            String sqlSelect = "SELECT id FROM Artist WHERE artist LIKE ?";
+            String sqlSelect = "SELECT id FROM Artist WHERE artist = ?";
             PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
-            preparedStatement.setString(1, "%"+artist+"%");
+            preparedStatement.setString(1, artist);
             ResultSet rs = preparedStatement.executeQuery();
 
             if(rs.next()) 
@@ -100,7 +100,7 @@ import mytunes.be.Path;
             {
                 String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
                 PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
-                preparedStatementInsert.setString(1, "%"+artist+"%");
+                preparedStatementInsert.setString(1, artist);
                 preparedStatementInsert.executeUpdate();
 
                 ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -118,7 +118,52 @@ import mytunes.be.Path;
         
     }
 
-    
+
+    /**
+     * 
+     * @param album
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int setAlbum(String album) throws SQLServerException, SQLException
+    {
+        
+        
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
+
+            String sqlSelect = "SELECT id FROM Album WHERE album = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            preparedStatement.setString(1, album);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if(rs.next()) 
+            {
+                id = rs.getInt("id");
+            }
+            else
+            {
+                String sqlInsert = "INSERT INTO Album (album) VALUES (?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                preparedStatementInsert.setString(1, album);
+                preparedStatementInsert.executeUpdate();
+
+                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+                while(rsi.next())
+                {
+                    id = rsi.getInt("id");
+
+                }
+            } 
+
+            return id;
+        }
+        
+        
+    }
     
     
 }
