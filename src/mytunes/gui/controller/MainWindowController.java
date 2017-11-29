@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
@@ -103,7 +104,6 @@ public class MainWindowController implements Initializable
     private boolean isPlaying;
     private boolean isLooping;
     private Duration mpduration;
-    private Duration timeCurrently;
     private Media song;
     private boolean pause;
     Media currentlyPlaying;
@@ -143,7 +143,7 @@ public class MainWindowController implements Initializable
         setupTableContextMenu();
         setupPlaylistPanel();
         setupMediaPlayer();
-        
+
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
     }
@@ -380,7 +380,9 @@ public class MainWindowController implements Initializable
         }
         if (isPlaying == false)
         {
-            progressListeners();
+            //Needs to set the BEFORE media is played (apparently?)
+            TimeChangeListener();
+
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
@@ -394,8 +396,24 @@ public class MainWindowController implements Initializable
         }
     }
 
-    private void progressListeners()
+    private void TimeChangeListener()
     {
+        mPlayer.currentTimeProperty().addListener((Observable ov) ->
+        {
+            updateValues();
+        });
+    }
+
+    private void updateValues()
+    {
+        Duration currentTime = mPlayer.getCurrentTime();
+        lblTimer.setText(formatTime(currentTime, mpduration));
+        
+        mPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration duration, Duration current) ->
+        {
+            progressSlider.setValue(current.toSeconds());
+        });
+
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
         {
@@ -409,12 +427,6 @@ public class MainWindowController implements Initializable
         progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
         {
             mPlayer.seek(Duration.seconds(progressSlider.getValue()));
-
-        });
-
-        mPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration duration, Duration current) ->
-        {
-            progressSlider.setValue(current.toSeconds());
         });
     }
 
@@ -457,7 +469,7 @@ public class MainWindowController implements Initializable
         }
     }
 
-     /**
+    /**
      * Will handle the playback duration
      *
      * @param event
@@ -638,9 +650,9 @@ public class MainWindowController implements Initializable
     }
 
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
-    private static String formatTime(Duration timeCurrently, Duration duration)
+    private static String formatTime(Duration elapsed, Duration duration)
     {
-        int intElapsed = (int) Math.floor(timeCurrently.toSeconds());
+        int intElapsed = (int) Math.floor(elapsed.toSeconds());
         int elapsedHours = intElapsed / (60 * 60);
         if (elapsedHours > 0)
         {
