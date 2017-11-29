@@ -1,42 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="230.0" prefWidth="460.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
-   <children>
-      <Label alignment="CENTER" layoutX="286.0" layoutY="31.0" text="Create a new Playlist" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-         <font>
-            <Font size="24.0" />
-         </font>
-      </Label>
-      <HBox spacing="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
-         <children>
-            <Label text="Title: ">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtPlaylistName" prefWidth="250.0" promptText="Enter the title of the new playlist">
-               <font>
-                  <Font size="14.0" />
-               </font></TextField>
-         </children>
-         <padding>
-            <Insets left="50.0" right="50.0" />
-         </padding>
-      </HBox>
-      <JFXButton fx:id="btnPlaylistCreate" onAction="#createPlaylist" text="Create" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="70.0" />
-      <JFXButton fx:id="btnPlaylistQuit" onAction="#cancel" text="Cancel" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="70.0" />
-      <Label fx:id="lblError" alignment="CENTER" layoutX="30.0" layoutY="30.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="130.0">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-   </children>
+<AnchorPane id="AnchorPane" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
+    <children>
+        <Label alignment="CENTER" layoutX="286.0" layoutY="31.0" text="Create a new Playlist" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Label>
+        <HBox alignment="CENTER" spacing="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <Label text="Title: ">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="txtPlaylistName" prefWidth="250.0" promptText="Enter the title of the new playlist">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </TextField>
+            </children>
+            <padding>
+                <Insets left="50.0" right="50.0" />
+            </padding>
+        </HBox>
+        <Label fx:id="lblError" alignment="CENTER" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="140.0">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <AnchorPane layoutX="20.0" layoutY="180.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <children>
+                <VBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label text="Playlist">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtPlaylistSearch" onAction="#playlistSearch" />
+                        <JFXListView fx:id="listInPlaylist" prefHeight="350.0">
+                            <padding>
+                                <Insets bottom="20.0" />
+                            </padding>
+                        </JFXListView>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label alignment="CENTER" text="Song list">
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtSongSearch" onAction="#songlistSearch" />
+                        <JFXListView fx:id="listNotInList" prefHeight="350.0">
+                            <padding>
+                                <Insets bottom="20.0" />
+                            </padding>
+                        </JFXListView>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="280.0" layoutY="20.0" spacing="30.0" AnchorPane.leftAnchor="280.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="100.0">
+                    <children>
+                        <JFXButton onAction="#moveAllToPlaylist" prefWidth="50.0" text="|&lt;-" />
+                        <JFXButton onAction="#moveSelectedToPlaylist" prefWidth="50.0" text="&lt;-" />
+                        <JFXButton onAction="#removeSelectedFromPlaylist" prefWidth="50.0" text="-&gt;" />
+                        <JFXButton onAction="#removeAllFromPlaylist" prefWidth="50.0" text="-&gt;|" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+        <HBox alignment="CENTER" layoutX="155.0" layoutY="679.0" spacing="270.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <children>
+                <JFXButton onAction="#createPlaylist" text="Create" />
+                <JFXButton onAction="#cancel" text="Cancel" />
+            </children>
+        </HBox>
+    </children>
 </AnchorPane>

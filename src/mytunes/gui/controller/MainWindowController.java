@@ -47,7 +47,7 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXSlider volumeSlider;
     @FXML
-    private JFXListView<String> listQueue;
+    private JFXListView<Music> listQueue;
     @FXML
     private JFXListView<?> listMetaData;
     @FXML
@@ -272,11 +272,11 @@ public class MainWindowController implements Initializable
         if (wm.getQueueList().isEmpty())
         {
             addElevatorMusic();
-            file = new File(wm.getQueueList().get(0).toLowerCase());
+            file = new File(wm.getQueueList().get(0).getLocation());
         }
         else
         {
-            file = new File(wm.getQueueList().get(0).toLowerCase());
+            file = new File(wm.getQueueList().get(0).getLocation());
         }
 
         song = new Media(file.toURI().toString());
@@ -398,12 +398,12 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Handles the playback itself
+     * Manages the playback speed
      *
      * @param event
      */
     @FXML
-    private void playbackAction(ActionEvent event)
+    private void playbackSpeed(ActionEvent event)
     {
         //an int to see where we are in the combobox' index.
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
@@ -547,7 +547,14 @@ public class MainWindowController implements Initializable
         {
             for (int i = 0; i < chosenFiles.size(); i++)
             {
-                wm.getQueueList().add(chosenFiles.get(i).getAbsolutePath());
+                wm.getQueueList().add(new Music(
+                        0,
+                        chosenFiles.get(i).getName(),
+                        chosenFiles.get(i).getName(),
+                        chosenFiles.get(i).getName(),
+                        9999,
+                        chosenFiles.get(i).getAbsolutePath()
+                ));
             }
         }
         else
@@ -558,20 +565,11 @@ public class MainWindowController implements Initializable
 
         if (!wm.getQueueList().isEmpty())
         {
-            String source = wm.getQueueList().get(0);
             setupMediaPlayer();
 
         }
         pathNames = chosenFiles;
-
-        try
-        {
-            savePath();
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
+        //savePath();
 
     }
 
@@ -648,27 +646,43 @@ public class MainWindowController implements Initializable
      */
     private void addElevatorMusic()
     {
-        String music;
+        Music track;
+
+        String title = "";
+        String album = "";
+        String artist = "";
 
         Random rnd = new Random();
-
         int r = rnd.nextInt(2) + 2;
-        System.out.println(r);
         if (r > 2)
         {
-            music = "./src/myTunes/media/Elevator (Control).mp3";
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/Elevator (Control).mp3");
         }
         else if (r > 3)
         {
-            music = "./src/myTunes/media/Elevator (Caverns).mp3";
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/Elevator (Caverns).mp3");
         }
         else
         {
-            music = "./src/myTunes/media/elevatormusic.mp3";
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/elevatormusic.mp3");
         }
 
-        File file = new File(music);
-        wm.getQueueList().add(file.getAbsolutePath());
+        wm.getQueueList().add(track);
     }
 
     /**
@@ -688,7 +702,7 @@ public class MainWindowController implements Initializable
     private void getNewSongInQue()
     {
         mPlayer.stop();
-        File file = new File(wm.getQueueList().get(0));
+        File file = new File(wm.getQueueList().get(0).getLocation());
         song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);

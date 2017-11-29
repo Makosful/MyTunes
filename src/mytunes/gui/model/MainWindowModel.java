@@ -28,7 +28,7 @@ public class MainWindowModel
 
     // Lists
     private ObservableList<Music> allSongs;
-    private ObservableList<String> queue;
+    private ObservableList<Music> queue;
     private ObservableList<Playlist> playlists;
 
     // Objects
@@ -94,7 +94,7 @@ public class MainWindowModel
      *
      * @return The list containing the queues
      */
-    public ObservableList<String> getQueueList()
+    public ObservableList<Music> getQueueList()
     {
         return queue;
     }
@@ -107,16 +107,7 @@ public class MainWindowModel
     public void setQueuePlay(ObservableList<Music> selectedItems)
     {
         this.queue.clear();
-        ArrayList<File> files = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++)
-        {
-            File file = new File(selectedItems.get(i).getLocation());
-            files.add(file);
-        }
-        for (int i = 0; i < files.size(); i++)
-        {
-            this.queue.add(files.get(i).getAbsolutePath());
-        }
+        this.queue.addAll(selectedItems);
     }
 
     /**
@@ -126,16 +117,7 @@ public class MainWindowModel
      */
     public void setQueueAdd(ObservableList<Music> selectedItems)
     {
-        ArrayList<File> files = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++)
-        {
-            File file = new File(selectedItems.get(i).getLocation());
-            files.add(file);
-        }
-        for (int i = 0; i < files.size(); i++)
-        {
-            this.queue.add(files.get(i).getAbsolutePath());
-        }
+        this.queue.addAll(selectedItems);
     }
     //</editor-fold>
 
@@ -177,6 +159,8 @@ public class MainWindowModel
             // Gets the controller for the window, so we can retrieve data after
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
+
+            plCont.setSongList(allSongs);
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");

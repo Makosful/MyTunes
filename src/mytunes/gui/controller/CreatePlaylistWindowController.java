@@ -1,14 +1,22 @@
 package mytunes.gui.controller;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mytunes.be.Music;
+import mytunes.gui.model.MainWindowModel;
 
 /**
  * FXML Controller class
@@ -19,17 +27,26 @@ public class CreatePlaylistWindowController implements Initializable
 {
 
     @FXML
+    private Label lblError;
+    @FXML
     private TextField txtPlaylistName;
     @FXML
-    private JFXButton btnPlaylistCreate;
+    private TextField txtPlaylistSearch;
     @FXML
-    private JFXButton btnPlaylistQuit;
+    private TextField txtSongSearch;
     @FXML
-    private Label lblError;
+    private JFXListView<Music> listInPlaylist;
+    @FXML
+    private JFXListView<Music> listNotInList;
 
     private String title;
     private Stage stage;
     private String error;
+    private ObservableList<Music> playlist;
+    private ObservableList<Music> songlist;
+
+    // Objects
+    MainWindowModel wm = new MainWindowModel();
 
     /**
      * Initializes the controller class.
@@ -40,12 +57,23 @@ public class CreatePlaylistWindowController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        // TODO
         error = "Please chose a name or cancel the proccess";
+        this.playlist = FXCollections.observableArrayList();
+        this.songlist = FXCollections.observableArrayList();
+
+        listNotInList.setItems(wm.getSongList());
+        listInPlaylist.setItems(playlist);
+        listNotInList.setItems(songlist);
+
+        setAutoTextChange(txtPlaylistSearch, playlist);
+        setAutoTextChange(txtSongSearch, songlist);
+
+        listInPlaylist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listNotInList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     /**
-     * Saves the name of the playlist and passes it on to the main window
+     * Creates a new playlist and saves it in the cache
      *
      * @param event
      */
@@ -72,7 +100,7 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void cancel(ActionEvent event)
     {
-        stage = (Stage) btnPlaylistQuit.getScene().getWindow();
+        stage = (Stage) lblError.getScene().getWindow();
         stage.close();
     }
 
@@ -84,5 +112,109 @@ public class CreatePlaylistWindowController implements Initializable
     public String getTitle()
     {
         return title;
+    }
+
+    /**
+     * Retrieves the currently stored playlist
+     *
+     * @return
+     */
+    public ObservableList<Music> getPlaylist()
+    {
+        return playlist;
+    }
+
+    /**
+     * Sets the songlist
+     *
+     * @param songList
+     */
+    public void setSongList(ObservableList<Music> songList)
+    {
+        songlist.addAll(songList);
+    }
+
+    @FXML
+    private void moveAllToPlaylist(ActionEvent event)
+    {
+        playlist.addAll(wm.getSongList());
+    }
+
+    @FXML
+    private void moveSelectedToPlaylist(ActionEvent event)
+    {
+        ObservableList<Music> selectedItems = listNotInList
+                .getSelectionModel().getSelectedItems();
+
+        this.playlist.addAll(selectedItems);
+    }
+
+    @FXML
+    private void removeSelectedFromPlaylist(ActionEvent event)
+    {
+        ObservableList<Music> selectedItems = listInPlaylist
+                .getSelectionModel().getSelectedItems();
+
+        this.playlist.removeAll(selectedItems);
+    }
+
+    @FXML
+    private void removeAllFromPlaylist(ActionEvent event)
+    {
+        playlist.removeAll(wm.getSongList());
+    }
+
+    @FXML
+    private void playlistSearch(ActionEvent event)
+    {
+        txtSongSearch.getText();
+    }
+
+    @FXML
+    private void songlistSearch(ActionEvent event)
+    {
+    }
+
+    private void setAutoTextChange(TextField textField, ObservableList<Music> list)
+    {
+        textField.textProperty()
+                .addListener((ObservableValue<? extends String> observable,
+                              String oldText,
+                              String newText) ->
+                {
+                    try
+                    {
+                        search(textField.getText(), list);
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println(e.getMessage());
+                    }
+                });
+    }
+
+    private void search(String text, ObservableList<Music> list)
+    {
+        List<Music> result = getSearchResult(text, list);
+        list.clear();
+        list.addAll(result);
+    }
+
+    private List<Music> getSearchResult(String text,
+                                        ObservableList<Music> list)
+    {
+        List<Music> searchResult = new ArrayList<>();
+
+        list.forEach((music) ->
+        {
+            if ((music.getTitle().toLowerCase().contains(text.toLowerCase())
+                 || music.getAlbum().toLowerCase().contains(text.toLowerCase())
+                 || music.getArtist().toLowerCase().contains(text.toLowerCase())))
+            {
+                searchResult.add(music);
+            }
+        });
+
+        return searchResult;
     }
 }

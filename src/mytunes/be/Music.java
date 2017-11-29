@@ -109,7 +109,6 @@ public class Music
     @Override
     public String toString()
     {
-        return "Metadata " + "id: " + id + ", Title: " + title + ", artist: " + artist + ", album: " + album + ", year: " + year
-               + ", duration:" + duration + ", description: " + description + ", location: " + location;
+        return this.title;
     }
 }

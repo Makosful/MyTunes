@@ -50,10 +50,10 @@
                                 <Insets left="10.0" />
                             </padding>
                         </JFXSlider>
-                        <ComboBox fx:id="playbackSpeed" onAction="#playbackAction" prefWidth="125.0" promptText="Speed" style="-fx-background-color: #ccc;">
-                     <HBox.margin>
-                        <Insets right="20.0" top="5.0" />
-                     </HBox.margin>
+                        <ComboBox fx:id="playbackSpeed" onAction="#playbackSpeed" prefWidth="125.0" promptText="Speed" style="-fx-background-color: #ccc;">
+                            <HBox.margin>
+                                <Insets right="20.0" top="5.0" />
+                            </HBox.margin>
                         </ComboBox>
                         <Slider fx:id="progressSlider" onDragDetected="#progressDrag" prefHeight="40.0" prefWidth="950.0">
                             <HBox.margin>
@@ -64,18 +64,18 @@
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding>
+                            <padding>
+                                <Insets left="5.0" />
+                            </padding>
                         </Label>
-                    <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" onAction="#playbackAction" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Option 1" />
-                            <MenuItem mnemonicParsing="false" text="Option 2" />
-                            <MenuItem mnemonicParsing="false" text="Option 3" />
-                            <MenuItem mnemonicParsing="false" text="Option 4" />
-                        </items>
-                    </MenuButton>
+                        <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Option 1" />
+                                <MenuItem mnemonicParsing="false" text="Option 2" />
+                                <MenuItem mnemonicParsing="false" text="Option 3" />
+                                <MenuItem mnemonicParsing="false" text="Option 4" />
+                            </items>
+                        </MenuButton>
                     </children>
                     <FlowPane.margin>
                         <Insets />
@@ -83,26 +83,26 @@
                 </HBox>
             </children>
         </FlowPane>
-          <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <menus>
-                  <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-                      <items>
-                          <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
-                  <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
-                      </items>
-                  </Menu>
-                  <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
-                      <items>
-                          <MenuItem mnemonicParsing="false" text="Delete" />
-                      </items>
-                  </Menu>
-                  <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
-                      <items>
-                          <MenuItem mnemonicParsing="false" text="About" />
-                      </items>
-                  </Menu>
-              </menus>
-          </MenuBar>
+        <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMP3Files" text="Load MP3(s)" />
+                        <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
+                    </items>
+                </Menu>
+                <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
         <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="400.0" AnchorPane.rightAnchor="400.0" AnchorPane.topAnchor="40.0">
             <columns>
                 <TableColumn fx:id="clmNr" prefWidth="75.0" text="Nr." />
@@ -112,39 +112,39 @@
                 <TableColumn fx:id="clmYear" prefWidth="75.0" text="Year" />
             </columns>
         </TableView>
-      <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0">
-         <children>
-            <VBox>
-               <children>
-                  <HBox prefHeight="27.0" prefWidth="370.0" spacing="30.0">
-                     <children>
-                        <JFXButton fx:id="btnCreatePlaylist" layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
-                           <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
-                           </HBox.margin>
-                        </JFXButton>
-                        <JFXButton fx:id="btnDeletePlaylist" onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
-                           <HBox.margin>
-                              <Insets left="0" right="5.0" />
-                           </HBox.margin>
-                        </JFXButton>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <padding>
-                        <Insets left="15.0" right="15.0" />
-                     </padding>
-                  </HBox>
-                    <JFXListView fx:id="playlistPanel" prefHeight="505.0" prefWidth="370.0" style="-fx-background-color: #ccc;">
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </JFXListView>
-               </children>
-            </VBox>
-         </children>
-      </AnchorPane>
+        <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0">
+            <children>
+                <VBox>
+                    <children>
+                        <HBox prefHeight="27.0" prefWidth="370.0" spacing="30.0">
+                            <children>
+                                <JFXButton fx:id="btnCreatePlaylist" layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
+                                    <HBox.margin>
+                                        <Insets left="5.0" right="5.0" />
+                                    </HBox.margin>
+                                </JFXButton>
+                                <JFXButton fx:id="btnDeletePlaylist" onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
+                                    <HBox.margin>
+                                        <Insets left="0" right="5.0" />
+                                    </HBox.margin>
+                                </JFXButton>
+                            </children>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <padding>
+                                <Insets left="15.0" right="15.0" />
+                            </padding>
+                        </HBox>
+                        <JFXListView fx:id="playlistPanel" prefHeight="505.0" prefWidth="370.0" style="-fx-background-color: #ccc;">
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </JFXListView>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
         <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
             <children>
                 <MediaView fx:id="mediaView" fitHeight="250.0" fitWidth="370.0" />
@@ -170,12 +170,12 @@
                                             </HBox.margin>
                                         </JFXButton>
                                     </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <padding>
-                              <Insets left="15.0" right="15.0" />
-                           </padding>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets left="15.0" right="15.0" />
+                                    </padding>
                                 </HBox>
                                 <JFXListView fx:id="listQueue" prefHeight="215.0" prefWidth="370.0" style="-fx-background-color: #ccc;">
                                     <VBox.margin>
