@@ -20,6 +20,7 @@ public class Music
     private int duration;
     private String description;
     private String location;
+    private String genre;
 
     public Music(int id, String title, String album, String artist, int year)
     {
@@ -28,6 +29,11 @@ public class Music
         this.album = album;
         this.artist = artist;
         this.year = year;
+    }
+    
+    public Music()
+    {
+        
     }
 
     public int getId()
@@ -73,6 +79,16 @@ public class Music
     public int getYear()
     {
         return year;
+    }
+    
+    public String getGenre()
+    {
+        return genre;
+    }
+    
+    public void setGenre(String genre)
+    {
+        this.genre = genre;
     }
 
     public void setYear(int year)
