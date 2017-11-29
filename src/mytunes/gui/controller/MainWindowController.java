@@ -5,12 +5,15 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -31,6 +34,8 @@ import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
+import org.apache.tika.exception.TikaException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -495,7 +500,7 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
-    private void LoadMP3Files(ActionEvent event)
+    private void LoadMP3Files(ActionEvent event) throws FileNotFoundException, TikaException, IOException 
     {
         /*
          * Firstly we create a new FileChooser and add an mp3 filter to disable
@@ -516,11 +521,23 @@ public class MainWindowController implements Initializable
         try
         {
             wm.setPathAndName(chosenFiles);
+         
         }
         catch (IOException ex)
         {
             System.out.println(ex.getMessage());
         }
+        
+        try
+        {
+            wm.setMetaData(chosenFiles);
+        }
+        catch (SAXException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+        
+        
 
         if (chosenFiles != null)
         {
