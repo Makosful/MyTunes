@@ -11,12 +11,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
-import javafx.animation.PauseTransition;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -114,10 +112,11 @@ public class MainWindowController implements Initializable
     private Media song;
     private boolean pause;
     Media currentlyPlaying;
-
+    private List<File> pathNames;
+    
     // Model
     private MainWindowModel wm;
-    private List<File> pathNames;
+    
 
     /**
      * Constructor, for all intends and purposes
@@ -137,9 +136,9 @@ public class MainWindowController implements Initializable
 
         // Sets up and connects the various lists to the model
         setupSongList();
+        setupTableContextMenu();
         setupQueueList();
         setupPlaybackSettings();
-        setupTableContextMenu();
         setupPlaylistPanel();
 
         // Places the playback functionality at the very front of the application
@@ -365,15 +364,7 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
-            mPlayer.setOnEndOfMedia(new Runnable() 
-            {
-                @Override
-                public void run()
-                {
-                    wm.getQueueList().remove(0);
-                    changeSongInQue();
-                }
-            });
+            onEndOfmedia();
         } // if the boolean is true we shall stop playing, reverse the boolean and
         // edit the buttons text.
         else
@@ -661,9 +652,27 @@ public class MainWindowController implements Initializable
         File file = new File(music);
         wm.getQueueList().add(file.getAbsolutePath());
     }
+    
+        /**
+     * Plays next song when song ends.
+     */
+    private void onEndOfmedia()
+    {
+        mPlayer.setOnEndOfMedia(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                    wm.getQueueList().remove(0);
+                    changeSongInQue();
+                   
+            }
+        });
+       
+    }
 
     /**
-     * Plays the next song.
+     * Plays the next song, if que is not empty.
      */
     private void changeSongInQue()
     {
@@ -724,10 +733,5 @@ public class MainWindowController implements Initializable
                 wm.createSongPath(songNamePaths.get(i));
             }
         }
-    }
-    @FXML
-    private void test(ActionEvent event)
-    {
-        changeSongInQue();
     }
 }
