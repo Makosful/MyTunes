@@ -160,7 +160,7 @@ public class MainWindowModel
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
 
-            plCont.setSongList(allSongs);
+            plCont.setSonglist(this.allSongs);
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
@@ -175,11 +175,14 @@ public class MainWindowModel
             // Waits for the user to give the playlist a name
 
             // Adds the new playlist to the list of lists, dawg
-            Playlist pl = new Playlist(plCont.getTitle());
-            this.playlists.add(pl);
+            if (plCont.shouldSave())
+            {
+                Playlist pl = new Playlist(plCont.getTitle());
+                this.playlists.add(pl);
 
-            // Saves the playlist to storage
-            bllManager.addPlaylist(pl); // Not implimented yet
+                // Saves the playlist to storage
+                bllManager.addPlaylist(pl); // Not implimented yet
+            }
         }
         catch (IOException ex)
         {

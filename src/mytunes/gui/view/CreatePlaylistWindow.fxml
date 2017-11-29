@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
+<AnchorPane id="AnchorPane" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
     <children>
         <Label alignment="CENTER" layoutX="286.0" layoutY="31.0" text="Create a new Playlist" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <font>
@@ -49,7 +49,7 @@
                             </font>
                         </Label>
                         <TextField fx:id="txtPlaylistSearch" onAction="#playlistSearch" />
-                        <JFXListView fx:id="listInPlaylist" prefHeight="350.0">
+                        <JFXListView fx:id="listPlaylist" prefHeight="350.0">
                             <padding>
                                 <Insets bottom="20.0" />
                             </padding>
@@ -64,7 +64,7 @@
                             </font>
                         </Label>
                         <TextField fx:id="txtSongSearch" onAction="#songlistSearch" />
-                        <JFXListView fx:id="listNotInList" prefHeight="350.0">
+                        <JFXListView fx:id="listSonglist" prefHeight="350.0">
                             <padding>
                                 <Insets bottom="20.0" />
                             </padding>

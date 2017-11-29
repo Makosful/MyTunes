@@ -219,4 +219,14 @@ public class CreatePlaylistWindowController implements Initializable
 
         return searchResult;
     }
+
+    public void setSonglist(ObservableList<Music> allSongs)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean shouldSave()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
