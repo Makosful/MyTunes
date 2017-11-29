@@ -8,6 +8,7 @@ import java.util.List;
 import mytunes.be.Music;
 import mytunes.be.Path;
 
+
 /**
  *
  * @author Axl
@@ -29,6 +30,45 @@ import mytunes.be.Path;
 
         return songs;
     }
+    
+    public Music setMusicAlbum(Music music) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            String sql = "INSERT INTO Album VALUES (?, ?);";
+            PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, music.getAlbum());
+            statement.setInt(2, music.getYear());
+            statement.executeUpdate();
+        }
+        throw new RuntimeException("Can't get album");
+    }
+    
+    public Music setMusicArtist(Music music) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            String sql = "INSERT INTO Artist VALUES (?);";
+            PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, music.getArtist());
+            statement.executeUpdate();
+        }
+        throw new RuntimeException("Can't get album");
+    }
+    
+    public Music setMusicGenre(Music music) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            String sql = "INSERT INTO Artist VALUES (?);";
+            PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, music.getGenre());
+            statement.executeUpdate();
+        }
+        throw new RuntimeException("Can't get music genre");
+    }
+    
+
 
     public Path createSongPath(String pathname) throws SQLServerException, SQLException
     {
@@ -39,19 +79,18 @@ import mytunes.be.Path;
 
             PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, pathname);
-
-            if (statement.executeUpdate() == 1)
-            {
-                ResultSet rs = statement.getGeneratedKeys();
-                rs.next();
-                int id = rs.getInt(1);
-                Path path = new Path(pathname);
-                return path;
-            }
+            statement.executeUpdate();
+            
             throw new RuntimeException("Song path was not created");
-
         }
     }
+    
+    public void getIds()
+    {
+        
+    }
+    
+    
     
     public List<String> checkIfIsInDatabase() throws SQLServerException, SQLException
     {
@@ -65,6 +104,7 @@ import mytunes.be.Path;
 
             while (rs.next()) 
             {
+                rs.getInt("id");
                 dataBaseSongNames.add(rs.getString("pathname"));
             }
             return dataBaseSongNames;
