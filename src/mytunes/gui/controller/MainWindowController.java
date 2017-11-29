@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -102,6 +103,7 @@ public class MainWindowController implements Initializable
     private boolean isPlaying;
     private boolean isLooping;
     private Duration mpduration;
+    private Duration timeCurrently;
     private Media song;
     private boolean pause;
     Media currentlyPlaying;
@@ -140,7 +142,8 @@ public class MainWindowController implements Initializable
         setupPlaybackSettings();
         setupTableContextMenu();
         setupPlaylistPanel();
-
+        setupMediaPlayer();
+        
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
     }
@@ -261,7 +264,7 @@ public class MainWindowController implements Initializable
                                         "175% speed",
                                         "200% speed");
     }
-    
+
     /**
      * Handles the playback itself
      *
@@ -318,9 +321,10 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Sets up the Media Player
+     * Handles the file chooser and allows multiple selections of files to add (
+     * NEEDS A FIX TO ADD MEDIA PLAYER TO ALL FILES )
      */
-    private void setupMediaPlayer()
+    private void choosingFiles()
     {
         File file;
         if (wm.getQueueList().isEmpty())
@@ -336,22 +340,26 @@ public class MainWindowController implements Initializable
         song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
-        mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
+    }
 
-        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
+    /**
+     * Sets up the Media Player
+     */
+    private void setupMediaPlayer()
+    {
+        choosingFiles(); //Needs a fix as mentioned in the method
+        //As soon as the media player is ready to play a song we allow for manipulating the media file (playback speed, volume etc.)
         mPlayer.setOnReady(() ->
         {
+            mediaView = new MediaView(mPlayer);
+
+            mpduration = mPlayer.getTotalDuration();
             enableSettings();
-            mpduration = mPlayer.getMedia().getDuration();
-            progressSliderSetup(mPlayer);
-            updateProgressSlider();
-            progressSlider.maxProperty().bind(Bindings.createDoubleBinding(
-                    () -> mpduration.toSeconds(),
-                    mPlayer.totalDurationProperty()));
+            progressSlider.setValue(0.0);
+            progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
         });
     }
-    
+
     private void enableSettings()
     {
         if (volumeSlider.isDisabled() && btnLoop.isDisabled() && playbackSpeed.isDisabled())
@@ -359,25 +367,25 @@ public class MainWindowController implements Initializable
             volumeSlider.setDisable(false);
             btnLoop.setDisable(false);
             playbackSpeed.setDisable(false);
-            progressSlider.setStyle("-fx-control-inner-background:  #0E9654;");
+            progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
         }
     }
 
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
-
         if (wm.getQueueList().isEmpty() && !isPlaying)
         {
-            setupMediaPlayer();
+            enableSettings();
         }
         if (isPlaying == false)
         {
+            progressListeners();
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
-        } // if the boolean is true we shall stop playing, reverse the boolean and
-        // edit the buttons text.
+        }
+        // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
         else
         {
             mPlayer.pause();
@@ -386,7 +394,7 @@ public class MainWindowController implements Initializable
         }
     }
 
-    private void progressSliderSetup(MediaPlayer mPlayer)
+    private void progressListeners()
     {
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
@@ -394,79 +402,22 @@ public class MainWindowController implements Initializable
             //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
             if (progressSlider.isValueChanging())
             {
-                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-                updateProgressSlider();
-                //updateSliders();
+                mPlayer.seek(Duration.seconds(progressSlider.getValue()));
             }
         });
         //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
         progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
         {
-            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-            updateProgressSlider();
-            //updateSliders();
-            
+            mPlayer.seek(Duration.seconds(progressSlider.getValue()));
+
         });
-    }
-    
-    
-//    private void updateSliders()
-//    {
-//        if (mpduration != null && progressSlider != null && volumeSlider != null && duration != null) {
-//        Platform.runLater(new Runnable() {
-//            public void run() {
-//                Duration currentTime = mp.getCurrentTime();
-//                playTime.setText(formatTime(currentTime, duration));
-//                timeSlider.setDisable(duration.isUnknown());
-//                if (!timeSlider.isDisabled() && duration.greaterThan(Duration.ZERO) && !timeSlider.isValueChanging()) {
-//                    timeSlider.setValue(currentTime.divide(duration).toMillis() * 100.0);
-//                }
-//                if (!volumeSlider.isValueChanging()) {
-//                    volumeSlider.setValue((int) Math.round(mp.getVolume() * 100));
-//                }
-//            }
-//        });
-//    }
-//    }
 
-    private void updateProgressSlider()
-    {
-        double currentTime = mPlayer.getCurrentTime().toSeconds();
-        double totalTime = mPlayer.getTotalDuration().toSeconds();
-
-        double cTMinutes = (currentTime / 60);
-        double cTSeconds = currentTime;
-
-        String cTimeFormat = String.format("%.01f:%.01f", cTMinutes, cTSeconds);
-
-        double tTMinutes = (totalTime / 60);
-        double tTSeconds = totalTime;
-        String tTimeFormat = String.format("%.01f:%.01f", tTMinutes, tTSeconds);
-
-        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
-
-        mPlayer.setOnEndOfMedia(new Runnable()
+        mPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration duration, Duration current) ->
         {
-            @Override
-            public void run()
-            {
-                System.out.println("Song has finished");
-                resetToDefault();
-            }
-
-            private void resetToDefault()
-            {
-                
-            }
+            progressSlider.setValue(current.toSeconds());
         });
-        
-        
-        //FOR TESTING
-        System.out.println("duration in minutes:" + mpduration.toMinutes());
-        System.out.println("duration in seconds:" + mpduration.toSeconds());
-        System.out.println("duration in milliseconds:" + mpduration.toMillis());
     }
-    
+
     /**
      * Tells the playback to stop entirely
      *
@@ -506,8 +457,8 @@ public class MainWindowController implements Initializable
         }
     }
 
-    /**
-     * Handles the volume
+     /**
+     * Will handle the playback duration
      *
      * @param event
      */
@@ -528,11 +479,6 @@ public class MainWindowController implements Initializable
         });
     }
 
-    /**
-     * Will handle the playback duration
-     *
-     * @param event
-     */
     /**
      * Loads multiple MP3 files
      *
@@ -676,14 +622,11 @@ public class MainWindowController implements Initializable
 
         mPlayer = new MediaPlayer(song);
         mediaView = new MediaView(mPlayer);
-        progressSliderSetup(mPlayer);
 
         //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
-            progressSliderSetup(mPlayer);
             mpduration = mPlayer.getMedia().getDuration();
-            updateProgressSlider();
         });
         mPlayer.play();
     }
@@ -691,6 +634,58 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
-        
+
+    }
+
+    // COPY PASTED METHOD TO FORMAT TIME PROPERLY
+    private static String formatTime(Duration timeCurrently, Duration duration)
+    {
+        int intElapsed = (int) Math.floor(timeCurrently.toSeconds());
+        int elapsedHours = intElapsed / (60 * 60);
+        if (elapsedHours > 0)
+        {
+            intElapsed -= elapsedHours * 60 * 60;
+        }
+        int elapsedMinutes = intElapsed / 60;
+        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
+                             - elapsedMinutes * 60;
+
+        if (duration.greaterThan(Duration.ZERO))
+        {
+            int intDuration = (int) Math.floor(duration.toSeconds());
+            int durationHours = intDuration / (60 * 60);
+            if (durationHours > 0)
+            {
+                intDuration -= durationHours * 60 * 60;
+            }
+            int durationMinutes = intDuration / 60;
+            int durationSeconds = intDuration - durationHours * 60 * 60
+                                  - durationMinutes * 60;
+            if (durationHours > 0)
+            {
+                return String.format("%d:%02d:%02d/%d:%02d:%02d",
+                                     elapsedHours, elapsedMinutes, elapsedSeconds,
+                                     durationHours, durationMinutes, durationSeconds);
+            }
+            else
+            {
+                return String.format("%02d:%02d/%02d:%02d",
+                                     elapsedMinutes, elapsedSeconds, durationMinutes,
+                                     durationSeconds);
+            }
+        }
+        else
+        {
+            if (elapsedHours > 0)
+            {
+                return String.format("%d:%02d:%02d", elapsedHours,
+                                     elapsedMinutes, elapsedSeconds);
+            }
+            else
+            {
+                return String.format("%02d:%02d", elapsedMinutes,
+                                     elapsedSeconds);
+            }
+        }
     }
 }
