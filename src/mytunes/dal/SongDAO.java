@@ -75,39 +75,47 @@ import mytunes.be.Path;
     /**
      * Not finished yet, ...but if the artist already exsists in the artist table get the id, else insert the artist and get the artistId
      * @param artist
+     * @return id
      * @throws SQLServerException
      * @throws SQLException 
      */
-    public void setArtist(String artist) throws SQLServerException, SQLException
+    public int setArtist(String artist) throws SQLServerException, SQLException
     {
+        
+        
         try (Connection con = db.getConnection())
         {
-                String sqlSelect = "SELECT * FROM Artist WHERE artist LIKE ?";
-                PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
-                preparedStatement.setString(1, "%"+artist+"%");
-                ResultSet rs = preparedStatement.executeQuery();
-                
-                if(rs.next()) 
+            int id = 0;
+
+            String sqlSelect = "SELECT id FROM Artist WHERE artist LIKE ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            preparedStatement.setString(1, "%"+artist+"%");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if(rs.next()) 
+            {
+                id = rs.getInt("id");
+            }
+            else
+            {
+                String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                preparedStatementInsert.setString(1, "%"+artist+"%");
+                preparedStatementInsert.executeUpdate();
+
+                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+                while(rsi.next())
                 {
-                   int id = rs.getInt("id");
+                    id = rsi.getInt("id");
+
                 }
-                else
-                {
-                    String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
-                    PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
-                    preparedStatementInsert.setString(1, "%"+artist+"%");
-                    preparedStatementInsert.executeUpdate();
-                    
-                    ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
-                    
-                    while(rsi.next())
-                    {
-                        int id = rsi.getInt("id");
-                    }
-                } 
-                
-                
+            } 
+
+            return id;
         }
+        
+        
     }
 
     
