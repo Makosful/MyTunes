@@ -282,7 +282,18 @@ public class MainWindowController implements Initializable
                 });
                 loadSong.setOnAction(action ->
                 {
-                    LoadMP3Files(action);
+                    try
+                    {
+                        LoadMP3Files(action);
+                    }
+                    catch (TikaException ex)
+                    {
+                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    catch (IOException ex)
+                    {
+                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 });
                 clearQueueContext.setOnAction(action ->
                 {
