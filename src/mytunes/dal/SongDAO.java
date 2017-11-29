@@ -87,7 +87,7 @@ import mytunes.be.Path;
         int artistId = setArtist(song.getArtist());
         int albumId = setAlbum(song.getAlbum());
         int genreId = setGenre(song.getGenre());
-        int pathId = setPath();
+        int pathId = setPath(song.getSongPathName());
         
         try (Connection con = db.getConnection())
         {
@@ -102,7 +102,7 @@ import mytunes.be.Path;
                 preparedStatementInsert.executeUpdate();
 
                 ResultSet rs = preparedStatementInsert.getGeneratedKeys();
-
+                
         
         }
     }
@@ -249,10 +249,34 @@ import mytunes.be.Path;
         
     }
 
-    private int setPath()
+    /**
+     * 
+     * @param songPathName
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    private int setPath(String songPathName) throws SQLServerException, SQLException
     {
+        try (Connection con = db.getConnection())
+        {
+                int id = 0;
+                String sqlInsert = "INSERT INTO Path (pathname) VALUES (?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                preparedStatementInsert.setString(1, songPathName);
+                preparedStatementInsert.executeUpdate();
+
+                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+                while(rsi.next())
+                {
+                    id = rsi.getInt("id");
+
+                }
+                
+                return id;
+        }
         
-        return 0;
     }
     
     
