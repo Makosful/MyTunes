@@ -17,7 +17,7 @@ public class Music
     private String artist;
     private String album;
     private int year;
-    private int duration;
+    private double duration;
     private String description;
     private String location;
     private String genre;
@@ -96,12 +96,12 @@ public class Music
         this.year = year;
     }
 
-    public int getDuration()
+    public double getDuration()
     {
         return duration;
     }
 
-    public void setDuration(int duration)
+    public void setDuration(double duration)
     {
         this.duration = duration;
     }
