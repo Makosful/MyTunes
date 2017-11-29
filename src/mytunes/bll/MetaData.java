@@ -30,6 +30,15 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class MetaData {
        
+    private String title;
+    private String artist;
+    private String album;
+    private int year;
+    private int duration;
+    private String description;
+    private String location;
+    
+    
     
     public void MetaData(List<File> chosenFiles) throws FileNotFoundException, IOException, SAXException, TikaException{
             
@@ -41,7 +50,7 @@ public class MetaData {
             
             for(int i = 0; i < chosenFiles.size(); i++){
                 
-                Music track = new Music();
+                Music track = new Music(0, null, null, null, 0);
                 
                 String fileString = chosenFiles.get(i).getAbsolutePath();
 
@@ -60,7 +69,7 @@ public class MetaData {
                 track.setTitle(meta.get("title"));
                 track.setAlbum(meta.get("xmpDM:album"));
                 track.setYear(Integer.parseInt(meta.get("xmpDM:releaseDate")));
-                track.setGenre(meta.get("xmpDM:genre"));
+//                track.setGenre(meta.get("xmpDM:genre"));
                 track.SetDescription(meta.get("xmpDM:logComment")); 
                 //track.setComposer(meta.get("xmpDM:composer"));
               //  track.setDuration(Integer.parseInt(meta.get("xmpDM:duration")));
@@ -73,6 +82,33 @@ public class MetaData {
                // System.out.println("genre:"+meta.get("xmpDM:genre"));
                // System.out.println("composer:"+meta.get("xmpDM:composer"));
                // System.out.println("genre:"+meta.get("xmpDM:logComment"));
+               
+               
+                if(track.getArtist().isEmpty())
+                {
+                    String songName = chosenFiles.get(i).getName();
+                    if(songName.contains("."))
+                    {
+                       songName = songName.substring(0, chosenFiles.get(i).getName().lastIndexOf("."));
+                    }
+                    
+                    if(songName.contains("-"))
+                    {
+                        String[] artistAndTitle = songName.split("-", 2);
+                        
+                        artist = artistAndTitle[0];
+                        
+                        title = artistAndTitle[1];
+                    }
+                    else
+                    {
+                        artist = songName;
+                    }
+                    
+                    System.out.println("artist: "+artist+" title:"+title);
+                    
+                    
+                }
 
                 
                 tracks.add(track);
