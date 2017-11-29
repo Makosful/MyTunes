@@ -78,6 +78,26 @@ public class MainWindowModel
     {
         return allSongs;
     }
+
+    /**
+     * Replaces all the items in the Queue with the selected items
+     *
+     * @param selectedItems
+     */
+    public void setQueuePlay(ObservableList<Music> selectedItems)
+    {
+        this.queue.clear();
+        ArrayList<File> files = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++)
+        {
+            File file = new File(selectedItems.get(i).getLocation());
+            files.add(file);
+        }
+        for (int i = 0; i < files.size(); i++)
+        {
+            this.queue.add(files.get(i).getAbsolutePath());
+        }
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Queue List">

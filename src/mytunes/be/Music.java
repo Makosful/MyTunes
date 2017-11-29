@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mytunes.be;
 
 /**
@@ -21,13 +16,14 @@ public class Music
     private String description;
     private String location;
 
-    public Music(int id, String title, String album, String artist, int year)
+    public Music(int id, String title, String album, String artist, int year, String location)
     {
         this.id = id;
         this.title = title;
         this.album = album;
         this.artist = artist;
         this.year = year;
+        this.location = location;
     }
 
     public int getId()

@@ -30,18 +30,19 @@ public class BLLManager
 
     public List<Music> getSongList() throws IOException
     {
-        return mm.getAllSongs();
+        return mm.getAllSongsLocal();
     }
 
     public void createSongPath(String setPath) throws SQLException
     {
         songDAO.createSongPath(setPath);
     }
-    
+
     public List<String> checkIfIsInDatabase() throws SQLException
     {
         return songDAO.checkIfIsInDatabase();
     }
+
     public ObservableList<Playlist> getPlaylists()
     {
         return plDAO.getPlaylists();

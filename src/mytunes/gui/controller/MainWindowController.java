@@ -157,7 +157,7 @@ public class MainWindowController implements Initializable
 
         // Loads the list of saved songs from the storage
         wm.loadSongList();
-        
+
         // Fills the table with all loaded lists
         tblSongList.setItems(wm.getSongList());
 
@@ -167,7 +167,7 @@ public class MainWindowController implements Initializable
 
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        
+
         // Defines the context menu for the table
         createTableContextMenu();
     }
@@ -207,10 +207,12 @@ public class MainWindowController implements Initializable
 
                     if (!selectedItems.isEmpty())
                     {
-                        for (Music item : selectedItems)
+                        if (isPlaying)
                         {
-                            System.out.println(item.getTitle());
+                            this.songStop(action);
                         }
+                        wm.setQueuePlay(selectedItems);
+                        //this.playbackAction(action);
                     }
                 });
 
