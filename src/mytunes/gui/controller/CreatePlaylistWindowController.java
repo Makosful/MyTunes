@@ -175,7 +175,8 @@ public class CreatePlaylistWindowController implements Initializable
     {
     }
 
-    private void setAutoTextChange(TextField textField, ObservableList<Music> list)
+    private void setAutoTextChange(TextField textField,
+                                   ObservableList<Music> list)
     {
         textField.textProperty()
                 .addListener((ObservableValue<? extends String> observable,
@@ -193,10 +194,11 @@ public class CreatePlaylistWindowController implements Initializable
                 });
     }
 
-    private void search(String text, ObservableList<Music> list)
+    private void search(String text,
+                        ObservableList<Music> list)
     {
-        List<Music> result = getSearchResult(text, list);
         list.clear();
+        List<Music> result = getSearchResult(text, wm.getSongList());
         list.addAll(result);
     }
 
