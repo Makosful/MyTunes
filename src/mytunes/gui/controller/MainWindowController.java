@@ -176,18 +176,27 @@ public class MainWindowController implements Initializable
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
+
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
         cm.getItems().add(play);
+
         // Creates a new item for the menu and puts it in
         MenuItem addQueue = new MenuItem("Add to queue");
         cm.getItems().add(addQueue);
+
         // Creates a new item for the menu and puts it in
         MenuItem loadSong = new MenuItem("Load Song");
         cm.getItems().add(loadSong);
+
         // Creates a new item for the menu and puts it in
         MenuItem clearQueueContext = new MenuItem("Clear Queue");
         cm.getItems().add(clearQueueContext);
+
+        MenuItem addToPlaylist1 = new MenuItem("Add to Playlist > add");
+        cm.getItems().add(addToPlaylist1);
+        MenuItem addToPlaylist2 = new MenuItem("Add to Playlist > too");
+        cm.getItems().add(addToPlaylist2);
 
         tblSongList.setRowFactory(tv ->
         {
@@ -212,18 +221,26 @@ public class MainWindowController implements Initializable
                             this.songStop(action);
                         }
                         wm.setQueuePlay(selectedItems);
-                        //this.playbackAction(action);
+                        setupMediaPlayer();
+                        musicPlayPause(action);
                     }
                 });
 
                 addQueue.setOnAction(action ->
                 {
-                    System.out.println("Adds to queue");
+                    ObservableList<Music> selectedItems = tblSongList
+                            .getSelectionModel().getSelectedItems();
+
+                    if (!selectedItems.isEmpty())
+                    {
+                        wm.setQueueAdd(selectedItems);
+                        setupMediaPlayer();
+                    }
                 });
 
                 loadSong.setOnAction(action ->
                 {
-                    //LoadMP3Files(action);
+                    LoadMP3Files(action);
                 });
 
                 clearQueueContext.setOnAction(action ->

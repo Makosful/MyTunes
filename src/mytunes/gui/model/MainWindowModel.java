@@ -78,6 +78,26 @@ public class MainWindowModel
     {
         return allSongs;
     }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Queue List">
+    /**
+     * Clears the Queue List entirely
+     */
+    public void clearQueueList()
+    {
+        this.queue.clear();
+    }
+
+    /**
+     * Gets the queue list
+     *
+     * @return The list containing the queues
+     */
+    public ObservableList<String> getQueueList()
+    {
+        return queue;
+    }
 
     /**
      * Replaces all the items in the Queue with the selected items
@@ -98,25 +118,24 @@ public class MainWindowModel
             this.queue.add(files.get(i).getAbsolutePath());
         }
     }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Queue List">
-    /**
-     * Clears the Queue List entirely
-     */
-    public void clearQueueList()
-    {
-        this.queue.clear();
-    }
 
     /**
-     * Gets the queue list
+     * Adds the selected items to the end of the queue list
      *
-     * @return The list containing the queues
+     * @param selectedItems
      */
-    public ObservableList<String> getQueueList()
+    public void setQueueAdd(ObservableList<Music> selectedItems)
     {
-        return queue;
+        ArrayList<File> files = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++)
+        {
+            File file = new File(selectedItems.get(i).getLocation());
+            files.add(file);
+        }
+        for (int i = 0; i < files.size(); i++)
+        {
+            this.queue.add(files.get(i).getAbsolutePath());
+        }
     }
     //</editor-fold>
 
