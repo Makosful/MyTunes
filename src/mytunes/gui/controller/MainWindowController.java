@@ -400,11 +400,11 @@ public class MainWindowController implements Initializable
     {
         mPlayer.currentTimeProperty().addListener((Observable ov) ->
         {
-            updateValues();
+            updateSliderAndTimer();
         });
     }
 
-    private void updateValues()
+    private void updateSliderAndTimer()
     {
         Duration currentTime = mPlayer.getCurrentTime();
         lblTimer.setText(formatTime(currentTime, mpduration));
