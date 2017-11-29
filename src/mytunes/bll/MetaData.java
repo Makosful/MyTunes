@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.dal.SongDAO;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -33,99 +34,208 @@ public class MetaData {
     private String title;
     private String artist;
     private String album;
-    private int year;
-    private int duration;
+    private String year;
+    private String genre;
+    private String duration;
     private String description;
     private String location;
     
     
-    
-    public void MetaData(List<File> chosenFiles) throws FileNotFoundException, IOException, SAXException, TikaException{
-            
-            String name = "C:\\Users\\B\\Desktop\\Davids mappe\\datamatiker\\Javafx\\MetaData\\media\\Elevator (Control).mp3";
-            
-            List<Music> tracks = new ArrayList();
+    SongDAO sDAO;
 
-         
-            
-            for(int i = 0; i < chosenFiles.size(); i++){
-                
-                Music track = new Music(0, null, null, null, 0);
-                
-                String fileString = chosenFiles.get(i).getAbsolutePath();
-
-
-                Metadata meta;
-                try (InputStream input = new FileInputStream(new File(fileString))) {
-                    ContentHandler handler = (ContentHandler) new DefaultHandler();
-                    meta = new Metadata();
-                    Parser parser = new Mp3Parser();
-                    ParseContext parseCtx  = new ParseContext();
-                    parser.parse(input, handler, meta, parseCtx);
-                }
-
-              
-                track.setArtist(meta.get("xmpDM:artist"));
-                track.setTitle(meta.get("title"));
-                track.setAlbum(meta.get("xmpDM:album"));
-                track.setYear(Integer.parseInt(meta.get("xmpDM:releaseDate")));
-//                track.setGenre(meta.get("xmpDM:genre"));
-                track.SetDescription(meta.get("xmpDM:logComment")); 
-                //track.setComposer(meta.get("xmpDM:composer"));
-              //  track.setDuration(Integer.parseInt(meta.get("xmpDM:duration")));
-                
-                
-                
-                //System.out.println("artist:"+meta.get("xmpDM:artist"));
-               // System.out.println("title:"+meta.get("title"));
-               // System.out.println("releasedate:"+meta.get("xmpDM:releaseDate"));
-               // System.out.println("genre:"+meta.get("xmpDM:genre"));
-               // System.out.println("composer:"+meta.get("xmpDM:composer"));
-               // System.out.println("genre:"+meta.get("xmpDM:logComment"));
-               
-               
-                if(track.getArtist().isEmpty())
-                {
-                    String songName = chosenFiles.get(i).getName();
-                    if(songName.contains("."))
-                    {
-                       songName = songName.substring(0, chosenFiles.get(i).getName().lastIndexOf("."));
-                    }
-                    
-                    if(songName.contains("-"))
-                    {
-                        String[] artistAndTitle = songName.split("-", 2);
-                        
-                        artist = artistAndTitle[0];
-                        
-                        title = artistAndTitle[1];
-                    }
-                    else
-                    {
-                        artist = songName;
-                    }
-                    
-                    System.out.println("artist: "+artist+" title:"+title);
-                    
-                    
-                }
-
-                
-                tracks.add(track);
-        
-            }
-            
-          System.out.println(tracks.get(0).getArtist()+"!!!Virker");  
-    
-    
+    public MetaData() throws IOException
+    {
+        this.sDAO = new SongDAO();
     }
     
     
+        /**
+         * 
+         * @param chosenFiles
+         * @throws FileNotFoundException
+         * @throws IOException
+         * @throws SAXException
+         * @throws TikaException 
+         */
+        public void MetaData(List<File> chosenFiles) throws FileNotFoundException, IOException, SAXException, TikaException{
+
+
+            List<Music> tracks = new ArrayList();
+
+
+
+            for(int i = 0; i < chosenFiles.size(); i++){
+
+
+                setMetaData(chosenFiles.get(i).getAbsolutePath());
+
+                validateMetaData(chosenFiles.get(i));
+
+                Music track = createMusicObject();
+
+                tracks.add(track);
+
+                /*
+                System.out.println("Artist: "+tracks.get(i).getArtist());   
+                System.out.println("Title: "+tracks.get(i).getTitle());
+                System.out.println("Genre: "+tracks.get(i).getGenre());
+                System.out.println("Album: "+tracks.get(i).getAlbum());
+                System.out.println("Description: "+tracks.get(i).getDescription());
+                System.out.println("Year: "+tracks.get(i).getYear());
+                System.out.println("Duration: "+tracks.get(i).getDuration());
+                */
+
+            }
+
+            // sDAO.setMusicAlbum();
+           // sDAO.setMusicArtist();
+           // sDAO.setMusicGenre();
+
+
+        }
     
+
     
+
+        /**
+         * 
+         * @param fileString
+         * @throws FileNotFoundException
+         * @throws IOException
+         * @throws SAXException
+         * @throws TikaException 
+         */
+        private void setMetaData(String fileString)throws FileNotFoundException, IOException, SAXException, TikaException
+        {
+
+
+            Metadata meta;
+            try (InputStream input = new FileInputStream(new File(fileString))) {
+                ContentHandler handler = (ContentHandler) new DefaultHandler();
+                meta = new Metadata();
+                Parser parser = new Mp3Parser();
+                ParseContext parseCtx  = new ParseContext();
+                parser.parse(input, handler, meta, parseCtx);
+            }
+
+
+            artist = meta.get("xmpDM:artist");
+            title = meta.get("title");
+            album = meta.get("xmpDM:album");
+            year = meta.get("xmpDM:releaseDate");
+            genre = meta.get("xmpDM:genre");
+            description = meta.get("xmpDM:logComment"); 
+            duration = meta.get("xmpDM:duration");        
+
+            
+        }
     
-    
-    
+
+
+        /**
+         * 
+         * @param chosenFile 
+         */
+        private void validateMetaData(File chosenFile)
+        {
+
+            if(artist == null && title == null)
+            {
+                String songName = chosenFile.getName();
+
+                if(songName.contains("."))
+                {
+                   songName = songName.substring(0, chosenFile.getName().lastIndexOf("."));
+                }
+
+                if(songName.contains("-"))
+                {
+                    String[] artistAndTitle = songName.split("-", 2);
+
+                    artist = artistAndTitle[0];
+
+                    title = artistAndTitle[1];
+                }
+                else
+                {
+                    artist = songName;
+
+                    title = "title";
+                }
+
+
+            }
+            else if(artist == null)
+            {
+                artist = "artist";
+            }
+            else if(title == null)
+            {
+                title = "title";
+            }
+            
+            
+            
+            if(album == null)
+            {
+                album = "album";
+            }
+            
+            if(genre == null)
+            {
+                genre = "genre";
+            }
+            
+            if(year == null)
+            {
+                year = "1337";
+            }
+            
+            if(description == null)
+            {
+                description = "No description";
+            }
+            
+            if(duration == null)
+            {
+                description = "0";
+            }
+
+        }
+
+        
+        
+        
+        
+        
+        /**
+         * 
+         * @return 
+         */
+        private Music createMusicObject()
+        {
+            Music track = new Music();
+            
+            track.setArtist(artist);
+            track.setTitle(title);
+            track.setGenre(genre);
+            track.setAlbum(album);
+            track.SetDescription(description);
+            track.setYear(Integer.parseInt(year));
+            track.setDuration(Double.parseDouble(duration));
+
+            return track;
+        }
+
+
+
+
+
+
+
+
+
+
     
     
     
