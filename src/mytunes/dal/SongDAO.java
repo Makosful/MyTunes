@@ -134,7 +134,7 @@ import mytunes.be.Path;
         {
             int id = 0;
 
-            String sqlSelect = "SELECT id FROM Album WHERE album = ?";
+            String sqlSelect = "SELECT id FROM Albums WHERE album = ?";
             PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
             preparedStatement.setString(1, album);
             ResultSet rs = preparedStatement.executeQuery();
@@ -145,9 +145,55 @@ import mytunes.be.Path;
             }
             else
             {
-                String sqlInsert = "INSERT INTO Album (album) VALUES (?)";
+                String sqlInsert = "INSERT INTO Albums (album) VALUES (?)";
                 PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
                 preparedStatementInsert.setString(1, album);
+                preparedStatementInsert.executeUpdate();
+
+                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+                while(rsi.next())
+                {
+                    id = rsi.getInt("id");
+
+                }
+            } 
+
+            return id;
+        }
+        
+        
+    }
+    
+    /**
+     * 
+     * @param genre
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int setGenre(String genre) throws SQLServerException, SQLException
+    {
+        
+        
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
+
+            String sqlSelect = "SELECT id FROM Genre WHERE genre = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            preparedStatement.setString(1, genre);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if(rs.next()) 
+            {
+                id = rs.getInt("id");
+            }
+            else
+            {
+                String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                preparedStatementInsert.setString(1, genre);
                 preparedStatementInsert.executeUpdate();
 
                 ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
