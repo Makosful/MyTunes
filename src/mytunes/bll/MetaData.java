@@ -10,7 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
@@ -87,10 +87,20 @@ public class MetaData {
 
             }
 
-            // sDAO.setMusicAlbum();
-           // sDAO.setMusicArtist();
-           // sDAO.setMusicGenre();
-
+            
+            tracks.forEach((track) ->
+            {
+                try
+                {
+                    sDAO.setSong(track);
+                }
+                catch (SQLException ex)
+                {
+                    System.out.println(ex.getMessage());
+                }
+            });
+           
+           
 
         }
     
