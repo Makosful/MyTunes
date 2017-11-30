@@ -146,7 +146,7 @@ public class MainWindowController implements Initializable
         setupQueueList();
         setuPlaybackSpeedSettings();
         setupPlaylistPanel();
-        setupMediaPlayer();
+        //setupMediaPlayer();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -483,7 +483,6 @@ public class MainWindowController implements Initializable
             mediaView = new MediaView(mPlayer);
 
             mpduration = mPlayer.getTotalDuration();
-            enableSettings();
             progressSlider.setValue(0.0);
             progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
 
@@ -518,6 +517,7 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
+            enableSettings();
             mPlayer.setOnEndOfMedia(() ->
             {
                 if (!wm.getQueueList().isEmpty())
