@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -357,10 +356,13 @@ public class MainWindowController implements Initializable
     @FXML
     private void songStop(ActionEvent event)
     {
-        mPlayer.stop();
-        isPlaying = false;
-        btnPlayPause.setText("Play");
-        progressSlider.setValue(0);
+        if (isPlaying)
+        {
+            mPlayer.stop();
+            isPlaying = false;
+            btnPlayPause.setText("Play");
+            progressSlider.setValue(0);
+        }
     }
 
     /**
@@ -534,15 +536,7 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-        try
-        {
-            wm.setPathAndName(chosenFiles);
-        }
-        catch (IOException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-
+        //wm.setPathAndName(chosenFiles);
         if (chosenFiles != null)
         {
             for (int i = 0; i < chosenFiles.size(); i++)

@@ -148,7 +148,7 @@ public class MainWindowModel
         try
         {
             // Gets a hold of the FXML and controller
-            File fxml = new File("./src/MyTunes/gui/view/CreatePlaylistWindow.fxml");
+            File fxml = new File("src/mytunes/gui/view/CreatePlaylistWindow.fxml");
             FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
 
             // Loads the window
@@ -160,7 +160,7 @@ public class MainWindowModel
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
 
-            plCont.setSonglist(this.allSongs);
+            plCont.setSongList(this.allSongs);
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");

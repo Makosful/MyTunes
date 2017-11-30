@@ -35,15 +35,16 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private TextField txtSongSearch;
     @FXML
-    private JFXListView<Music> listInPlaylist;
+    private JFXListView<Music> listPlaylist;
     @FXML
-    private JFXListView<Music> listNotInList;
+    private JFXListView<Music> listSonglist;
 
     private String title;
     private Stage stage;
     private String error;
     private ObservableList<Music> playlist;
     private ObservableList<Music> songlist;
+    private boolean save = false;
 
     // Objects
     MainWindowModel wm = new MainWindowModel();
@@ -61,15 +62,15 @@ public class CreatePlaylistWindowController implements Initializable
         this.playlist = FXCollections.observableArrayList();
         this.songlist = FXCollections.observableArrayList();
 
-        listNotInList.setItems(wm.getSongList());
-        listInPlaylist.setItems(playlist);
-        listNotInList.setItems(songlist);
+        listSonglist.setItems(wm.getSongList());
+        listPlaylist.setItems(playlist);
+        listSonglist.setItems(songlist);
 
         setAutoTextChange(txtPlaylistSearch, playlist);
         setAutoTextChange(txtSongSearch, songlist);
 
-        listInPlaylist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        listNotInList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listPlaylist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listSonglist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     /**
@@ -88,6 +89,7 @@ public class CreatePlaylistWindowController implements Initializable
         }
         else
         {
+            save = true;
             cancel(event);
         }
     }
@@ -134,6 +136,11 @@ public class CreatePlaylistWindowController implements Initializable
         songlist.addAll(songList);
     }
 
+    public boolean shouldSave()
+    {
+        return save;
+    }
+
     @FXML
     private void moveAllToPlaylist(ActionEvent event)
     {
@@ -143,7 +150,7 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void moveSelectedToPlaylist(ActionEvent event)
     {
-        ObservableList<Music> selectedItems = listNotInList
+        ObservableList<Music> selectedItems = listSonglist
                 .getSelectionModel().getSelectedItems();
 
         this.playlist.addAll(selectedItems);
@@ -152,7 +159,7 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void removeSelectedFromPlaylist(ActionEvent event)
     {
-        ObservableList<Music> selectedItems = listInPlaylist
+        ObservableList<Music> selectedItems = listPlaylist
                 .getSelectionModel().getSelectedItems();
 
         this.playlist.removeAll(selectedItems);
@@ -218,15 +225,5 @@ public class CreatePlaylistWindowController implements Initializable
         });
 
         return searchResult;
-    }
-
-    public void setSonglist(ObservableList<Music> allSongs)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public boolean shouldSave()
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
