@@ -803,8 +803,10 @@ public class MainWindowController implements Initializable
 
     /**
      * Clears the queue
-     * We check if queue is empty, if it is not we force all songs to stop, followed by a method to clear our queue and 
-     * finally set the isPlaying boolean accordingly and the text of the Play/Pause button
+     * We check if queue is empty, if it is not we force all songs to stop,
+     * followed by a method to clear our queue and
+     * finally set the isPlaying boolean accordingly and the text of the
+     * Play/Pause button
      */
     @FXML
     private void clearQueue(ActionEvent event)
@@ -824,7 +826,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Creates a new playlist 
+     * Creates a new playlist
      * and adds it to the list of playlists
      */
     @FXML
@@ -902,8 +904,10 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Gets ahold of the new song in queue by checking the index of the list. When the media is ready to play we set the duration of the new MediaPlayer
-     * 
+     * Gets ahold of the new song in queue by checking the index of the list.
+     * When the media is ready to play we set the duration of the new
+     * MediaPlayer
+     *
      * //TODO : Needs to add MORE than just mpduration (I think?)
      */
     private void getNewSongInQue()
@@ -925,7 +929,8 @@ public class MainWindowController implements Initializable
 
     /**
      * A method to listen to the MediaPlayer Status
-     * A listener which gives feedback on what status the MediaPlayer currently has (for visual debugging)
+     * A listener which gives feedback on what status the MediaPlayer currently
+     * has (for visual debugging)
      */
     private void GetmPlayerStatus()
     {
@@ -964,8 +969,7 @@ public class MainWindowController implements Initializable
             intElapsed -= elapsedHours * 60 * 60;
         }
         int elapsedMinutes = intElapsed / 60;
-        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60
-                             - elapsedMinutes * 60;
+        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60 - elapsedMinutes * 60;
 
         if (duration.greaterThan(Duration.ZERO))
         {
@@ -976,32 +980,25 @@ public class MainWindowController implements Initializable
                 intDuration -= durationHours * 60 * 60;
             }
             int durationMinutes = intDuration / 60;
-            int durationSeconds = intDuration - durationHours * 60 * 60
-                                  - durationMinutes * 60;
+            int durationSeconds = intDuration - durationHours * 60 * 60 - durationMinutes * 60;
             if (durationHours > 0)
             {
-                return String.format("%d:%02d:%02d/%d:%02d:%02d",
-                                     elapsedHours, elapsedMinutes, elapsedSeconds,
-                                     durationHours, durationMinutes, durationSeconds);
+                return String.format("%d:%02d:%02d/%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds, durationHours, durationMinutes, durationSeconds);
             }
             else
             {
-                return String.format("%02d:%02d/%02d:%02d",
-                                     elapsedMinutes, elapsedSeconds, durationMinutes,
-                                     durationSeconds);
+                return String.format("%02d:%02d/%02d:%02d", elapsedMinutes, elapsedSeconds, durationMinutes, durationSeconds);
             }
         }
         else
         {
             if (elapsedHours > 0)
             {
-                return String.format("%d:%02d:%02d", elapsedHours,
-                                     elapsedMinutes, elapsedSeconds);
+                return String.format("%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds);
             }
             else
             {
-                return String.format("%02d:%02d", elapsedMinutes,
-                                     elapsedSeconds);
+                return String.format("%02d:%02d", elapsedMinutes, elapsedSeconds);
             }
         }
     }
@@ -1013,6 +1010,6 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
+        
     }
-
 }
