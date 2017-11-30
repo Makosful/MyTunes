@@ -173,7 +173,7 @@
             </children>
         </AnchorPane>
 
-        <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="250.0" prefWidth="370.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0">
+        <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="247.0" prefWidth="370.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
             <children>
                 <MediaView fx:id="mediaView" fitHeight="250.0" fitWidth="370.0" />
             </children>
@@ -216,5 +216,6 @@
                 </AnchorPane>
             </children>
         </Pane>
+      <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" />
     </children>
 </AnchorPane>
