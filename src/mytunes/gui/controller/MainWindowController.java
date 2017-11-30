@@ -146,7 +146,6 @@ public class MainWindowController implements Initializable
         setupQueueList();
         setuPlaybackSpeedSettings();
         setupPlaylistPanel();
-        //setupMediaPlayer();
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
@@ -196,7 +195,7 @@ public class MainWindowController implements Initializable
 
                 wm.setQueuePlay(selectedItem);
 
-                prepareSetup();
+                prepareAndPlay();
 
                 mPlayer.play();
             }
@@ -250,8 +249,7 @@ public class MainWindowController implements Initializable
                             this.songStop(action);
                         }
                         wm.setQueuePlay(selectedItems);
-                        setupMediaPlayer();
-                        musicPlayPause(action);
+                        prepareSetup();
                     }
                 });
 
@@ -263,7 +261,7 @@ public class MainWindowController implements Initializable
                     if (!selectedItems.isEmpty())
                     {
                         wm.setQueueAdd(selectedItems);
-                        setupMediaPlayer();
+                        prepareSetup();
                     }
                 });
 
@@ -496,18 +494,30 @@ public class MainWindowController implements Initializable
     private void prepareSetup()
     {
         setupMediaPlayer();
-        TimeChangeListener();
         enableSettings();
+        TimeChangeListener();
+    }
+
+    private void prepareAndPlay()
+    {
+        if (isPlaying)
+        {
+            mPlayer.stop();
+        }
+        prepareSetup();
+        mPlayer.play();
+        isPlaying = true;
+        btnPlayPause.setText("Pause");
     }
 
     private void enableSettings()
     {
-            volumeSlider.setDisable(false);
-            btnLoop.setDisable(false);
-            playbackSpeed.setDisable(false);
-            progressSlider.setDisable(false);
-            lblTimer.setDisable(false);
-            progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
+        volumeSlider.setDisable(false);
+        btnLoop.setDisable(false);
+        playbackSpeed.setDisable(false);
+        progressSlider.setDisable(false);
+        lblTimer.setDisable(false);
+        progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
     }
 
     @FXML
@@ -517,7 +527,7 @@ public class MainWindowController implements Initializable
         {
             enableSettings();
             addElevatorMusic();
-            setupMediaPlayer();
+            prepareSetup();
             mPlayer.play();
         }
         else if (!isPlaying)
@@ -704,7 +714,7 @@ public class MainWindowController implements Initializable
 
         if (!wm.getQueueList().isEmpty())
         {
-            setupMediaPlayer();
+            prepareSetup();
 
         }
 
