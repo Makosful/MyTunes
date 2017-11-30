@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -26,6 +27,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -106,8 +108,10 @@ public class MainWindowController implements Initializable
     private Duration mpduration;
     private Media song;
     private boolean pause;
+    private Status mStatus;
     Media currentlyPlaying;
-
+    List<Media> medias;
+    private int i = 0;
     // Model
     private MainWindowModel wm;
     private List<File> pathNames;
@@ -132,6 +136,8 @@ public class MainWindowController implements Initializable
         volumeSlider.setDisable(true);
         btnLoop.setDisable(true);
         playbackSpeed.setDisable(true);
+        progressSlider.setDisable(true);
+        lblTimer.setDisable(true);
 
         //instantiates our Model class
         wm = new MainWindowModel();
@@ -357,6 +363,19 @@ public class MainWindowController implements Initializable
             enableSettings();
             progressSlider.setValue(0.0);
             progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
+
+            mPlayer.setOnEndOfMedia(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    mPlayer.stop();
+                    getNewSongInQue();
+                    i++;
+                    mPlayer = new MediaPlayer(medias.get(i));
+                    mPlayer.play();
+                }
+            });
         });
     }
 
@@ -367,6 +386,8 @@ public class MainWindowController implements Initializable
             volumeSlider.setDisable(false);
             btnLoop.setDisable(false);
             playbackSpeed.setDisable(false);
+            progressSlider.setDisable(false);
+            lblTimer.setDisable(false);
             progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
         }
     }
@@ -408,7 +429,7 @@ public class MainWindowController implements Initializable
     {
         Duration currentTime = mPlayer.getCurrentTime();
         lblTimer.setText(formatTime(currentTime, mpduration));
-        
+
         mPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration duration, Duration current) ->
         {
             progressSlider.setValue(current.toSeconds());
@@ -417,7 +438,8 @@ public class MainWindowController implements Initializable
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
         {
-            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
+            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, 
+            //where max length = song duration.
             if (progressSlider.isValueChanging())
             {
                 mPlayer.seek(Duration.seconds(progressSlider.getValue()));
@@ -438,10 +460,20 @@ public class MainWindowController implements Initializable
     @FXML
     private void songStop(ActionEvent event)
     {
-        mPlayer.stop();
-        isPlaying = false;
-        btnPlayPause.setText("Play");
-        progressSlider.setValue(0);
+        mStatus = mPlayer.getStatus();
+
+        if (mStatus == Status.PLAYING)
+        {
+            mPlayer.stop();
+            isPlaying = false;
+            btnPlayPause.setText("Play");
+            progressSlider.setValue(0.0);
+        }
+        else
+        {
+            System.out.println("Not playing, already stopped");
+        }
+
     }
 
     /**
@@ -628,13 +660,20 @@ public class MainWindowController implements Initializable
      */
     private void getNewSongInQue()
     {
+        medias = new ArrayList();
         mPlayer.stop();
-        File file = new File(wm.getQueueList().get(0));
-        song = new Media(file.toURI().toString());
+//        File file = new File(wm.getQueueList().get(0));
+       
+    File file;
 
-        mPlayer = new MediaPlayer(song);
-        mediaView = new MediaView(mPlayer);
 
+        for (int i = 0; i < wm.getQueueList().size(); i++)
+        {
+            file = new File(wm.getQueueList().get(i));
+            song = new Media(file.toURI().toString());
+            medias.add(song);
+        }
+        
         //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
