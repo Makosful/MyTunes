@@ -82,8 +82,9 @@ public class MainWindowController implements Initializable
     private Media song;
     private Status mStatus;
     Media currentlyPlaying;
-
     List<Media> medias;
+
+//    private String mPlayerStatus;
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
@@ -120,6 +121,8 @@ public class MainWindowController implements Initializable
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
+    @FXML
+    private Label lblmPlayerStatus;
 
     /**
      * Constructor, for all intends and purposes
@@ -487,7 +490,7 @@ public class MainWindowController implements Initializable
             mpduration = mPlayer.getTotalDuration();
             progressSlider.setValue(0.0);
             progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
-
+            GetmPlayerStatus();
         });
     }
 
@@ -505,6 +508,7 @@ public class MainWindowController implements Initializable
             mPlayer.stop();
         }
         prepareSetup();
+        GetmPlayerStatus();
         mPlayer.play();
         isPlaying = true;
         btnPlayPause.setText("Pause");
@@ -614,7 +618,7 @@ public class MainWindowController implements Initializable
             btnPlayPause.setText("Play");
             progressSlider.setValue(0.0);
         }
-        else if( mStatus == Status.STOPPED)
+        else if (mStatus == Status.STOPPED)
         {
             System.out.println("Status is: " + mStatus);
         }
@@ -844,17 +848,33 @@ public class MainWindowController implements Initializable
         });
     }
 
-    @FXML
-    private void progressDrag(MouseEvent event)
+    private void GetmPlayerStatus()
     {
+        mPlayer.statusProperty().addListener((observable, oldValue, newValue) -> lblmPlayerStatus.setText("MediaPlayer Status: " + newValue.toString().toLowerCase()));
 
+//        if (mPlayer.getStatus() == Status.UNKNOWN)
+//        {
+//            mPlayerStatus = mPlayerStatus = Status.UNKNOWN.toString();
+//        }
+//
+//        if (mPlayer.getStatus() == Status.PAUSED)
+//        {
+//            mPlayerStatus = Status.PAUSED.toString();
+//        }
+//        else if (mPlayer.getStatus() == Status.PLAYING)
+//        {
+//            mPlayerStatus = Status.PLAYING.toString();
+//        }
+//        else if (mPlayer.getStatus() == Status.STOPPED)
+//        {
+//            mPlayerStatus = Status.STOPPED.toString();
+//        }
+//        else if (mPlayer.getStatus() == Status.READY)
+//        {
+//            mPlayerStatus = Status.READY.toString();
+//        }
     }
 
-    private void mPlayerStatus()
-    {
-        //TODO Ager Storm
-    }
-    
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
     private static String formatTime(Duration elapsed, Duration duration)
     {
@@ -905,6 +925,11 @@ public class MainWindowController implements Initializable
                                      elapsedSeconds);
             }
         }
+    }
+
+    @FXML
+    private void progressDrag(MouseEvent event)
+    {
     }
 
 }
