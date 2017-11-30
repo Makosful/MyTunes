@@ -502,15 +502,12 @@ public class MainWindowController implements Initializable
 
     private void enableSettings()
     {
-        if (volumeSlider.isDisabled() && btnLoop.isDisabled() && playbackSpeed.isDisabled())
-        {
             volumeSlider.setDisable(false);
             btnLoop.setDisable(false);
             playbackSpeed.setDisable(false);
             progressSlider.setDisable(false);
             lblTimer.setDisable(false);
             progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
-        }
     }
 
     @FXML
