@@ -5,7 +5,11 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
+<<<<<<< HEAD
+=======
 import java.io.FileNotFoundException;
+import java.io.IOException;
+>>>>>>> master
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -111,6 +115,7 @@ public class MainWindowController implements Initializable
     private JFXButton btnCreatePlaylist;
     @FXML
     private JFXButton btnDeletePlaylist;
+<<<<<<< HEAD
     @FXML
     private Pane bottomPane;
     @FXML
@@ -119,10 +124,23 @@ public class MainWindowController implements Initializable
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
+=======
+    // </editor-fold>
+
+    // Instance variables
+    private MediaPlayer mPlayer;
+    private boolean isPlaying;
+    private boolean isLooping;
+    private Duration mpduration;
+    private Media song;
+    private boolean pause;
+    Media currentlyPlaying;
+    private List<File> pathNames;
     
     // Model
     private MainWindowModel wm;
-    private List<File> pathNames;
+    
+>>>>>>> master
 
     /**
      * Constructor, for all intends and purposes
@@ -261,7 +279,18 @@ public class MainWindowController implements Initializable
 
                 loadSong.setOnAction(action ->
                 {
-                    LoadMP3Files(action);
+                    try
+                    {
+                        LoadMP3Files(action);
+                    }
+                    catch (TikaException ex)
+                    {
+                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    catch (IOException ex)
+                    {
+                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 });
 
                 clearQueueContext.setOnAction(action ->
@@ -366,18 +395,6 @@ public class MainWindowController implements Initializable
     }
 
     private void createPlaylistContextMenu()
-                    try
-                    {
-                        LoadMP3Files(action);
-                    }
-                    catch (TikaException ex)
-                    {
-                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    catch (IOException ex)
-                    {
-                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
     {
         ContextMenu cm = new ContextMenu();
 
@@ -621,6 +638,9 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
+<<<<<<< HEAD
+        //wm.setPathAndName(chosenFiles);
+=======
         try
         {
             wm.setPathAndName(chosenFiles);
@@ -642,6 +662,7 @@ public class MainWindowController implements Initializable
         
         
 
+>>>>>>> master
         if (chosenFiles != null)
         {
             for (int i = 0; i < chosenFiles.size(); i++)
