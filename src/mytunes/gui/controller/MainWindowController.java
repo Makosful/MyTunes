@@ -6,19 +6,13 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.net.URL;
-
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
-
 import javafx.beans.Observable;
-
 import javafx.beans.value.ObservableValue;
-
 import javafx.collections.ObservableList;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -567,7 +561,7 @@ public class MainWindowController implements Initializable
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
         {
-            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, 
+            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song,
             //where max length = song duration.
             if (progressSlider.isValueChanging())
             {
@@ -777,9 +771,9 @@ public class MainWindowController implements Initializable
     {
         Music track;
 
-        String title = "";
-        String album = "";
-        String artist = "";
+        String title = "Elevator Music";
+        String album = "PlaceHolder";
+        String artist = "Bond. James Bond";
 
         Random rnd = new Random();
         int r = rnd.nextInt(2) + 2;
