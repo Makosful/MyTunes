@@ -30,12 +30,18 @@ public class BLLManager
 
     public List<Music> getSongList() throws IOException
     {
-        return mm.getAllSongs();
+        return mm.getAllSongsLocal();
     }
 
     public void createSongPath(String setPath) throws SQLException
     {
-        songDAO.createSongPath(setPath);
+        //songDAO.createSongPath(setPath);
+    }
+
+    public List<String> checkIfIsInDatabase() throws SQLException
+    {
+//        return songDAO.checkIfIsInDatabase();
+        return null;
     }
 
     public ObservableList<Playlist> getPlaylists()
@@ -51,5 +57,15 @@ public class BLLManager
     public void addPlaylist(Playlist playlist)
     {
         plDAO.addPlaylist(playlist);
+    }
+
+    /**
+     * Removes a playlist from the database
+     *
+     * @param playlist
+     */
+    public void removePlaylist(Playlist playlist)
+    {
+        plDAO.removePlaylist(playlist);
     }
 }

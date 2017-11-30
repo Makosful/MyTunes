@@ -15,13 +15,13 @@ import mytunes.be.Music;
 public class MockMusic
 {
 
-    public ObservableList<Music> getAllSongs() throws FileNotFoundException,
-                                                      IOException
+    public ObservableList<Music> getAllSongsCSV() throws FileNotFoundException,
+                                                         IOException
     {
         ObservableList<Music> data = FXCollections.observableArrayList();
 
         try (BufferedReader CSVFile = new BufferedReader(
-                new FileReader("./res/songs/mock.csv")))
+                new FileReader("res/songs/mock.csv")))
         {
             CSVFile.readLine(); // Skips the header
             String dataRow = CSVFile.readLine();
@@ -33,11 +33,48 @@ public class MockMusic
                         dataArray[1], // Title
                         dataArray[2], // Album
                         dataArray[3], // Artist
-                        Integer.parseInt(dataArray[4])) // Year
+                        Integer.parseInt(dataArray[4]), // Year
+                        "The sky") // Location
                 );
                 dataRow = CSVFile.readLine();
             }
             return data;
         }
+    }
+
+    public ObservableList<Music> getAllSongsLocal()
+    {
+        ObservableList<Music> data = FXCollections.observableArrayList();
+
+        Music track;
+        String album = "Golden Eye 007 OST";
+        String artist = "Graeme Norgate & Grant Kirkhope";
+
+        track = new Music(1, "James Bond Theme", album, artist, 0, "res/songs/01 - James Bond Theme.mp3");
+        data.add(track);
+        track = new Music(2, "Mission Select", album, artist, 0, "res/songs/02 - Mission Select.mp3");
+        data.add(track);
+        track = new Music(3, "007 Watch Theme", album, artist, 0, "res/songs/03 - 007 Watch Theme.mp3");
+        data.add(track);
+        track = new Music(4, "Dam", album, artist, 0, "res/songs/04 - Dam.mp3");
+        data.add(track);
+        track = new Music(5, "Dam X", album, artist, 0, "res/songs/05 - Dam X.mp3");
+        data.add(track);
+        track = new Music(6, "Bungeee!", album, artist, 0, "res/songs/06 - Bungeee!.mp3");
+        data.add(track);
+        track = new Music(7, "Unsquare Water Dance", album, artist, 0, "res/songs/07 - Unsquare Water Dance.mp3");
+        data.add(track);
+        track = new Music(8, "Facility", album, artist, 0, "res/songs/08 - Facility.mp3");
+        data.add(track);
+        track = new Music(9, "Facility X", album, artist, 0, "res/songs/09 - Facility X.mp3");
+        data.add(track);
+        track = new Music(10, "Runaway", album, artist, 0, "res/songs/10 - Runway.mp3");
+        data.add(track);
+        track = new Music(11, "Runaway X", album, artist, 0, "res/songs/11 -  Runway X.mp3");
+        data.add(track);
+        track = new Music(12, "Plane Takeoff", album, artist, 0, "res/songs/12 - Plane Takeoff.mp3");
+        data.add(track);
+
+        return data;
     }
 }

@@ -28,7 +28,7 @@ public class MainWindowModel
 
     // Lists
     private ObservableList<Music> allSongs;
-    private ObservableList<String> queue;
+    private ObservableList<Music> queue;
     private ObservableList<Playlist> playlists;
 
     // Objects
@@ -52,28 +52,7 @@ public class MainWindowModel
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Getters">
-    /**
-     * Gets the list containing all the songs
-     *
-     * @return a List containing all the registered songs
-     */
-    public ObservableList<Music> getSongList()
-    {
-        return allSongs;
-    }
-
-    /**
-     * Gets the queue list
-     *
-     * @return The list containing the queues
-     */
-    public ObservableList<String> getQueueList()
-    {
-        return queue;
-    }
-    //</editor-fold>
-
+    //<editor-fold defaultstate="collapsed" desc="Song List">
     /**
      * Loads all the songs into the program
      */
@@ -91,16 +70,152 @@ public class MainWindowModel
     }
 
     /**
-     * Saves song name to database.
+     * Gets the list containing all the songs
      *
-     * @param setPath
-     *
-     * @throws SQLException
+     * @return a List containing all the registered songs
      */
-    public void createSongPath(String setPath) throws SQLException
+    public ObservableList<Music> getSongList()
     {
-        bllManager.createSongPath(setPath);
+        return allSongs;
     }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Queue List">
+    /**
+     * Clears the Queue List entirely
+     */
+    public void clearQueueList()
+    {
+        this.queue.clear();
+    }
+
+    /**
+     * Gets the queue list
+     *
+     * @return The list containing the queues
+     */
+    public ObservableList<Music> getQueueList()
+    {
+        return queue;
+    }
+
+    /**
+     * Replaces all the items in the Queue with the selected items
+     *
+     * @param selectedItems
+     */
+    public void setQueuePlay(ObservableList<Music> selectedItems)
+    {
+        this.queue.clear();
+        this.queue.addAll(selectedItems);
+    }
+
+    public void setQueuePlay(Music track)
+    {
+        this.queue.clear();
+        this.queue.add(track);
+    }
+
+    /**
+     * Adds the selected items to the end of the queue list
+     *
+     * @param selectedItems
+     */
+    public void setQueueAdd(ObservableList<Music> selectedItems)
+    {
+        this.queue.addAll(selectedItems);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
+    /**
+     * Gets the list of playlists
+     *
+     * @return An Observeable Array list of all the Playlists
+     */
+    public ObservableList<Playlist> getPlaylists()
+    {
+        return playlists;
+    }
+
+    /**
+     * Loads the playlist from storage
+     */
+    public void loadPlaylists()
+    {
+        playlists.addAll(bllManager.getPlaylists());
+    }
+
+    /**
+     * Displays the window for creating new playlists
+     */
+    public void createPlaylistWindow()
+    {
+        try
+        {
+            // Gets a hold of the FXML and controller
+            File fxml = new File("src/mytunes/gui/view/CreatePlaylistWindow.fxml");
+            FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
+
+            // Loads the window
+            Parent root = fxLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            // Gets the controller for the window, so we can retrieve data after
+            // it's been closed
+            CreatePlaylistWindowController plCont = fxLoader.getController();
+
+            plCont.setSongList(this.allSongs);
+
+            // Sets the icon for the new window
+            File ico = new File("./res/icon/TrollTunes56x56.png");
+            Image icon = new Image(ico.toURI().toString());
+            stage.getIcons().add(icon);
+
+            // Sets the title for the new window
+            stage.setTitle("Create Playlist");
+
+            stage.setScene(scene);
+            stage.showAndWait();
+            // Waits for the user to give the playlist a name
+
+            // Adds the new playlist to the list of lists, dawg
+            if (plCont.shouldSave())
+            {
+                Playlist pl = new Playlist(plCont.getTitle());
+                pl.setPlaylist(plCont.getPlaylist());
+                this.playlists.add(pl);
+
+                // Saves the playlist to storage
+                bllManager.addPlaylist(pl); // Not implimented yet
+            }
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Deletes one or more playlists from the list
+     *
+     * @param playlists The playlist to delete
+     */
+    public void deletePlaylists(ObservableList<Playlist> playlists)
+    {
+        if (playlists.isEmpty())
+        {
+            // Do nothing
+        }
+        else
+        {
+            this.playlists.removeAll(playlists);
+        }
+    }
+    //</editor-fold>
+
+
 
     /**
      * Goes through song files, and gets their name. Returns a list with their
@@ -142,67 +257,4 @@ public class MainWindowModel
         }
     }
 
-    public void clearQueueList()
-    {
-        this.queue.clear();
-    }
-
-    public ObservableList<Playlist> getPlaylists()
-    {
-        return playlists;
-    }
-
-    public void loadPlaylists()
-    {
-        playlists = bllManager.getPlaylists();
-    }
-
-    /**
-     * Handles everything about creating new playlists and adding them to the
-     * list
-     */
-    public void createPlaylistWindow()
-    {
-        try
-        {
-            // Declares variables to use afterwards
-            String title = "Nameless";
-
-            // Gets a hold of the FXML and controller
-            File fxml = new File("./src/MyTunes/gui/view/CreatePlaylistWindow.fxml");
-            FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
-
-            // Loads the window
-            Parent root = fxLoader.load();
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-
-            // Gets the controller for the window, so we can retrieve data after
-            // it's been closed
-            CreatePlaylistWindowController plCont = fxLoader.getController();
-
-            // Sets the icon for the new window
-            File ico = new File("./res/icon/TrollTunes56x56.png");
-            Image icon = new Image(ico.toURI().toString());
-            stage.getIcons().add(icon);
-
-            // Sets the title for the new window
-            stage.setTitle("Create Playlist");
-
-            stage.setScene(scene);
-            stage.showAndWait();
-            // Waits for the user to give the playlist a name
-
-            // Adds the new playlist to the list of lists, dawg
-            Playlist pl = new Playlist(plCont.getTitle());
-            this.playlists.add(pl);
-
-            // Saves the playlist to storage
-            bllManager.addPlaylist(pl); // Not implimented yet
-        }
-        catch (IOException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-    }
 }

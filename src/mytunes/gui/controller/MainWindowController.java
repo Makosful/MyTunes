@@ -5,17 +5,20 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
-import javafx.beans.InvalidationListener;
+
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
+
 import javafx.beans.value.ObservableValue;
+
+import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,31 +45,19 @@ import mytunes.gui.model.MainWindowModel;
 public class MainWindowController implements Initializable
 {
 
-    // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
-    @FXML
-    private JFXButton btnStop;
+    //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
     private JFXButton btnPlayPause;
     @FXML
     private JFXSlider volumeSlider;
     @FXML
-    private JFXListView<String> listQueue;
+    private JFXListView<Music> listQueue;
     @FXML
     private JFXListView<?> listMetaData;
     @FXML
     private JFXToggleButton btnLoop;
     @FXML
-    private JFXButton btnLoadMP3Multi;
-    @FXML
-    private JFXButton btnClearMP3;
-    @FXML
     private JFXListView<Playlist> playlistPanel;
-    @FXML
-    private Pane bottomPane;
-    @FXML
-    private Pane queuePanel;
-    @FXML
-    private FlowPane playbackPanel;
     @FXML
     private Label lblTimer;
     @FXML
@@ -87,19 +78,7 @@ public class MainWindowController implements Initializable
     private TableColumn<Music, String> clmArtist;
     @FXML
     private TableColumn<Music, String> clmYear;
-    @FXML
-    private MenuButton btnSettings;
-    @FXML
-    private MenuItem loadMP3;
-    @FXML
-    private MenuBar menuBar;
-    @FXML
-    private Menu menuFile;
-    @FXML
-    private Menu menuSettings;
-    @FXML
-    private Menu menuAbout;
-    // </editor-fold>
+    //</editor-fold>
 
     // Instance variables
     private MediaPlayer mPlayer;
@@ -110,18 +89,44 @@ public class MainWindowController implements Initializable
     private boolean pause;
     private Status mStatus;
     Media currentlyPlaying;
+    
     List<Media> medias;
     private int i = 0;
     private File newFile;
+    private List<File> pathNames;
+
     // Model
     private MainWindowModel wm;
-    private List<File> pathNames;
+    @FXML
+    private FlowPane playbackPanel;
+    @FXML
+    private JFXButton btnStop;
+    @FXML
+    private MenuButton btnSettings;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private Menu menuFile;
+    @FXML
+    private MenuItem loadMP3;
     @FXML
     private MenuItem clearQueueMenu;
+    @FXML
+    private Menu menuSettings;
+    @FXML
+    private Menu menuAbout;
     @FXML
     private JFXButton btnCreatePlaylist;
     @FXML
     private JFXButton btnDeletePlaylist;
+    @FXML
+    private Pane bottomPane;
+    @FXML
+    private Pane queuePanel;
+    @FXML
+    private JFXButton btnLoadMP3Multi;
+    @FXML
+    private JFXButton btnClearMP3;
 
     /**
      * Constructor, for all intends and purposes
@@ -147,7 +152,6 @@ public class MainWindowController implements Initializable
         setupSongList();
         setupQueueList();
         setupPlaybackSettings();
-        setupTableContextMenu();
         setupPlaylistPanel();
         setupMediaPlayer();
 
@@ -155,40 +159,60 @@ public class MainWindowController implements Initializable
         volumeSlider.getParent().getParent().toFront();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="SETUP Methods">
     /**
      * Sets up the table & list containing all the songs
      */
     private void setupSongList()
     {
+        // Sets the table colums ids
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
         clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
         clmCover.setCellValueFactory(new PropertyValueFactory("album"));
         clmYear.setCellValueFactory(new PropertyValueFactory("year"));
 
+        // Loads the list of saved songs from the storage
+        wm.loadSongList();
+
+        // Fills the table with all loaded lists
         tblSongList.setItems(wm.getSongList());
 
+        // Defines the defautl sorted order
         tblSongList.getSortOrder().add(clmCover);
         tblSongList.getSortOrder().add(clmNr);
 
-        wm.loadSongList();
+        // Allows for multiple entries to be selected at once
+        tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        setupTableDoubleClick();
+
+        // Defines the context menu for the table
+        createTableContextMenu();
     }
 
-    /**
-     * Sets the list with the queue
-     */
-    private void setupQueueList()
+    private void setupTableDoubleClick()
     {
-        listQueue.setItems(wm.getQueueList());
+        tblSongList.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getClickCount() == 2)
+            {
+                Music selectedItem = tblSongList
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+                wm.setQueuePlay(selectedItem);
+            }
+        });
     }
 
-    /**
-     * Sets up the context menu for the table list of songs
-     */
-    private void setupTableContextMenu()
+    private void createTableContextMenu()
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
+
+        MenuItem error = new MenuItem("None of these work for now");
+        cm.getItems().add(error);
 
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
@@ -217,26 +241,40 @@ public class MainWindowController implements Initializable
                     cm.show(tblSongList, event.getScreenX(), event.getScreenY());
                 }
 
-                // Sets the actions that'll happen when the Play function has
-                // been picked
                 play.setOnAction(action ->
                 {
-                    if (!row.isEmpty())
+                    ObservableList<Music> selectedItems = tblSongList
+                            .getSelectionModel().getSelectedItems();
+
+                    if (!selectedItems.isEmpty())
                     {
-                        System.out.println(row.getItem().getTitle());
+                        if (isPlaying)
+                        {
+                            this.songStop(action);
+                        }
+                        wm.setQueuePlay(selectedItems);
+                        setupMediaPlayer();
+                        musicPlayPause(action);
                     }
                 });
 
-                // Sets the actions that'll happen when the Add to Queue function
-                // has been picked
                 addQueue.setOnAction(action ->
                 {
-                    System.out.println("Adds to queue");
+                    ObservableList<Music> selectedItems = tblSongList
+                            .getSelectionModel().getSelectedItems();
+
+                    if (!selectedItems.isEmpty())
+                    {
+                        wm.setQueueAdd(selectedItems);
+                        setupMediaPlayer();
+                    }
                 });
+
                 loadSong.setOnAction(action ->
                 {
                     LoadMP3Files(action);
                 });
+
                 clearQueueContext.setOnAction(action ->
                 {
                     clearQueue(action);
@@ -247,13 +285,100 @@ public class MainWindowController implements Initializable
             return row;
 
         }); // END of table row factory
-
     }
 
+    /**
+     * Sets the list with the queue
+     */
+    private void setupQueueList()
+    {
+        listQueue.setItems(wm.getQueueList());
+    }
+
+    /**
+     * Sets up the panel for the playlists
+>>>>>>> master
+     */
     private void setupPlaylistPanel()
     {
+        // Allows for multiple selections to be made
+        playlistPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Puts the playlists into the view
         playlistPanel.setItems(wm.getPlaylists());
+
+        // Loads the stores playlists
+        wm.loadPlaylists();
+
+        setupPlaylistDoubleClick();
+
+        createPlaylistContextMenu();
     }
+
+    private void setupPlaylistDoubleClick()
+    {
+        playlistPanel.setOnMouseClicked(event ->
+        {
+            if (event.getClickCount() == 2)
+            {
+                System.out.println("One");
+            }
+        });
+    }
+
+    private void createPlaylistContextMenu()
+    {
+        ContextMenu cm = new ContextMenu();
+
+        MenuItem playPlaylist = new MenuItem("Play List");
+        cm.getItems().add(playPlaylist);
+
+        MenuItem addPlaylist = new MenuItem("Add to Queue");
+        cm.getItems().add(addPlaylist);
+
+        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                cm.show(playlistPanel, event.getScreenX(), event.getScreenY());
+            }
+
+            playPlaylist.setOnAction((Action) ->
+            {
+                wm.setQueuePlay(playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist());
+            });
+
+            addPlaylist.setOnAction((action) ->
+            {
+                wm.setQueueAdd(playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist());
+            });
+        });
+    }
+    
+    private void progressSliderSetup(MediaPlayer mPlayer)
+    {
+        //adds a listener to the value, allowing it to determine where to play from when the user drags.
+        progressSlider.valueProperty().addListener((Observable ov) ->
+        {
+            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
+            if (progressSlider.isValueChanging())
+            {
+                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+            }
+        });
+        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
+        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
+        {
+            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
+        });
+    }
+    //</editor-fold>
 
     /**
      * Handle the settings for the playback
@@ -270,15 +395,39 @@ public class MainWindowController implements Initializable
                                         "150% speed",
                                         "175% speed",
                                         "200% speed");
+        if (volumeSlider.isDisabled())
+        {
+            volumeSlider.setDisable(false);
+        }
+
+        if (wm.getQueueList().isEmpty() && !isPlaying)
+        {
+            setupMediaPlayer();
+        }
+        if (isPlaying == false)
+        {
+            pause = false;
+            mPlayer.play();
+            isPlaying = true;
+            btnPlayPause.setText("Pause");
+        } // if the boolean is true we shall stop playing, reverse the boolean and
+        // edit the buttons text.
+        else
+        {
+            mPlayer.pause();
+            isPlaying = false;
+            btnPlayPause.setText("Play");
+            pause = true;
+        }
     }
 
     /**
-     * Handles the playback itself
+     * Manages the playback speed
      *
      * @param event
      */
     @FXML
-    private void playbackAction(ActionEvent event)
+    private void playbackSpeed(ActionEvent event)
     {
         //an int to see where we are in the combobox' index.
         int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
@@ -337,11 +486,11 @@ public class MainWindowController implements Initializable
         if (wm.getQueueList().isEmpty())
         {
             addElevatorMusic();
-            file = new File(wm.getQueueList().get(0).toLowerCase());
+            file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
         }
         else
         {
-            file = new File(wm.getQueueList().get(0).toLowerCase());
+            file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
         }
 
         song = new Media(file.toURI().toString());
@@ -552,20 +701,19 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-        try
-        {
-            wm.setPathAndName(chosenFiles);
-        }
-        catch (IOException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-
+        //wm.setPathAndName(chosenFiles);
         if (chosenFiles != null)
         {
             for (int i = 0; i < chosenFiles.size(); i++)
             {
-                wm.getQueueList().add(chosenFiles.get(i).getAbsolutePath());
+                wm.getQueueList().add(new Music(
+                        0,
+                        chosenFiles.get(i).getName(),
+                        chosenFiles.get(i).getName(),
+                        chosenFiles.get(i).getName(),
+                        9999,
+                        chosenFiles.get(i).getAbsolutePath()
+                ));
             }
         }
         else
@@ -576,48 +724,12 @@ public class MainWindowController implements Initializable
 
         if (!wm.getQueueList().isEmpty())
         {
-            String source = wm.getQueueList().get(0);
-            currentlyPlaying = new Media(new File(source.toLowerCase()).toURI().toString());
             setupMediaPlayer();
 
         }
+
         pathNames = chosenFiles;
 
-        try
-        {
-            savePath();
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-
-    }
-
-    //Sets up a random filler with one of x music files if our mediaplayer has no selected audio to play, thus never getting a nullpointer & also adding some fun (elevator music)
-    private void addElevatorMusic()
-    {
-        String music;
-
-        Random rnd = new Random();
-
-        int r = rnd.nextInt(2) + 2;
-        System.out.println(r);
-        if (r > 2)
-        {
-            music = "./src/myTunes/media/Elevator (Control).mp3";
-        }
-        else if (r > 3)
-        {
-            music = "./src/myTunes/media/Elevator (Caverns).mp3";
-        }
-        else
-        {
-            music = "./src/myTunes/media/elevatormusic.mp3";
-        }
-
-        File file = new File(music);
-        wm.getQueueList().add(file.getAbsolutePath());
     }
 
     @FXML
@@ -637,27 +749,105 @@ public class MainWindowController implements Initializable
         btnPlayPause.setText("Play");
     }
 
-    // Saves songs name to database.
-    private void savePath() throws SQLException
-    {
-        List<String> songNamePaths = wm.getPath(pathNames);
-
-        for (int i = 0; i < songNamePaths.size(); i++)
-        {
-            wm.createSongPath(songNamePaths.get(i));
-        }
-    }
-    //</editor-fold>
-
+    /**
+     * Creates a new playlist and adds it to the list of playlists
+     *
+     * @param event
+     */
     @FXML
     private void createPlaylist(ActionEvent event)
     {
         wm.createPlaylistWindow();
     }
 
+    /**
+     * Removes a playlist
+     *
+     * @param event
+     */
     @FXML
     private void deletePlaylist(ActionEvent event)
     {
+        ObservableList<Playlist> selectedItems = playlistPanel
+                .getSelectionModel().getSelectedItems();
+        wm.deletePlaylists(selectedItems);
+    }
+    //</editor-fold>
+
+    private void updateProgressSlider()
+    {
+        double currentTime = mPlayer.getCurrentTime().toSeconds();
+        double totalTime = mPlayer.getTotalDuration().toSeconds();
+
+        double cTMinutes = (currentTime / 60);
+        double cTSeconds = currentTime;
+
+        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
+
+        double tTMinutes = (totalTime / 60);
+        double tTSeconds = totalTime;
+        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
+
+        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
+        //FOR TESTING
+        System.out.println("duration in minutes:" + mpduration.toMinutes());
+        System.out.println("duration in seconds:" + mpduration.toSeconds());
+        System.out.println("duration in milliseconds:" + mpduration.toMillis());
+    }
+
+    /**
+     * Adds a random song to the playlist
+     */
+    private void addElevatorMusic()
+    {
+        Music track;
+
+        String title = "";
+        String album = "";
+        String artist = "";
+
+        Random rnd = new Random();
+        int r = rnd.nextInt(2) + 2;
+        if (r > 2)
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/Elevator (Control).mp3");
+        }
+        else if (r > 3)
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/Elevator (Caverns).mp3");
+        }
+        else
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              0000,
+                              "./src/myTunes/media/elevatormusic.mp3");
+        }
+
+        wm.getQueueList().add(track);
+    }
+
+    /**
+     * Plays the next song.
+     */
+    private void changeSongInQue()
+    {
+        if (!wm.getQueueList().isEmpty() && pause == false)
+        {
+            getNewSongInQue();
+        }
     }
 
     /**
@@ -667,14 +857,13 @@ public class MainWindowController implements Initializable
     {
         medias = new ArrayList();
         mPlayer.stop();
+        
         for (int i = 0; i < wm.getQueueList().size(); i++)
         {
-            newFile = new File(wm.getQueueList().get(i));
+            newFile = new File(wm.getQueueList().get(i).getLocation());
             song = new Media(newFile.toURI().toString());
             medias.add(song);
         }
-        
-        //As soon as the media player is ready to play a song it'll get it's duration and set up the progress slider
         mPlayer.setOnReady(() ->
         {
             mpduration = mPlayer.getMedia().getDuration();
@@ -738,4 +927,5 @@ public class MainWindowController implements Initializable
             }
         }
     }
+
 }
