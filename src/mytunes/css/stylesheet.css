@@ -14,6 +14,11 @@ and open the template in the editor.
 .root:focused {
     -fx-background-color: #487597;
 }
+
+.table-view .context-menu .menu-item .label {
+    -fx-text-fill: black;
+}
+
 .table-view .column-header-background{
     -fx-background-color: linear-gradient(#848484 0%, #666666 100%);
 }
@@ -61,12 +66,10 @@ and open the template in the editor.
 }
 
 .list-view .list-cell:even {
--fx-background-color: #666666;
--fx-text-fill: white;
+    -fx-background-color: #666666;
 }
 .list-view .list-cell:odd {
--fx-background-color: #848484;
--fx-text-fill: white;
+    -fx-background-color: #848484;
 }
 
 .list-view .list-cell:filled:hover {
@@ -78,7 +81,8 @@ and open the template in the editor.
     -fx-text-fill: -fx-text-inner-color;
 }
 
-/*.list-view .list-cell:filled:hover { 
+/*
+.list-view .list-cell:filled:hover { 
     -fx-background-color: #00f;
     -fx-text-fill: white;
 }*/
@@ -111,10 +115,10 @@ and open the template in the editor.
 
 .button {
     -fx-background-color: 
-    #090a0c,
-    linear-gradient(#a1a3a3 0%, #636667 100%),
-    linear-gradient(#526570, #464a4e),
-    radial-gradient(center 50% 50%, radius 100%, #666666, #a1a3a3);
+        #090a0c,
+        linear-gradient(#a1a3a3 0%, #636667 100%),
+        linear-gradient(#526570, #464a4e),
+        radial-gradient(center 50% 50%, radius 100%, #666666, #a1a3a3);
     -fx-background-radius: 5, 4, 4, 5;
     -fx-background-insets: 0, 1, 1, 0;
     -fx-text-fill: white;
