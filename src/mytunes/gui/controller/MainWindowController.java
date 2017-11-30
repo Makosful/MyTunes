@@ -112,6 +112,7 @@ public class MainWindowController implements Initializable
     Media currentlyPlaying;
     List<Media> medias;
     private int i = 0;
+    private File newFile;
     // Model
     private MainWindowModel wm;
     private List<File> pathNames;
@@ -364,18 +365,6 @@ public class MainWindowController implements Initializable
             progressSlider.setValue(0.0);
             progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
 
-            mPlayer.setOnEndOfMedia(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    mPlayer.stop();
-                    getNewSongInQue();
-                    i++;
-                    mPlayer = new MediaPlayer(medias.get(i));
-                    mPlayer.play();
-                }
-            });
         });
     }
 
@@ -407,6 +396,22 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
+            mPlayer.setOnEndOfMedia(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if(!wm.getQueueList().isEmpty())
+                    {
+                    mPlayer.stop();
+                    getNewSongInQue();
+                    i++;
+                        System.out.println(medias.get(i));
+                    mPlayer = new MediaPlayer(medias.get(i));
+                    mPlayer.play();
+                    }
+                }
+            });
         }
         // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
         else
@@ -662,15 +667,10 @@ public class MainWindowController implements Initializable
     {
         medias = new ArrayList();
         mPlayer.stop();
-//        File file = new File(wm.getQueueList().get(0));
-       
-    File file;
-
-
         for (int i = 0; i < wm.getQueueList().size(); i++)
         {
-            file = new File(wm.getQueueList().get(i));
-            song = new Media(file.toURI().toString());
+            newFile = new File(wm.getQueueList().get(i));
+            song = new Media(newFile.toURI().toString());
             medias.add(song);
         }
         
@@ -679,7 +679,6 @@ public class MainWindowController implements Initializable
         {
             mpduration = mPlayer.getMedia().getDuration();
         });
-        mPlayer.play();
     }
 
     @FXML
