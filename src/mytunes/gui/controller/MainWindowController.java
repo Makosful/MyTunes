@@ -637,7 +637,7 @@ public class MainWindowController implements Initializable
     {
         //Creates a new volume slider and sets the default value to 50%
         JFXSlider volSlide = volumeSlider;
-        //volSlide.setValue(50);
+        
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
@@ -745,27 +745,6 @@ public class MainWindowController implements Initializable
         wm.deletePlaylists(selectedItems);
     }
     //</editor-fold>
-
-    private void updateProgressSlider()
-    {
-        double currentTime = mPlayer.getCurrentTime().toSeconds();
-        double totalTime = mPlayer.getTotalDuration().toSeconds();
-
-        double cTMinutes = (currentTime / 60);
-        double cTSeconds = currentTime;
-
-        String cTimeFormat = String.format("%.02f:%.02f", cTMinutes, cTSeconds);
-
-        double tTMinutes = (totalTime / 60);
-        double tTSeconds = totalTime;
-        String tTimeFormat = String.format("%.02f:%.02f", tTMinutes, tTSeconds);
-
-        lblTimer.setText(cTimeFormat + " / " + tTimeFormat);
-        //FOR TESTING
-        System.out.println("duration in minutes:" + mpduration.toMinutes());
-        System.out.println("duration in seconds:" + mpduration.toSeconds());
-        System.out.println("duration in milliseconds:" + mpduration.toMillis());
-    }
 
     /**
      * Adds a random song to the playlist
