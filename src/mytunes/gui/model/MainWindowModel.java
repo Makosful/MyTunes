@@ -215,22 +215,7 @@ public class MainWindowModel
     }
     //</editor-fold>
 
-    public List<String> checkIfIsInDatabase() throws SQLException
-    {
-        return bllManager.checkIfIsInDatabase();
-    }
 
-    /**
-     * Saves song name to database.
-     *
-     * @param setPath
-     *
-     * @throws SQLException
-     */
-    public void createSongPath(String setPath) throws SQLException
-    {
-        bllManager.createSongPath(setPath);
-    }
 
     /**
      * Goes through song files, and gets their name. Returns a list with their

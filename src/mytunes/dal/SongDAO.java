@@ -12,8 +12,9 @@ import mytunes.be.Path;
  *
  * @author Axl
  */
-    public class SongDAO
-    {
+public class SongDAO
+{
+
     DataBaseConnector db;
     List<String> dataBaseSongNames;
 
@@ -30,6 +31,15 @@ import mytunes.be.Path;
         return songs;
     }
 
+    /**
+     *
+     * @param pathname
+     *
+     * @return
+     *
+     * @throws SQLServerException
+     * @throws SQLException
+     */
     public Path createSongPath(String pathname) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
@@ -52,18 +62,18 @@ import mytunes.be.Path;
 
         }
     }
-    
+
     public List<String> checkIfIsInDatabase() throws SQLServerException, SQLException
     {
         dataBaseSongNames.clear();
-        try (Connection con = db.getConnection()) 
+        try (Connection con = db.getConnection())
         {
             Statement st = con.createStatement();
             String sqlGet = "SELECT * FROM Path;";
 
             ResultSet rs = st.executeQuery(sqlGet);
 
-            while (rs.next()) 
+            while (rs.next())
             {
                 dataBaseSongNames.add(rs.getString("pathname"));
             }

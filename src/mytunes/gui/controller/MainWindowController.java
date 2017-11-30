@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -192,6 +191,9 @@ public class MainWindowController implements Initializable
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
+
+        MenuItem error = new MenuItem("None of these work for now");
+        cm.getItems().add(error);
 
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
@@ -624,8 +626,8 @@ public class MainWindowController implements Initializable
             setupMediaPlayer();
 
         }
+
         pathNames = chosenFiles;
-        //savePath();
 
     }
 
@@ -775,33 +777,4 @@ public class MainWindowController implements Initializable
         mPlayer.play();
     }
 
-    /**
-     * Saves a song name to the database
-     *
-     * @throws SQLException
-     */
-    private void savePath() throws SQLException
-    {
-        List<String> dataBaseSongNames = wm.checkIfIsInDatabase();
-
-        List<String> songNamePaths = wm.getPath(pathNames);
-
-        if (!dataBaseSongNames.isEmpty())
-        {
-            for (String pathString : songNamePaths)
-            {
-                if (!dataBaseSongNames.contains(pathString))
-                {
-                    wm.createSongPath(pathString);
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < songNamePaths.size(); i++)
-            {
-                wm.createSongPath(songNamePaths.get(i));
-            }
-        }
-    }
 }
