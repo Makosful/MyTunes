@@ -508,8 +508,11 @@ public class MainWindowController implements Initializable
         if (wm.getQueueList().isEmpty() && !isPlaying)
         {
             enableSettings();
+            addElevatorMusic();
+            setupMediaPlayer();
+            mPlayer.play();
         }
-        if (isPlaying == false)
+        else if (!isPlaying)
         {
             //Needs to set the BEFORE media is played (apparently?)
             TimeChangeListener();
