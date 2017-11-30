@@ -38,9 +38,7 @@ import mytunes.gui.model.MainWindowModel;
 public class MainWindowController implements Initializable
 {
 
-    // <editor-fold defaultstate="collapsed" desc=" FXML & Variables">
-    @FXML
-    private JFXButton btnStop;
+    //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
     private JFXButton btnPlayPause;
     @FXML
@@ -52,17 +50,7 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXToggleButton btnLoop;
     @FXML
-    private JFXButton btnLoadMP3Multi;
-    @FXML
-    private JFXButton btnClearMP3;
-    @FXML
     private JFXListView<Playlist> playlistPanel;
-    @FXML
-    private Pane bottomPane;
-    @FXML
-    private Pane queuePanel;
-    @FXML
-    private FlowPane playbackPanel;
     @FXML
     private Label lblTimer;
     @FXML
@@ -83,25 +71,7 @@ public class MainWindowController implements Initializable
     private TableColumn<Music, String> clmArtist;
     @FXML
     private TableColumn<Music, String> clmYear;
-    @FXML
-    private MenuButton btnSettings;
-    @FXML
-    private MenuItem loadMP3;
-    @FXML
-    private MenuBar menuBar;
-    @FXML
-    private Menu menuFile;
-    @FXML
-    private Menu menuSettings;
-    @FXML
-    private Menu menuAbout;
-    @FXML
-    private MenuItem clearQueueMenu;
-    @FXML
-    private JFXButton btnCreatePlaylist;
-    @FXML
-    private JFXButton btnDeletePlaylist;
-    // </editor-fold>
+    //</editor-fold>
 
     // Instance variables
     private MediaPlayer mPlayer;
@@ -114,6 +84,36 @@ public class MainWindowController implements Initializable
 
     // Model
     private MainWindowModel wm;
+    @FXML
+    private FlowPane playbackPanel;
+    @FXML
+    private JFXButton btnStop;
+    @FXML
+    private MenuButton btnSettings;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private Menu menuFile;
+    @FXML
+    private MenuItem loadMP3;
+    @FXML
+    private MenuItem clearQueueMenu;
+    @FXML
+    private Menu menuSettings;
+    @FXML
+    private Menu menuAbout;
+    @FXML
+    private JFXButton btnCreatePlaylist;
+    @FXML
+    private JFXButton btnDeletePlaylist;
+    @FXML
+    private Pane bottomPane;
+    @FXML
+    private Pane queuePanel;
+    @FXML
+    private JFXButton btnLoadMP3Multi;
+    @FXML
+    private JFXButton btnClearMP3;
 
     /**
      * Constructor, for all intends and purposes
@@ -179,7 +179,9 @@ public class MainWindowController implements Initializable
         {
             if (event.getClickCount() == 2)
             {
-                Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+                Music selectedItem = tblSongList
+                        .getSelectionModel()
+                        .getSelectedItem();
 
                 wm.setQueuePlay(selectedItem);
             }
@@ -334,35 +336,34 @@ public class MainWindowController implements Initializable
         // Puts the playlists into the view
         playlistPanel.setItems(wm.getPlaylists());
 
-        setupPlaylistDoubleClick();
-
-        setPlaylistContextMenu();
-
         // Loads the stores playlists
         wm.loadPlaylists();
+
+        setupPlaylistDoubleClick();
+
+        createPlaylistContextMenu();
     }
 
     private void setupPlaylistDoubleClick()
     {
-        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        playlistPanel.setOnMouseClicked(event ->
         {
             if (event.getClickCount() == 2)
             {
-                Playlist selectedItem = playlistPanel
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-                wm.setQueuePlay(selectedItem.getPlaylist());
+                System.out.println("One");
             }
         });
     }
 
-    private void setPlaylistContextMenu()
+    private void createPlaylistContextMenu()
     {
         ContextMenu cm = new ContextMenu();
 
-        MenuItem addQueue = new MenuItem("Add to Queue");
-        cm.getItems().add(addQueue);
+        MenuItem playPlaylist = new MenuItem("Play List");
+        cm.getItems().add(playPlaylist);
+
+        MenuItem addPlaylist = new MenuItem("Add to Queue");
+        cm.getItems().add(addPlaylist);
 
         playlistPanel.setOnMouseClicked((MouseEvent event) ->
         {
@@ -371,9 +372,20 @@ public class MainWindowController implements Initializable
                 cm.show(playlistPanel, event.getScreenX(), event.getScreenY());
             }
 
-            addQueue.setOnAction((action) ->
+            playPlaylist.setOnAction((Action) ->
             {
-                wm.setQueueAdd(playlistPanel.getSelectionModel().getSelectedItem().getPlaylist());
+                wm.setQueuePlay(playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist());
+            });
+
+            addPlaylist.setOnAction((action) ->
+            {
+                wm.setQueueAdd(playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist());
             });
         });
     }
