@@ -15,6 +15,8 @@ public class Music
     private int duration;
     private String description;
     private String location;
+    private String genre;
+    private String songPathName;
 
     public Music(int id, String title, String album, String artist, int year, String location)
     {
@@ -110,5 +112,25 @@ public class Music
     public String toString()
     {
         return this.title;
+    }
+
+    public String getGenre()
+    {
+        return genre;
+    }
+
+    public void setGenre(String genre)
+    {
+        this.genre = genre;
+    }
+
+    public String getSongPathName()
+    {
+        return songPathName;
+    }
+
+    public void setSongPathName(String songPathName)
+    {
+        this.songPathName = songPathName;
     }
 }
