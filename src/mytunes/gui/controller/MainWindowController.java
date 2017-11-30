@@ -598,14 +598,19 @@ public class MainWindowController implements Initializable
 
         if (mStatus == Status.PLAYING)
         {
+            System.out.println("Status is: " + mStatus);
             mPlayer.stop();
             isPlaying = false;
             btnPlayPause.setText("Play");
             progressSlider.setValue(0.0);
         }
-        else
+        else if( mStatus == Status.STOPPED)
         {
-            System.out.println("Not playing, already stopped");
+            System.out.println("Status is: " + mStatus);
+        }
+        else if (mStatus == Status.PAUSED)
+        {
+            System.out.println("Status is: " + mStatus);
         }
 
     }
@@ -835,6 +840,11 @@ public class MainWindowController implements Initializable
 
     }
 
+    private void mPlayerStatus()
+    {
+        //TODO Ager Storm
+    }
+    
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
     private static String formatTime(Duration elapsed, Duration duration)
     {
