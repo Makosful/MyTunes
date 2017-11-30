@@ -228,24 +228,17 @@ public class MainWindowModel
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
 
-        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
-        for (int i = 0; i < chosenFiles.size(); i++)
 
-        {
-            System.out.println(chosenFiles.get(i).getName());
-        }
-    }
-
-    public void writeMusicFolderPath(String path) throws IOException
-    {
-
+        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
         {
-            writer.write(path);
+            writer.write(chosenFiles.get(0).getAbsolutePath());
         }
+                
+
     }
 
-    
+   
     
     public void setMetaData(List<File> chosenFiles) throws IOException, FileNotFoundException, TikaException, SAXException 
     {

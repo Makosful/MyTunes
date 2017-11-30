@@ -44,7 +44,7 @@ import mytunes.be.Path;
             {
                 ResultSet rs = statement.getGeneratedKeys();
                 rs.next();
-                int id = rs.getInt(1);
+                
                 Path path = new Path(pathname);
                 return path;
             }
@@ -84,16 +84,20 @@ import mytunes.be.Path;
      */
     public void setSong(Music song) throws SQLServerException, SQLException
     {
+        System.out.println("1");
         int artistId = setArtist(song.getArtist());
-        int albumId = setAlbum(song.getAlbum());
+        System.out.println("2");
+        int albumId = setAlbum(song.getAlbum(), song.getYear());
+        System.out.println("3");
         int genreId = setGenre(song.getGenre());
+        System.out.println("4");
         int pathId = setPath(song.getSongPathName());
-        
+        System.out.println("5");
         try (Connection con = db.getConnection())
         {
 
-                String sqlInsert = "INSERT INTO Song VALUES (?, ?, ?, ?, ?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS); 
                 preparedStatementInsert.setString(1, song.getTitle());
                 preparedStatementInsert.setInt(2, artistId);
                 preparedStatementInsert.setInt(3, albumId);
@@ -101,9 +105,10 @@ import mytunes.be.Path;
                 preparedStatementInsert.setInt(5, pathId);
                 preparedStatementInsert.executeUpdate();
 
-                ResultSet rs = preparedStatementInsert.getGeneratedKeys();
+               // ResultSet rs = preparedStatementInsert.getGeneratedKeys();
                 
         
+                
         }
     }
     
@@ -126,7 +131,7 @@ import mytunes.be.Path;
             int id = 0;
 
             String sqlSelect = "SELECT id FROM Artist WHERE artist = ?";
-            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS); 
             preparedStatement.setString(1, artist);
             ResultSet rs = preparedStatement.executeQuery();
 
@@ -137,7 +142,7 @@ import mytunes.be.Path;
             else
             {
                 String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS); 
                 preparedStatementInsert.setString(1, artist);
                 preparedStatementInsert.executeUpdate();
 
@@ -160,11 +165,12 @@ import mytunes.be.Path;
     /**
      * 
      * @param album
+     * @param releasedate
      * @return
      * @throws SQLServerException
      * @throws SQLException 
      */
-    public int setAlbum(String album) throws SQLServerException, SQLException
+    public int setAlbum(String album, int releasedate) throws SQLServerException, SQLException
     {
         
         
@@ -173,7 +179,7 @@ import mytunes.be.Path;
             int id = 0;
 
             String sqlSelect = "SELECT id FROM Albums WHERE album = ?";
-            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS); 
             preparedStatement.setString(1, album);
             ResultSet rs = preparedStatement.executeQuery();
 
@@ -183,9 +189,10 @@ import mytunes.be.Path;
             }
             else
             {
-                String sqlInsert = "INSERT INTO Albums (album) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                String sqlInsert = "INSERT INTO Albums (album, releasedate) VALUES (?, ?)";
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS); 
                 preparedStatementInsert.setString(1, album);
+                preparedStatementInsert.setInt(2, releasedate);
                 preparedStatementInsert.executeUpdate();
 
                 ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -219,7 +226,7 @@ import mytunes.be.Path;
             int id = 0;
 
             String sqlSelect = "SELECT id FROM Genre WHERE genre = ?";
-            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect);
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS); 
             preparedStatement.setString(1, genre);
             ResultSet rs = preparedStatement.executeQuery();
 
@@ -230,7 +237,7 @@ import mytunes.be.Path;
             else
             {
                 String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS); 
                 preparedStatementInsert.setString(1, genre);
                 preparedStatementInsert.executeUpdate();
 
@@ -260,21 +267,25 @@ import mytunes.be.Path;
     {
         try (Connection con = db.getConnection())
         {
-                int id = 0;
-                String sqlInsert = "INSERT INTO Path (pathname) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
-                preparedStatementInsert.setString(1, songPathName);
-                preparedStatementInsert.executeUpdate();
+            int id = 0;
 
-                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+            String sqlInsert = "INSERT INTO Path (pathname) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS); 
+            preparedStatementInsert.setString(1, songPathName);
+            preparedStatementInsert.executeUpdate();
 
-                while(rsi.next())
-                {
-                    id = rsi.getInt("id");
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
 
-                }
-                
-                return id;
+            while(rsi.next())
+            {
+                id = rsi.getInt(1);
+
+            }
+
+
+            return id;
+            
+
         }
         
     }
