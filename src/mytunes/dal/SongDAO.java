@@ -30,48 +30,7 @@ import mytunes.be.Path;
         return songs;
     }
 
-    public Path createSongPath(String pathname) throws SQLServerException, SQLException
-    {
-        try (Connection con = db.getConnection())
 
-        {
-            String sql = "INSERT INTO Path VALUES (?);";
-
-            PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, pathname);
-
-            if (statement.executeUpdate() == 1)
-            {
-                ResultSet rs = statement.getGeneratedKeys();
-                rs.next();
-                
-                Path path = new Path(pathname);
-                return path;
-            }
-            throw new RuntimeException("Song path was not created");
-
-        }
-    }
-    
-    public List<String> checkIfIsInDatabase() throws SQLServerException, SQLException
-    {
-        dataBaseSongNames.clear();
-        try (Connection con = db.getConnection()) 
-        {
-            Statement st = con.createStatement();
-            String sqlGet = "SELECT * FROM Path;";
-
-            ResultSet rs = st.executeQuery(sqlGet);
-
-            while (rs.next()) 
-            {
-                dataBaseSongNames.add(rs.getString("pathname"));
-            }
-            return dataBaseSongNames;
-        }
-    }
-    
-    
     
     
     
@@ -84,15 +43,15 @@ import mytunes.be.Path;
      */
     public void setSong(Music song) throws SQLServerException, SQLException
     {
-        System.out.println("1");
+ 
         int artistId = setArtist(song.getArtist());
-        System.out.println("2");
+
         int albumId = setAlbum(song.getAlbum(), song.getYear());
-        System.out.println("3");
+
         int genreId = setGenre(song.getGenre());
-        System.out.println("4");
+
         int pathId = setPath(song.getSongPathName());
-        System.out.println("5");
+
         try (Connection con = db.getConnection())
         {
 
@@ -150,7 +109,7 @@ import mytunes.be.Path;
 
                 while(rsi.next())
                 {
-                    id = rsi.getInt("id");
+                    id = rsi.getInt(1);
 
                 }
             } 
@@ -199,7 +158,7 @@ import mytunes.be.Path;
 
                 while(rsi.next())
                 {
-                    id = rsi.getInt("id");
+                    id = rsi.getInt(1);
 
                 }
             } 
@@ -245,7 +204,7 @@ import mytunes.be.Path;
 
                 while(rsi.next())
                 {
-                    id = rsi.getInt("id");
+                    id = rsi.getInt(1);
 
                 }
             } 
