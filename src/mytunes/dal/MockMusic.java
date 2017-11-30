@@ -47,32 +47,102 @@ public class MockMusic
         ObservableList<Music> data = FXCollections.observableArrayList();
 
         Music track;
-        String album = "Golden Eye 007 OST";
-        String artist = "Graeme Norgate & Grant Kirkhope";
+        String album = "YouTube Audio Library";
 
-        track = new Music(1, "James Bond Theme", album, artist, 0, "res/songs/01 - James Bond Theme.mp3");
+        track = new Music(1,
+                          "A Mission Scoring Action",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/A_Mission_Scoring_Action.mp3");
         data.add(track);
-        track = new Music(2, "Mission Select", album, artist, 0, "res/songs/02 - Mission Select.mp3");
+
+        track = new Music(2,
+                          "Baltic Levity Thatched Villagers",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Baltic_Levity_Thatched_Villagers.mp3");
         data.add(track);
-        track = new Music(3, "007 Watch Theme", album, artist, 0, "res/songs/03 - 007 Watch Theme.mp3");
+
+        track = new Music(3,
+                          "Bright Wish",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Bright_Wish.mp3");
         data.add(track);
-        track = new Music(4, "Dam", album, artist, 0, "res/songs/04 - Dam.mp3");
+
+        track = new Music(4,
+                          "Circus Waltz Silent Film Light",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Circus_Waltz_Silent_Film_Light.mp3");
         data.add(track);
-        track = new Music(5, "Dam X", album, artist, 0, "res/songs/05 - Dam X.mp3");
+
+        track = new Music(5,
+                          "Comic Hero Silent Film Light",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Comic_Hero_Silent_Film_Light.mp3");
         data.add(track);
-        track = new Music(6, "Bungeee!", album, artist, 0, "res/songs/06 - Bungeee!.mp3");
+
+        track = new Music(6,
+                          "Happy Little Elves",
+                          album,
+                          "Audionautix",
+                          0,
+                          "res/songs/Happy_Little_Elves.mp3");
         data.add(track);
-        track = new Music(7, "Unsquare Water Dance", album, artist, 0, "res/songs/07 - Unsquare Water Dance.mp3");
+
+        track = new Music(7,
+                          "Hat the Jazz",
+                          album,
+                          "Twin Musicom",
+                          0,
+                          "res/songs/Hat_the_Jazz.mp3");
         data.add(track);
-        track = new Music(8, "Facility", album, artist, 0, "res/songs/08 - Facility.mp3");
+
+        track = new Music(8,
+                          "Honey Bee",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Honey_Bee.mp3");
         data.add(track);
-        track = new Music(9, "Facility X", album, artist, 0, "res/songs/09 - Facility X.mp3");
+
+        track = new Music(9,
+                          "Hot Swing",
+                          album,
+                          "Kevin MacLeod",
+                          0,
+                          "res/songs/Hot_Swing.mp3");
         data.add(track);
-        track = new Music(10, "Runaway", album, artist, 0, "res/songs/10 - Runway.mp3");
+
+        track = new Music(10,
+                          "Odd News",
+                          album,
+                          "Twin Musicom",
+                          0,
+                          "res/songs/Odd_News.mp3");
         data.add(track);
-        track = new Music(11, "Runaway X", album, artist, 0, "res/songs/11 -  Runway X.mp3");
+
+        track = new Music(11,
+                          "Officers Call",
+                          album,
+                          "The U.S. Marine Corps Band",
+                          0,
+                          "res/songs/Officers_Call.mp3");
         data.add(track);
-        track = new Music(12, "Plane Takeoff", album, artist, 0, "res/songs/12 - Plane Takeoff.mp3");
+
+        track = new Music(12,
+                          "Prelude No 5",
+                          album,
+                          "Chris Zabriskie",
+                          0,
+                          "res/songs/Prelude_No_5.mp3");
         data.add(track);
 
         return data;
