@@ -33,7 +33,6 @@ public class SongDAO
     /**
      *
      * @param song
-     *
      * @throws SQLServerException
      * @throws SQLException
      */
@@ -65,13 +64,10 @@ public class SongDAO
     }
 
     /**
-     * Not finished yet, ...but if the artist already exsists in the artist
+     * if the artist already exsists in the artist
      * table get the id, else insert the artist and get the artistId
-     *
      * @param artist
-     *
      * @return id
-     *
      * @throws SQLServerException
      * @throws SQLException
      */
@@ -113,12 +109,11 @@ public class SongDAO
     }
 
     /**
-     *
+     * if the album already exsists in the album
+     * table get the id, else insert the album and get the artistId
      * @param album
      * @param releasedate
-     *
      * @return
-     *
      * @throws SQLServerException
      * @throws SQLException
      */
@@ -161,11 +156,10 @@ public class SongDAO
     }
 
     /**
-     *
+     * if the genre already exsists in the genre
+     * table get the id, else insert the genre and get the genreId
      * @param genre
-     *
      * @return
-     *
      * @throws SQLServerException
      * @throws SQLException
      */
@@ -205,13 +199,12 @@ public class SongDAO
         }
 
     }
+    
 
     /**
-     *
+     * Sets the path/name of the mp3 file and returns the id  
      * @param songPathName
-     *
      * @return
-     *
      * @throws SQLServerException
      * @throws SQLException
      */
