@@ -86,10 +86,9 @@ public class MainWindowController implements Initializable
     private boolean isLooping;
     private Duration mpduration;
     private Media song;
-    private boolean pause;
     private Status mStatus;
     Media currentlyPlaying;
-    
+
     List<Media> medias;
     private int i = 0;
     private File newFile;
@@ -151,7 +150,7 @@ public class MainWindowController implements Initializable
         // Sets up and connects the various lists to the model
         setupSongList();
         setupQueueList();
-        setupPlaybackSettings();
+        setuPlaybackSpeedSettings();
         setupPlaylistPanel();
         setupMediaPlayer();
 
@@ -297,7 +296,7 @@ public class MainWindowController implements Initializable
 
     /**
      * Sets up the panel for the playlists
->>>>>>> master
+     * >>>>>>> master
      */
     private void setupPlaylistPanel()
     {
@@ -360,7 +359,7 @@ public class MainWindowController implements Initializable
             });
         });
     }
-    
+
     private void progressSliderSetup(MediaPlayer mPlayer)
     {
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
@@ -383,7 +382,7 @@ public class MainWindowController implements Initializable
     /**
      * Handle the settings for the playback
      */
-    private void setupPlaybackSettings()
+    private void setuPlaybackSpeedSettings()
     {
         //setting default value of the choicebox
         playbackSpeed.setValue("Play speed");
@@ -398,26 +397,6 @@ public class MainWindowController implements Initializable
         if (volumeSlider.isDisabled())
         {
             volumeSlider.setDisable(false);
-        }
-
-        if (wm.getQueueList().isEmpty() && !isPlaying)
-        {
-            setupMediaPlayer();
-        }
-        if (isPlaying == false)
-        {
-            pause = false;
-            mPlayer.play();
-            isPlaying = true;
-            btnPlayPause.setText("Pause");
-        } // if the boolean is true we shall stop playing, reverse the boolean and
-        // edit the buttons text.
-        else
-        {
-            mPlayer.pause();
-            isPlaying = false;
-            btnPlayPause.setText("Play");
-            pause = true;
         }
     }
 
@@ -545,20 +524,16 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
-            mPlayer.setOnEndOfMedia(new Runnable()
+            mPlayer.setOnEndOfMedia(() ->
             {
-                @Override
-                public void run()
+                if (!wm.getQueueList().isEmpty())
                 {
-                    if(!wm.getQueueList().isEmpty())
-                    {
                     mPlayer.stop();
                     getNewSongInQue();
                     i++;
-                        System.out.println(medias.get(i));
+                    System.out.println(medias.get(i));
                     mPlayer = new MediaPlayer(medias.get(i));
                     mPlayer.play();
-                    }
                 }
             });
         }
@@ -704,15 +679,15 @@ public class MainWindowController implements Initializable
         //wm.setPathAndName(chosenFiles);
         if (chosenFiles != null)
         {
-            for (int i = 0; i < chosenFiles.size(); i++)
+            for (int index = 0; index < chosenFiles.size(); index++)
             {
                 wm.getQueueList().add(new Music(
                         0,
-                        chosenFiles.get(i).getName(),
-                        chosenFiles.get(i).getName(),
-                        chosenFiles.get(i).getName(),
+                        chosenFiles.get(index).getName(),
+                        chosenFiles.get(index).getName(),
+                        chosenFiles.get(index).getName(),
                         9999,
-                        chosenFiles.get(i).getAbsolutePath()
+                        chosenFiles.get(index).getAbsolutePath()
                 ));
             }
         }
@@ -844,7 +819,7 @@ public class MainWindowController implements Initializable
      */
     private void changeSongInQue()
     {
-        if (!wm.getQueueList().isEmpty() && pause == false)
+        if (!wm.getQueueList().isEmpty())
         {
             getNewSongInQue();
         }
@@ -857,10 +832,10 @@ public class MainWindowController implements Initializable
     {
         medias = new ArrayList();
         mPlayer.stop();
-        
-        for (int i = 0; i < wm.getQueueList().size(); i++)
+
+        for (int index = 0; index < wm.getQueueList().size(); index++)
         {
-            newFile = new File(wm.getQueueList().get(i).getLocation());
+            newFile = new File(wm.getQueueList().get(index).getLocation());
             song = new Media(newFile.toURI().toString());
             medias.add(song);
         }
