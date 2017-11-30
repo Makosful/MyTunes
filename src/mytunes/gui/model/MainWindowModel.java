@@ -1,6 +1,9 @@
 package mytunes.gui.model;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +17,7 @@ import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
-import mytunes.bll.MetaData;
 import mytunes.gui.controller.CreatePlaylistWindowController;
-import org.apache.tika.exception.TikaException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -33,7 +33,6 @@ public class MainWindowModel
 
     // Objects
     private BLLManager bllManager;
-    private MetaData metadata;
 
     /**
      * Constructor
@@ -42,7 +41,6 @@ public class MainWindowModel
     {
         try
         {
-            this.metadata = new MetaData();
             this.bllManager = new BLLManager();
             this.allSongs = FXCollections.observableArrayList();
             this.queue = FXCollections.observableArrayList();
@@ -257,31 +255,21 @@ public class MainWindowModel
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
 
+        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
+        for (int i = 0; i < chosenFiles.size(); i++)
 
-        
+        {
+            System.out.println(chosenFiles.get(i).getName());
+        }
+    }
+
+    public void writeMusicFolderPath(String path) throws IOException
+    {
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
         {
-            writer.write(chosenFiles.get(0).getAbsolutePath());
+            writer.write(path);
         }
-                
-
     }
 
-   
-    
-    public void setMetaData(List<File> chosenFiles) throws IOException, FileNotFoundException, TikaException, SAXException 
-    {
-        
-            metadata.MetaData(chosenFiles);
-
-    }
-    
 }
-
-
-
-
-
-
-
-   

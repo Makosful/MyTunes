@@ -5,14 +5,11 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
@@ -33,8 +30,6 @@ import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
-import org.apache.tika.exception.TikaException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -119,10 +114,6 @@ public class MainWindowController implements Initializable
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
-    
-    // Model
-    private MainWindowModel wm;
-    private List<File> pathNames;
 
     /**
      * Constructor, for all intends and purposes
@@ -142,7 +133,6 @@ public class MainWindowController implements Initializable
 
         // Sets up and connects the various lists to the model
         setupSongList();
-        setupTableContextMenu();
         setupQueueList();
         setupPlaybackSettings();
         setupPlaylistPanel();
@@ -366,18 +356,6 @@ public class MainWindowController implements Initializable
     }
 
     private void createPlaylistContextMenu()
-                    try
-                    {
-                        LoadMP3Files(action);
-                    }
-                    catch (TikaException ex)
-                    {
-                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    catch (IOException ex)
-                    {
-                        Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
     {
         ContextMenu cm = new ContextMenu();
 
@@ -472,7 +450,6 @@ public class MainWindowController implements Initializable
             mPlayer.play();
             isPlaying = true;
             btnPlayPause.setText("Pause");
-            onEndOfmedia();
         } // if the boolean is true we shall stop playing, reverse the boolean and
         // edit the buttons text.
         else
@@ -603,7 +580,7 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
-    private void LoadMP3Files(ActionEvent event) throws FileNotFoundException, TikaException, IOException 
+    private void LoadMP3Files(ActionEvent event)
     {
         /*
          * Firstly we create a new FileChooser and add an mp3 filter to disable
@@ -621,27 +598,7 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-        try
-        {
-            wm.setPathAndName(chosenFiles);
-         
-        }
-        catch (IOException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-        
-        try
-        {
-            wm.setMetaData(chosenFiles);
-        }
-        catch (SAXException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-        
-        
-
+        //wm.setPathAndName(chosenFiles);
         if (chosenFiles != null)
         {
             for (int i = 0; i < chosenFiles.size(); i++)
@@ -783,27 +740,9 @@ public class MainWindowController implements Initializable
 
         wm.getQueueList().add(track);
     }
-    
-        /**
-     * Plays next song when song ends.
-     */
-    private void onEndOfmedia()
-    {
-        mPlayer.setOnEndOfMedia(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                    wm.getQueueList().remove(0);
-                    changeSongInQue();
-                   
-            }
-        });
-       
-    }
 
     /**
-     * Plays the next song, if que is not empty.
+     * Plays the next song.
      */
     private void changeSongInQue()
     {

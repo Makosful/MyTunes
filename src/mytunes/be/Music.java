@@ -12,12 +12,9 @@ public class Music
     private String artist;
     private String album;
     private int year;
-    private double duration;
+    private int duration;
     private String description;
     private String location;
-    private String genre;
-    private String songPathName;
-
 
     public Music(int id, String title, String album, String artist, int year, String location)
     {
@@ -27,11 +24,6 @@ public class Music
         this.artist = artist;
         this.year = year;
         this.location = location;
-    }
-    
-    public Music()
-    {
-        
     }
 
     public int getId()
@@ -78,28 +70,18 @@ public class Music
     {
         return year;
     }
-    
-    public String getGenre()
-    {
-        return genre;
-    }
-    
-    public void setGenre(String genre)
-    {
-        this.genre = genre;
-    }
 
     public void setYear(int year)
     {
         this.year = year;
     }
 
-    public double getDuration()
+    public int getDuration()
     {
         return duration;
     }
 
-    public void setDuration(double duration)
+    public void setDuration(int duration)
     {
         this.duration = duration;
     }
@@ -123,18 +105,6 @@ public class Music
     {
         this.location = location;
     }
-    
-    
-    public String getSongPathName()
-    {
-        return songPathName;
-    }
-
-    public void setSongPathName(String songPathName)
-    {
-        this.songPathName = songPathName;
-    }
-
 
     @Override
     public String toString()
