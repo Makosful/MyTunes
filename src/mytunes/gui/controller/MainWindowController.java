@@ -195,6 +195,10 @@ public class MainWindowController implements Initializable
                         .getSelectedItem();
 
                 wm.setQueuePlay(selectedItem);
+
+                prepareSetup();
+
+                mPlayer.play();
             }
         });
     }
@@ -489,6 +493,13 @@ public class MainWindowController implements Initializable
         });
     }
 
+    private void prepareSetup()
+    {
+        setupMediaPlayer();
+        TimeChangeListener();
+        enableSettings();
+    }
+
     private void enableSettings()
     {
         if (volumeSlider.isDisabled() && btnLoop.isDisabled() && playbackSpeed.isDisabled())
@@ -637,7 +648,7 @@ public class MainWindowController implements Initializable
     {
         //Creates a new volume slider and sets the default value to 50%
         JFXSlider volSlide = volumeSlider;
-        
+
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
 
