@@ -110,6 +110,12 @@ public class MainWindowModel
         this.queue.addAll(selectedItems);
     }
 
+    public void setQueuePlay(Music track)
+    {
+        this.queue.clear();
+        this.queue.add(track);
+    }
+
     /**
      * Adds the selected items to the end of the queue list
      *
@@ -178,6 +184,7 @@ public class MainWindowModel
             if (plCont.shouldSave())
             {
                 Playlist pl = new Playlist(plCont.getTitle());
+                pl.setPlaylist(plCont.getPlaylist());
                 this.playlists.add(pl);
 
                 // Saves the playlist to storage

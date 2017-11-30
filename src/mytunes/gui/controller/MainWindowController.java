@@ -167,8 +167,23 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        setupTableDoubleClick();
+
         // Defines the context menu for the table
         createTableContextMenu();
+    }
+
+    private void setupTableDoubleClick()
+    {
+        tblSongList.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getClickCount() == 2)
+            {
+                Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+
+                wm.setQueuePlay(selectedItem);
+            }
+        });
     }
 
     private void createTableContextMenu()
@@ -191,11 +206,6 @@ public class MainWindowController implements Initializable
         // Creates a new item for the menu and puts it in
         MenuItem clearQueueContext = new MenuItem("Clear Queue");
         cm.getItems().add(clearQueueContext);
-
-        MenuItem addToPlaylist1 = new MenuItem("Add to Playlist > add");
-        cm.getItems().add(addToPlaylist1);
-        MenuItem addToPlaylist2 = new MenuItem("Add to Playlist > too");
-        cm.getItems().add(addToPlaylist2);
 
         tblSongList.setRowFactory(tv ->
         {
@@ -324,8 +334,48 @@ public class MainWindowController implements Initializable
         // Puts the playlists into the view
         playlistPanel.setItems(wm.getPlaylists());
 
+        setupPlaylistDoubleClick();
+
+        setPlaylistContextMenu();
+
         // Loads the stores playlists
         wm.loadPlaylists();
+    }
+
+    private void setupPlaylistDoubleClick()
+    {
+        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getClickCount() == 2)
+            {
+                Playlist selectedItem = playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+                wm.setQueuePlay(selectedItem.getPlaylist());
+            }
+        });
+    }
+
+    private void setPlaylistContextMenu()
+    {
+        ContextMenu cm = new ContextMenu();
+
+        MenuItem addQueue = new MenuItem("Add to Queue");
+        cm.getItems().add(addQueue);
+
+        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                cm.show(playlistPanel, event.getScreenX(), event.getScreenY());
+            }
+
+            addQueue.setOnAction((action) ->
+            {
+                wm.setQueueAdd(playlistPanel.getSelectionModel().getSelectedItem().getPlaylist());
+            });
+        });
     }
 
     private void progressSliderSetup(MediaPlayer mPlayer)
