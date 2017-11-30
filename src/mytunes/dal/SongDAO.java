@@ -31,21 +31,20 @@ public class SongDAO
     }
 
     /**
-     *
+     * Gets the ids and inserts the song parameters/ creates the song in the songs table
      * @param song
      * @throws SQLServerException
      * @throws SQLException
      */
     public void setSong(Music song) throws SQLServerException, SQLException
     {
-
-        int artistId = setArtist(song.getArtist());
-
-        int albumId = setAlbum(song.getAlbum(), song.getYear());
-
-        int genreId = setGenre(song.getGenre());
-
-        int pathId = setPath(song.getSongPathName());
+        
+        List<Integer> relationIds = getRelationIds(song);
+        
+        int artistId = relationIds.get(0);
+        int albumId = relationIds.get(1);
+        int genreId = relationIds.get(2);
+        int pathId = relationIds.get(3);
 
         try (Connection con = db.getConnection())
         {
@@ -62,18 +61,79 @@ public class SongDAO
             // ResultSet rs = preparedStatementInsert.getGeneratedKeys();
         }
     }
-
+    
+    
     /**
-     * if the artist already exsists in the artist
-     * table get the id, else insert the artist and get the artistId
-     * @param artist
-     * @return id
-     * @throws SQLServerException
-     * @throws SQLException
+     * Determines with id should be used in the song table, if the artist/album/genre 
+     * already exists get the id from those, else get the newly inserted id's
+     * @param song
+     * @return list of id's 
+     * @throws SQLException 
      */
-    public int setArtist(String artist) throws SQLServerException, SQLException
+    private List getRelationIds(Music song) throws SQLException
     {
+        List<Integer> ids = new ArrayList();
+        
+        int artistId;
+        int albumId;
+        int genreId;
+        int pathId;
+        
+        //Determine if the artist already is in the db, and get the resulting id
+        int getArtistId = getExistingArtist(song.getArtist());
+        if(getArtistId != 0){
+            
+            artistId = getArtistId;
+        }
+        else
+        {
+            artistId = setArtist(song.getArtist());
+        }
+        
+        //Determine if the album already is in the db, and get the resulting id
+        int getAlbumId = getExistingAlbum(song.getAlbum());
+        if(getAlbumId != 0){ 
+            
+            albumId = getAlbumId;
+        }
+        else
+        {
+            albumId = setAlbum(song.getAlbum(), song.getYear());
+        }
+        
+        //Determine if the genre already is in the db, and get the resulting id
+        int getGenreId = getExistingGenre(song.getGenre());
+        if(getGenreId != 0){
+            
+            genreId = getGenreId;
+            
+        }
+        else
+        {
+            genreId = setGenre(song.getGenre());
+        }
 
+
+        pathId = setPath(song.getSongPathName());
+        
+        ids.add(artistId);
+        ids.add(albumId);
+        ids.add(genreId);
+        ids.add(pathId);
+        
+        return ids;
+    }
+
+    
+    /**
+     * If the artist already exsists in the artist table get the id
+     * @param artist
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    private int getExistingArtist(String artist) throws SQLServerException, SQLException
+    {
         try (Connection con = db.getConnection())
         {
             int id = 0;
@@ -87,39 +147,53 @@ public class SongDAO
             {
                 id = rs.getInt("id");
             }
-            else
-            {
-                String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-                preparedStatementInsert.setString(1, artist);
-                preparedStatementInsert.executeUpdate();
+            
+            return id;
+        }
+    }
+    
+    
+    
+    /**
+     * Insert the artist and get the artistId
+     * @param artist
+     * @return id
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    private int setArtist(String artist) throws SQLServerException, SQLException
+    {
 
-                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+        try (Connection con = db.getConnection())
+        {
+            int id;
 
-                while (rsi.next())
-                {
-                    id = rsi.getInt(1);
+            String sqlInsert = "INSERT INTO Artist (artist) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.setString(1, artist);
+            preparedStatementInsert.executeUpdate();
 
-                }
-            }
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+            
+            id = rsi.getInt(1);
 
             return id;
         }
 
     }
 
+    
     /**
-     * if the album already exsists in the album
-     * table get the id, else insert the album and get the artistId
+     * If the album already exsists in the album table get the id
      * @param album
-     * @param releasedate
      * @return
      * @throws SQLServerException
-     * @throws SQLException
+     * @throws SQLException 
      */
-    public int setAlbum(String album, int releasedate) throws SQLServerException, SQLException
+    private int getExistingAlbum(String album) throws SQLServerException, SQLException
     {
-
         try (Connection con = db.getConnection())
         {
             int id = 0;
@@ -132,23 +206,41 @@ public class SongDAO
             if (rs.next())
             {
                 id = rs.getInt("id");
+                
             }
-            else
-            {
-                String sqlInsert = "INSERT INTO Albums (album, releasedate) VALUES (?, ?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-                preparedStatementInsert.setString(1, album);
-                preparedStatementInsert.setInt(2, releasedate);
-                preparedStatementInsert.executeUpdate();
+            
+            return id;
+        }
+    }
+    
+    
+    
+    /**
+     * Insert the album and get the artistId
+     * @param album
+     * @param releasedate
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    private int setAlbum(String album, int releasedate) throws SQLServerException, SQLException
+    {
 
-                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+        try (Connection con = db.getConnection())
+        {
+            int id;
 
-                while (rsi.next())
-                {
-                    id = rsi.getInt(1);
+            String sqlInsert = "INSERT INTO Albums (album, releasedate) VALUES (?, ?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.setString(1, album);
+            preparedStatementInsert.setInt(2, releasedate);
+            preparedStatementInsert.executeUpdate();
 
-                }
-            }
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+            
+            id = rsi.getInt(1);
 
             return id;
         }
@@ -156,16 +248,14 @@ public class SongDAO
     }
 
     /**
-     * if the genre already exsists in the genre
-     * table get the id, else insert the genre and get the genreId
+     * If the genre already exsists in the genre table get the id
      * @param genre
      * @return
      * @throws SQLServerException
-     * @throws SQLException
+     * @throws SQLException 
      */
-    public int setGenre(String genre) throws SQLServerException, SQLException
+    private int getExistingGenre(String genre) throws SQLServerException, SQLException
     {
-
         try (Connection con = db.getConnection())
         {
             int id = 0;
@@ -178,22 +268,38 @@ public class SongDAO
             if (rs.next())
             {
                 id = rs.getInt("id");
+                
             }
-            else
-            {
-                String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
-                PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-                preparedStatementInsert.setString(1, genre);
-                preparedStatementInsert.executeUpdate();
+            
+            return id;
+        }
+    }
+    
+    
+    /**
+     * Insert the genre and get the genreId
+     * @param genre
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    private int setGenre(String genre) throws SQLServerException, SQLException
+    {
 
-                ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+        try (Connection con = db.getConnection())
+        {
+            int id;
 
-                while (rsi.next())
-                {
-                    id = rsi.getInt(1);
+            String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.setString(1, genre);
+            preparedStatementInsert.executeUpdate();
 
-                }
-            }
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+            
+            id = rsi.getInt(1);
 
             return id;
         }
@@ -232,4 +338,12 @@ public class SongDAO
         }
 
     }
+    
+    
+    
+    
+    
+    
+    
+    
 }
