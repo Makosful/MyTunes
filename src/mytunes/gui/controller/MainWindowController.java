@@ -570,16 +570,6 @@ public class MainWindowController implements Initializable
             setupMediaPlayer();
 
         }
-        pathNames = chosenFiles;
-
-        try
-        {
-            savePath();
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
 
     }
 
@@ -733,33 +723,5 @@ public class MainWindowController implements Initializable
         mPlayer.play();
     }
 
-    /**
-     * Saves a song name to the database
-     *
-     * @throws SQLException
-     */
-    private void savePath() throws SQLException
-    {
-        List<String> dataBaseSongNames = wm.checkIfIsInDatabase();
-
-        List<String> songNamePaths = wm.getPath(pathNames);
-
-        if (!dataBaseSongNames.isEmpty())
-        {
-            for (String pathString : songNamePaths)
-            {
-                if (!dataBaseSongNames.contains(pathString))
-                {
-                    wm.createSongPath(pathString);
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < songNamePaths.size(); i++)
-            {
-                wm.createSongPath(songNamePaths.get(i));
-            }
-        }
-    }
+   
 }
