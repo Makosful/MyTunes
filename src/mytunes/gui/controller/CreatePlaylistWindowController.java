@@ -2,10 +2,7 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -65,9 +62,6 @@ public class CreatePlaylistWindowController implements Initializable
         listSonglist.setItems(wm.getSongList());
         listPlaylist.setItems(playlist);
         listSonglist.setItems(songlist);
-
-        setAutoTextChange(txtPlaylistSearch, playlist);
-        setAutoTextChange(txtSongSearch, songlist);
 
         listPlaylist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listSonglist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -180,50 +174,5 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void songlistSearch(ActionEvent event)
     {
-    }
-
-    private void setAutoTextChange(TextField textField,
-                                   ObservableList<Music> list)
-    {
-        textField.textProperty()
-                .addListener((ObservableValue<? extends String> observable,
-                              String oldText,
-                              String newText) ->
-                {
-                    try
-                    {
-                        search(textField.getText(), list);
-                    }
-                    catch (Exception e)
-                    {
-                        System.out.println(e.getMessage());
-                    }
-                });
-    }
-
-    private void search(String text,
-                        ObservableList<Music> list)
-    {
-        list.clear();
-        List<Music> result = getSearchResult(text, wm.getSongList());
-        list.addAll(result);
-    }
-
-    private List<Music> getSearchResult(String text,
-                                        ObservableList<Music> list)
-    {
-        List<Music> searchResult = new ArrayList<>();
-
-        list.forEach((music) ->
-        {
-            if ((music.getTitle().toLowerCase().contains(text.toLowerCase())
-                 || music.getAlbum().toLowerCase().contains(text.toLowerCase())
-                 || music.getArtist().toLowerCase().contains(text.toLowerCase())))
-            {
-                searchResult.add(music);
-            }
-        });
-
-        return searchResult;
     }
 }
