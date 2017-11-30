@@ -138,7 +138,7 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void moveAllToPlaylist(ActionEvent event)
     {
-        playlist.addAll(wm.getSongList());
+        playlist.addAll(songlist);
     }
 
     @FXML
@@ -165,14 +165,15 @@ public class CreatePlaylistWindowController implements Initializable
         playlist.removeAll(wm.getSongList());
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Unimplimented">
     @FXML
     private void playlistSearch(ActionEvent event)
     {
-        txtSongSearch.getText();
     }
 
     @FXML
     private void songlistSearch(ActionEvent event)
     {
     }
+    //</editor-fold>
 }
