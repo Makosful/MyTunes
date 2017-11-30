@@ -127,6 +127,16 @@ public class MainWindowController implements Initializable
     /**
      * Constructor, for all intends and purposes
      *
+     * In the initialize we set all the methods we wish to initialize as soon as
+     * the program launches - that is - before the user has had any chance to
+     * tweak it.
+     * In this case we simply disable the ability to manipulate the Media Player
+     * (as it hasn't been loaded yet) and instantiates our Model as well as all
+     * our Setup methods, which
+     * we split up into different categories. Finally we make sure the volume
+     * slider is at the front so it goes over panes and such (will provide
+     * difference as a video).
+     *
      * @param location
      * @param resources
      */
@@ -154,7 +164,7 @@ public class MainWindowController implements Initializable
         volumeSlider.getParent().getParent().toFront();
     }
 
-    //<editor-fold defaultstate="collapsed" desc="SETUP Methods">
+    //<editor-fold defaultstate="collapsed" desc="Table View Fold">
     /**
      * Sets up the table & list containing all the songs
      */
@@ -180,6 +190,7 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        //Allows for double clicking the table to instantly play the selected media.
         setupTableDoubleClick();
 
         // Defines the context menu for the table
@@ -284,15 +295,9 @@ public class MainWindowController implements Initializable
 
         }); // END of table row factory
     }
+    //</editor-fold>
 
-    /**
-     * Sets the list with the queue
-     */
-    private void setupQueueList()
-    {
-        listQueue.setItems(wm.getQueueList());
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="Playlist Fold">
     /**
      * Sets up the panel for the playlists
      * >>>>>>> master
@@ -358,6 +363,15 @@ public class MainWindowController implements Initializable
             });
         });
     }
+    //</editor-fold>
+
+    /**
+     * Sets the list with the queue
+     */
+    private void setupQueueList()
+    {
+        listQueue.setItems(wm.getQueueList());
+    }
 
     private void progressSliderSetup(MediaPlayer mPlayer)
     {
@@ -376,19 +390,22 @@ public class MainWindowController implements Initializable
             mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
         });
     }
-    //</editor-fold>
 
     /**
      * Handle the settings for the playback
+     * In here we simply display the possible playback speeds for the user. May
+     * be changed to a slider in the future for full customization
+     * We also do a check for our volume sliders disable property and change it
+     * to enabled if it hasn't already been.
      */
     private void setuPlaybackSpeedSettings()
     {
         //setting default value of the choicebox
-        playbackSpeed.setValue("Play speed");
+        playbackSpeed.setValue("Default speed");
         //creating possible choices
         playbackSpeed.getItems().addAll("50% speed",
                                         "75% speed",
-                                        "100% speed",
+                                        "Default speed",
                                         "125% speed",
                                         "150% speed",
                                         "175% speed",
@@ -401,6 +418,9 @@ public class MainWindowController implements Initializable
 
     /**
      * Manages the playback speed
+     * Associated with the methods setuPlaybackSpeedSettings() listed above
+     * where we now manage the selection of the list and adjust the MediaPlayer
+     * playback speed accordingly.
      *
      * @param event
      */
@@ -455,6 +475,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
+     * Chooses the file(s)
      * Handles the file chooser and allows multiple selections of files to add (
      * NEEDS A FIX TO ADD MEDIA PLAYER TO ALL FILES )
      */
@@ -477,7 +498,14 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Sets up the Media Player
+     * Sets up MediaPlayers
+     * Sets up the Media Player by first running the fileChooser method and
+     * afterwards - once the media is ready - it creates a mediaview for it,
+     * acquires its duration, sets the
+     * progress sliders value to a double of 0 (reset) and then sets the max
+     * value of the slider to the songs duration in seconds.
+     * It retrieves the MediaPlayer Status in order to display it to the user as
+     * the final part in the setonready listener.
      */
     private void setupMediaPlayer()
     {
@@ -494,6 +522,7 @@ public class MainWindowController implements Initializable
         });
     }
 
+    //A collection of things we execute when we prepare the setups
     private void prepareSetup()
     {
         setupMediaPlayer();
@@ -501,6 +530,7 @@ public class MainWindowController implements Initializable
         TimeChangeListener();
     }
 
+    //A preperation of our setup, followed by the play function
     private void prepareAndPlay()
     {
         if (isPlaying)
@@ -514,6 +544,7 @@ public class MainWindowController implements Initializable
         btnPlayPause.setText("Pause");
     }
 
+    //Under the initialize we disabled all the following objects - here we enable them again, which we will run under the prepareSetup method
     private void enableSettings()
     {
         volumeSlider.setDisable(false);
@@ -524,6 +555,20 @@ public class MainWindowController implements Initializable
         progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
     }
 
+    /**
+     * Allows the user to Play/Pause a media
+     * A check on whether to play or pause the music (same button).
+     * Initially we check if the queue is empty and if we aren't already playing
+     * something, where we will then run some methods to prepare the media to be
+     * played and then finally playing it.
+     * Otherwise, if we are not playing and the queue is supposedly not empty
+     * we will add a listener which will update the sliders which allows for
+     * automatic time tracking and allowing the user to manipulate the play time
+     * (rewind, drag & drop, fast forward).
+     * On the end of the media we stop the player, fetch the next song in queue
+     * and count up on a parameter, sets our new mediaplayer to the next song
+     * and then finally play the next song
+     */
     @FXML
     private void musicPlayPause(ActionEvent event)
     {
@@ -565,6 +610,96 @@ public class MainWindowController implements Initializable
         }
     }
 
+    /**
+     * Allows the user to stop the media
+     * Grabs the current status of the MediaPlayer and then performs actions
+     * according to the response.
+     * If the Media is playing we stop the player and revert the isPlaying
+     * boolean followed by resetting the progress slider.
+     *
+     * If the status is anything else then nothing will occur...
+     */
+    @FXML
+    private void songStop(ActionEvent event)
+    {
+        mStatus = mPlayer.getStatus();
+
+        if (mStatus == Status.PLAYING)
+        {
+            System.out.println("Status is: " + mStatus);
+            mPlayer.stop();
+            isPlaying = false;
+            btnPlayPause.setText("Play");
+            progressSlider.setValue(0.0);
+        }
+        else if (mStatus == Status.STOPPED)
+        {
+            System.out.println("Status is: " + mStatus);
+        }
+        else if (mStatus == Status.PAUSED)
+        {
+            System.out.println("Status is: " + mStatus);
+        }
+        else if (mStatus == Status.UNKNOWN)
+        {
+            System.out.println("Status is: " + mStatus);
+        }
+
+    }
+
+    /**
+     * Allows for looping a media
+     * Allows the user to loop a current song, where we will then continually
+     * loop a song, denying it to reach the "on end of media" stage. If the loop
+     * is disabled nothing will occur.
+     * This is possibly by reverting the boolean in charge of the logic.
+     */
+    @FXML
+    private void LoopAction(ActionEvent event)
+    {
+        isLooping = !isLooping;
+        //if our loop slide-button is enabled we change the text, set the cycle count to indefinite and reverse the boolean
+        if (btnLoop.isSelected() == true)
+        {
+            btnLoop.setText("Loop: ON");
+            mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            isLooping = false;
+            System.out.println("Looping on");
+        }
+        else if (btnLoop.isSelected() != true)
+        {
+            btnLoop.setText("Loop: OFF");
+            isLooping = true;
+            System.out.println("Looping off");
+        }
+    }
+
+    /**
+     * Mixes the VolumeSlider
+     * Allows the user to manipulate the volume of the MediaPlayer. Works by
+     * checking what value the slider currently has, turning it into 100th parts
+     * so we can detect a range from 1 --> 100
+     * and finally sets the volume of the MediaPlayer to be the exact number of
+     * the volume slider.
+     */
+    @FXML
+    private void volumeMixer(MouseEvent event)
+    {
+        //Creates a new volume slider and sets the default value to 50%
+        JFXSlider volSlide = volumeSlider;
+
+        //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
+        volSlide.setValue(mPlayer.getVolume() * 100);
+
+        //Adds a listener on an observable in the volume slider, which allows users to tweak the volume of the player.
+        volSlide.valueProperty().addListener((javafx.beans.Observable observable)
+                ->
+        {
+            mPlayer.setVolume(volSlide.getValue() / 100);
+        });
+    }
+
+    //Allows for setting up listeners for the change in the progress slider
     private void TimeChangeListener()
     {
         mPlayer.currentTimeProperty().addListener((Observable ov) ->
@@ -573,11 +708,23 @@ public class MainWindowController implements Initializable
         });
     }
 
+    /**
+     * Updates ProgressSlider + Timer
+     * A method which first takes the duration from our media player and then
+     * sets the Timer label to be a formated version of: [how far we are / how
+     * long the song is]
+     * The slider is set up to manually check for how far we have gone and
+     * adjust to that (automatic sliding on progress) Followed by 2 slider
+     * listeners which allows the user
+     * to either drag and drop the slider knob or simply just click the progress
+     * slider and the slider will adjust to the user input.
+     */
     private void updateSliderAndTimer()
     {
         Duration currentTime = mPlayer.getCurrentTime();
         lblTimer.setText(formatTime(currentTime, mpduration));
 
+        //Adds a listener to the value, allowing it to automatically adjust to where it is - displaying the progress to the user.
         mPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration duration, Duration current) ->
         {
             progressSlider.setValue(current.toSeconds());
@@ -601,98 +748,21 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Tells the playback to stop entirely
-     *
-     * @param event
-     */
-    @FXML
-    private void songStop(ActionEvent event)
-    {
-        mStatus = mPlayer.getStatus();
-
-        if (mStatus == Status.PLAYING)
-        {
-            System.out.println("Status is: " + mStatus);
-            mPlayer.stop();
-            isPlaying = false;
-            btnPlayPause.setText("Play");
-            progressSlider.setValue(0.0);
-        }
-        else if (mStatus == Status.STOPPED)
-        {
-            System.out.println("Status is: " + mStatus);
-        }
-        else if (mStatus == Status.PAUSED)
-        {
-            System.out.println("Status is: " + mStatus);
-        }
-
-    }
-
-    /**
-     * Sets the current song to loop
-     *
-     * @param event
-     */
-    @FXML
-    private void LoopAction(ActionEvent event)
-    {
-        isLooping = !isLooping;
-        //if our loop slide-button is enabled we change the text, set the cycle count to indefinite and reverse the boolean
-        if (btnLoop.isSelected() == true)
-        {
-            btnLoop.setText("Loop: ON");
-            mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            isLooping = false;
-            System.out.println("Looping on");
-        }
-        else if (btnLoop.isSelected() != true)
-        {
-            btnLoop.setText("Loop: OFF");
-            isLooping = true;
-            System.out.println("Looping off");
-        }
-    }
-
-    /**
-     * Will handle the playback duration
-     *
-     * @param event
-     */
-    @FXML
-    private void volumeMixer(MouseEvent event)
-    {
-        //Creates a new volume slider and sets the default value to 50%
-        JFXSlider volSlide = volumeSlider;
-
-        //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
-        volSlide.setValue(mPlayer.getVolume() * 100);
-
-        //Adds a listener on an observable in the volume slider, which allows users to tweak the volume of the player.
-        volSlide.valueProperty().addListener((javafx.beans.Observable observable)
-                ->
-        {
-            mPlayer.setVolume(volSlide.getValue() / 100);
-        });
-    }
-
-    /**
      * Loads multiple MP3 files
-     *
-     * @param event
+     * Firstly we create a new FileChooser and add an mp3 filter to disable
+     * all other file formats (saves a lot of time troubleshooting what went
+     * wrong) then followingly we create a LIST of files rather than just a
+     * file, so we can load in multiple mp3 files. If the list contains
+     * items then we will determine their path and put them in the queue.
+     * Otherwise the list of files is empty and we determine that there was
+     * an error or that none were selected. Lastly we setup the mediaplayer
+     * so that we can play the now selected song(s)
      */
     @FXML
     private void LoadMP3Files(ActionEvent event)
     {
         /*
-         * Firstly we create a new FileChooser and add an mp3 filter to disable
-         * all other file formats (saves a lot of time troubleshooting what went
-         * wrong) then followingly we create a LIST of files rather than just a
-         * file, so we can load in multiple mp3 files. If the list contains
-         * items then we will determine their path and put them in the queue.
-         * Otherwise the list of files is empty and we determine that there was
-         * an error or that none were selected. Lastly we setup the mediaplayer
-         * so that we can play the now selected song(s)
+         *
          */
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
@@ -731,6 +801,11 @@ public class MainWindowController implements Initializable
 
     }
 
+    /**
+     * Clears the queue
+     * We check if queue is empty, if it is not we force all songs to stop, followed by a method to clear our queue and 
+     * finally set the isPlaying boolean accordingly and the text of the Play/Pause button
+     */
     @FXML
     private void clearQueue(ActionEvent event)
     {
@@ -749,9 +824,8 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Creates a new playlist and adds it to the list of playlists
-     *
-     * @param event
+     * Creates a new playlist 
+     * and adds it to the list of playlists
      */
     @FXML
     private void createPlaylist(ActionEvent event)
@@ -761,8 +835,7 @@ public class MainWindowController implements Initializable
 
     /**
      * Removes a playlist
-     *
-     * @param event
+     * and removes it to the list of playlists
      */
     @FXML
     private void deletePlaylist(ActionEvent event)
@@ -771,10 +844,10 @@ public class MainWindowController implements Initializable
                 .getSelectionModel().getSelectedItems();
         wm.deletePlaylists(selectedItems);
     }
-    //</editor-fold>
 
     /**
      * Adds a random song to the playlist
+     * if no song has been selected by the user (Empty list & user clicks Play)
      */
     private void addElevatorMusic()
     {
@@ -818,7 +891,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Plays the next song.
+     * Plays the next song in queue if there is one
      */
     private void changeSongInQue()
     {
@@ -829,7 +902,9 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Gets ahold of the new song in queue.
+     * Gets ahold of the new song in queue by checking the index of the list. When the media is ready to play we set the duration of the new MediaPlayer
+     * 
+     * //TODO : Needs to add MORE than just mpduration (I think?)
      */
     private void getNewSongInQue()
     {
@@ -848,6 +923,10 @@ public class MainWindowController implements Initializable
         });
     }
 
+    /**
+     * A method to listen to the MediaPlayer Status
+     * A listener which gives feedback on what status the MediaPlayer currently has (for visual debugging)
+     */
     private void GetmPlayerStatus()
     {
         mPlayer.statusProperty().addListener((observable, oldValue, newValue) -> lblmPlayerStatus.setText("MediaPlayer Status: " + newValue.toString().toLowerCase()));
@@ -927,6 +1006,10 @@ public class MainWindowController implements Initializable
         }
     }
 
+    /**
+     * REPLACED by listener
+     * Was originally intended for the ProgressSlider OnDrag event
+     */
     @FXML
     private void progressDrag(MouseEvent event)
     {
