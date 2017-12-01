@@ -314,32 +314,15 @@ public class MainWindowController implements Initializable
         wm.loadPlaylists();
 
         //setupPlaylistDoubleClick();
-        createPlaylistContextMenu();
+        setupPlaylistMouseListener();
     }
 
-    private void setupPlaylistDoubleClick()
-    {
-        playlistPanel.setOnMouseClicked(event ->
-        {
-            if (event.getClickCount() == 2)
-            {
-                System.out.println("One");
-            }
-        });
-    }
-
-    private void createPlaylistContextMenu()
+    private void setupPlaylistMouseListener()
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
 
-        // Creates a new item for the menu and puts it in
-        MenuItem playPlaylist = new MenuItem("Play List");
-        cm.getItems().add(playPlaylist);
-
-        // Creates a new item for the menu and puts it in
-        MenuItem addPlaylist = new MenuItem("Add to Queue");
-        cm.getItems().add(addPlaylist);
+        setupPlaylistContextMenu(cm);
 
         playlistPanel.setOnMouseClicked((MouseEvent event) ->
         {
@@ -352,22 +335,45 @@ public class MainWindowController implements Initializable
             {
                 cm.show(playlistPanel, event.getScreenX(), event.getScreenY());
             }
+        });
+    }
 
-            playPlaylist.setOnAction((Action) ->
-            {
-                wm.setQueuePlay(playlistPanel
-                        .getSelectionModel()
-                        .getSelectedItem()
-                        .getPlaylist());
-            });
+    /**
+     * Setsup the context menu, their options and the action of those options,
+     * for the playlist
+     *
+     * @param cm The context to work with
+     */
+    private void setupPlaylistContextMenu(ContextMenu cm)
+    {
+        // Creates the option to replace the queue with the playlist
+        MenuItem playPlaylist = new MenuItem("Play List");
+        cm.getItems().add(playPlaylist);
+        playPlaylist.setOnAction((Action) ->
+        {
+            wm.setQueuePlay(playlistPanel
+                    .getSelectionModel()
+                    .getSelectedItem()
+                    .getPlaylist());
+        });
 
-            addPlaylist.setOnAction((action) ->
-            {
-                wm.setQueueAdd(playlistPanel
-                        .getSelectionModel()
-                        .getSelectedItem()
-                        .getPlaylist());
-            });
+        // Creates the option to add the playlist to the queue
+        MenuItem addPlaylist = new MenuItem("Add to Queue");
+        cm.getItems().add(addPlaylist);
+        addPlaylist.setOnAction((action) ->
+        {
+            wm.setQueueAdd(playlistPanel
+                    .getSelectionModel()
+                    .getSelectedItem()
+                    .getPlaylist());
+        });
+
+        // Creates the option to edit playlists
+        MenuItem editPlaylist = new MenuItem("Edit Playlist");
+        cm.getItems().add(editPlaylist);
+        editPlaylist.setOnAction((event) ->
+        {
+            System.out.println("Thoust be changing thee order of musical arts.");
         });
     }
     //</editor-fold>
