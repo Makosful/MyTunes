@@ -803,8 +803,10 @@ public class MainWindowController implements Initializable
 
     /**
      * Clears the queue
-     * We check if queue is empty, if it is not we force all songs to stop, followed by a method to clear our queue and 
-     * finally set the isPlaying boolean accordingly and the text of the Play/Pause button
+     * We check if queue is empty, if it is not we force all songs to stop,
+     * followed by a method to clear our queue and
+     * finally set the isPlaying boolean accordingly and the text of the
+     * Play/Pause button
      */
     @FXML
     private void clearQueue(ActionEvent event)
@@ -824,7 +826,7 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Creates a new playlist 
+     * Creates a new playlist
      * and adds it to the list of playlists
      */
     @FXML
@@ -866,7 +868,7 @@ public class MainWindowController implements Initializable
                               album,
                               artist,
                               0000,
-                              "./src/myTunes/media/Elevator (Control).mp3");
+                              "./res/songs/placeholder/Elevator (Control).mp3");
         }
         else if (r > 3)
         {
@@ -875,7 +877,7 @@ public class MainWindowController implements Initializable
                               album,
                               artist,
                               0000,
-                              "./src/myTunes/media/Elevator (Caverns).mp3");
+                              "./res/songs/placeholder/Elevator (Caverns).mp3");
         }
         else
         {
@@ -884,7 +886,7 @@ public class MainWindowController implements Initializable
                               album,
                               artist,
                               0000,
-                              "./src/myTunes/media/elevatormusic.mp3");
+                              "./res/songs/placeholder/elevatormusic.mp3");
         }
 
         wm.getQueueList().add(track);
@@ -902,8 +904,10 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Gets ahold of the new song in queue by checking the index of the list. When the media is ready to play we set the duration of the new MediaPlayer
-     * 
+     * Gets ahold of the new song in queue by checking the index of the list.
+     * When the media is ready to play we set the duration of the new
+     * MediaPlayer
+     *
      * //TODO : Needs to add MORE than just mpduration (I think?)
      */
     private void getNewSongInQue()
@@ -925,7 +929,8 @@ public class MainWindowController implements Initializable
 
     /**
      * A method to listen to the MediaPlayer Status
-     * A listener which gives feedback on what status the MediaPlayer currently has (for visual debugging)
+     * A listener which gives feedback on what status the MediaPlayer currently
+     * has (for visual debugging)
      */
     private void GetmPlayerStatus()
     {
