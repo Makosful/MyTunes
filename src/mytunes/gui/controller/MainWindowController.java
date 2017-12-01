@@ -38,7 +38,6 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
-
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
     private JFXButton btnPlayPause;
@@ -283,7 +282,7 @@ public class MainWindowController implements Initializable
 
                 loadSong.setOnAction(action ->
                 {
-                    LoadMP3Files(action);
+                    LoadMediaFiles(action);
                 });
 
                 clearQueueContext.setOnAction(action ->
@@ -766,7 +765,7 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Change Song in Q | Get Next in Q Fold">
+    //<editor-fold defaultstate="collapsed" desc="Change next Song in Q | Get next Song in Q Fold">
     /**
      * Plays the next song in queue if there is one
      */
@@ -854,7 +853,10 @@ public class MainWindowController implements Initializable
         });
     }
 
-    //Under the initialize we disabled all the following objects - here we enable them again, which we will run under the prepareSetup method
+    /**
+     * Enables the initially disabled settings
+     * Under the initialize we disabled all the following objects - here we enable them again, which we will run under the prepareSetup method
+     * */
     private void enableSettings()
     {
         volumeSlider.setDisable(false);
@@ -877,14 +879,14 @@ public class MainWindowController implements Initializable
      * so that we can play the now selected song(s)
      */
     @FXML
-    private void LoadMP3Files(ActionEvent event)
+    private void LoadMediaFiles(ActionEvent event)
     {
         /*
          *
          */
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("MP3 Files", "*.mp3"));
+                new FileChooser.ExtensionFilter("Media Files", ".mp3", ".fxm", ".flv", ".mp4", ".wav", ".hls", ".aiff", ".aif"));
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
