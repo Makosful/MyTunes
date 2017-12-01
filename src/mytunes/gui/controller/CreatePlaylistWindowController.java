@@ -2,8 +2,12 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -40,7 +44,9 @@ public class CreatePlaylistWindowController implements Initializable
     private Stage stage;
     private String error;
     private ObservableList<Music> playlist;
+    private ObservableList<Music> playlistBackup;
     private ObservableList<Music> songlist;
+    private ObservableList<Music> songlistBackup;
     private boolean save = false;
 
     // Objects
@@ -55,18 +61,61 @@ public class CreatePlaylistWindowController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        // Static error message for when trying to save a playlist without a name
         error = "Please chose a name or cancel the proccess";
-        this.playlist = FXCollections.observableArrayList();
-        this.songlist = FXCollections.observableArrayList();
 
-        listSonglist.setItems(wm.getSongList());
+        // Creates the two lists in this window
+        this.playlist = FXCollections.observableArrayList();
+        this.playlistBackup = FXCollections.observableArrayList();
+        this.songlist = FXCollections.observableArrayList();
+        this.songlistBackup = FXCollections.observableArrayList();
+
+        // Loads the song list
+        wm.loadSongList();
+        songlist.addAll(wm.getSongList());
+        playlistBackup.addAll(playlist);
+        songlistBackup.addAll(songlist);
+
+        // Assigns the two lists
         listPlaylist.setItems(playlist);
         listSonglist.setItems(songlist);
 
+        // Allows for multiple items in each list to be selected
         listPlaylist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listSonglist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Makes Bob Ross do what Bob Roos does best
+        bobRoss(txtSongSearch, // The text field to use
+                songlist, // A list of filtered songs
+                songlistBackup);  // A list of unfiltered songs
+
+        bobRoss(txtPlaylistSearch, // The text field to use
+                playlist, // The list of filtered songs
+                playlistBackup);    //A list of unfiltered songs
+
+        setupPlaylistListener();
     }
 
+    private void setupPlaylistListener()
+    {
+        if (playlist.isEmpty())
+        {
+            listPlaylist.setDisable(true);
+        }
+        playlist.addListener((Change<? extends Music> c) ->
+        {
+            if (playlist.isEmpty())
+            {
+                listPlaylist.setDisable(true);
+            }
+            else
+            {
+                listPlaylist.setDisable(false);
+            }
+        });
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Buttons">
     /**
      * Creates a new playlist and saves it in the cache
      *
@@ -99,7 +148,45 @@ public class CreatePlaylistWindowController implements Initializable
         stage = (Stage) lblError.getScene().getWindow();
         stage.close();
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Move Song Buttons">
+    @FXML
+    private void moveAllToPlaylist(ActionEvent event)
+    {
+        this.playlist.addAll(songlist);
+        this.playlistBackup.addAll(songlist);
+    }
+
+    @FXML
+    private void moveSelectedToPlaylist(ActionEvent event)
+    {
+        ObservableList<Music> selectedItems = listSonglist
+                .getSelectionModel().getSelectedItems();
+
+        this.playlist.addAll(selectedItems);
+        this.playlistBackup.addAll(selectedItems);
+    }
+
+    @FXML
+    private void removeSelectedFromPlaylist(ActionEvent event)
+    {
+        ObservableList<Music> selectedItems = listPlaylist
+                .getSelectionModel().getSelectedItems();
+
+        this.playlist.removeAll(selectedItems);
+        this.playlistBackup.removeAll(selectedItems);
+    }
+
+    @FXML
+    private void removeAllFromPlaylist(ActionEvent event)
+    {
+        this.playlistBackup.removeAll(playlist);
+        this.playlist.clear();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="External Connectors">
     /**
      * Gets the title of the new playlist
      *
@@ -134,36 +221,7 @@ public class CreatePlaylistWindowController implements Initializable
     {
         return save;
     }
-
-    @FXML
-    private void moveAllToPlaylist(ActionEvent event)
-    {
-        playlist.addAll(songlist);
-    }
-
-    @FXML
-    private void moveSelectedToPlaylist(ActionEvent event)
-    {
-        ObservableList<Music> selectedItems = listSonglist
-                .getSelectionModel().getSelectedItems();
-
-        this.playlist.addAll(selectedItems);
-    }
-
-    @FXML
-    private void removeSelectedFromPlaylist(ActionEvent event)
-    {
-        ObservableList<Music> selectedItems = listPlaylist
-                .getSelectionModel().getSelectedItems();
-
-        this.playlist.removeAll(selectedItems);
-    }
-
-    @FXML
-    private void removeAllFromPlaylist(ActionEvent event)
-    {
-        playlist.removeAll(wm.getSongList());
-    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Unimplimented">
     @FXML
@@ -176,4 +234,49 @@ public class CreatePlaylistWindowController implements Initializable
     {
     }
     //</editor-fold>
+
+    /**
+     * It's bob Ross. No documentation needed.
+     *
+     * @param txt
+     * @param fullList
+     * @param changedList
+     */
+    private void bobRoss(TextField txt,
+                         ObservableList<Music> fullList,
+                         ObservableList<Music> changedList)
+    {
+        txt.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newValue) ->
+        {
+            search(txt.getText(), fullList, changedList);
+        });
+    }
+
+    private void search(String txt,
+                        ObservableList<Music> fullList,
+                        ObservableList<Music> changedList)
+    {
+        fullList.clear();
+        List<Music> result = getSearchResult(txt, changedList);
+        fullList.addAll(result);
+    }
+
+    private List<Music> getSearchResult(String txt, ObservableList<Music> list)
+    {
+        List<Music> searchResult = new ArrayList();
+
+        list.forEach((music) ->
+        {
+            if (music.getTitle().toLowerCase().contains(txt.toLowerCase())
+                || music.getArtist().toLowerCase().contains(txt.toLowerCase())
+                || music.getAlbum().toLowerCase().contains(txt.toLowerCase()))
+            {
+                searchResult.add(music);
+            }
+        });
+        return searchResult;
+    }
 }
