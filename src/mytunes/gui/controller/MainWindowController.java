@@ -5,11 +5,15 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -20,14 +24,19 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
@@ -56,7 +65,6 @@ public class MainWindowController implements Initializable
     private Label lblTimer;
     @FXML
     private Slider progressSlider;
-    @FXML
     private MediaView mediaView;
     @FXML
     private ComboBox<String> playbackSpeed;
@@ -98,15 +106,11 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXButton btnDeletePlaylist;
     @FXML
-    private Pane bottomPane;
-    @FXML
     private Pane queuePanel;
     @FXML
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
-    @FXML
-    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Instance Variables">
     // Instance variables
@@ -117,14 +121,22 @@ public class MainWindowController implements Initializable
     private Media song;
     private Status mStatus;
 
+    private static double startFreq = 250;
+    private static int amountOfBands = 7; // the minimum amount (keeping it simple)
+
     Media currentlyPlaying;
     List<Media> medias;
 
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
+    @FXML
     private Label lblmPlayerStatus;
 //</editor-fold>
+    @FXML
+    private AnchorPane paneEqualizer;
+    @FXML
+    private GridPane gridEqualizer;
 
     /**
      * Constructor, for all intends and purposes
@@ -536,7 +548,8 @@ public class MainWindowController implements Initializable
 
         if (null != mStatus)
 
-        switch (mStatus)
+        {
+            switch (mStatus)
             {
                 case PLAYING:
                     System.out.println("Status is: " + mStatus);
@@ -559,7 +572,7 @@ public class MainWindowController implements Initializable
                     break;
             }
         }
-    
+    }
 
     /**
      * A collection of things we execute when we prepare the setups
@@ -699,14 +712,14 @@ public class MainWindowController implements Initializable
 
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
-        
+
         //Adds a listener on an observable in the volume slider, which allows users to tweak the volume of the player.
         volSlide.valueProperty().addListener((javafx.beans.Observable observable)
                 ->
         {
             mPlayer.setVolume(volSlide.getValue());
-            
-            if(mPlayer.getVolume() > 3 && mPlayer.getVolume() < 0)
+
+            if (mPlayer.getVolume() > 3 && mPlayer.getVolume() < 0)
             {
                 mPlayer.setVolume(5);
             }
@@ -787,6 +800,15 @@ public class MainWindowController implements Initializable
         song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
+        
+        try
+        {
+            FileInputStream inputStream = new FileInputStream(file);
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     //<editor-fold defaultstate="collapsed" desc="Create Playlist | Delete Playlist | Random Song Fold">
@@ -1035,6 +1057,27 @@ public class MainWindowController implements Initializable
 //        else if (mPlayer.getStatus() == Status.READY)
 //        {
 //            mPlayerStatus = Status.READY.toString();
+//        }
+    }
+
+    private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
+    {
+//        AudioInputStream originalInputStream = AudioSystem.getAudioInputStream(inputStream);
+
+//        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
+//        
+//        bands.clear();
+//        
+//        double eqMin = EqualizerBand.MIN_GAIN;
+//        double eqMax = EqualizerBand.MAX_GAIN;
+//        double freq = startFreq;
+//        double median = eqMax - eqMin;
+//        
+//        for (int j = 0; amountOfBands; j++)
+//        {
+//            double theta = (double)j / (double)(amountOfBands -1) * (2 * Math.PI);
+//            
+//            double scale = 0.4 * (1 + Math.cos(theta));
 //        }
     }
 
