@@ -2,8 +2,6 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -85,35 +83,93 @@ public class CreatePlaylistWindowController implements Initializable
         listSonglist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Makes Bob Ross do what Bob Roos does best
-        bobRoss(txtSongSearch, // The text field to use
+        setupSearchFunctionality(txtSongSearch, // The text field to use
                 songlist, // A list of filtered songs
                 songlistBackup);  // A list of unfiltered songs
 
-        bobRoss(txtPlaylistSearch, // The text field to use
+        setupSearchFunctionality(txtPlaylistSearch, // The text field to use
                 playlist, // The list of filtered songs
                 playlistBackup);    //A list of unfiltered songs
 
-        setupPlaylistListener();
+        setupPlaylistListener(listPlaylist);
     }
 
-    private void setupPlaylistListener()
+    /**
+     * Sets up a listener for the playlist
+     *
+     * @param list
+     */
+    private void setupPlaylistListener(JFXListView<Music> list)
     {
-        if (playlist.isEmpty())
+        // First checks if the playlist is empty
+        // This is the initial state when opening the window
+        if (list.getItems().isEmpty())
         {
-            listPlaylist.setDisable(true);
+            // If it is, disable it
+            list.setDisable(true);
+
+            // Otherwise leave it enabled
         }
-        playlist.addListener((Change<? extends Music> c) ->
+
+        // Adds the listener to the playlist
+        // This is how it'll change as the list is being changed
+        list.getItems().addListener((Change<? extends Music> c) ->
         {
+            // Checks if the playlist has become empty
             if (playlist.isEmpty())
             {
+                // If it has, disable it
                 listPlaylist.setDisable(true);
             }
             else
             {
+                // If it's not empty, reenable it
                 listPlaylist.setDisable(false);
             }
         });
     }
+
+    //<editor-fold defaultstate="collapsed" desc="Search">
+    /**
+     * Sets up search functionality
+     *
+     * Connects a TextField and an ObservableList to provide a realtime search
+     * of the connected list.
+     * The editedList and the completeList must not be the same, but instead
+     * mirror two versions containing the same entries, as the later list will
+     * be used to check matches while the former list will be used to display
+     * the results
+     *
+     * @param txt          The TextField to add a listener to
+     * @param editedList   The list in which the searhc results should be put in
+     * @param completeList A mirror of the search list, but containing all the
+     *                     entires
+     */
+    private void setupSearchFunctionality(TextField txt,
+                                          ObservableList<Music> editedList,
+                                          ObservableList<Music> completeList)
+    {
+        txt.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newValue) ->
+        {
+            wm.searchPlaylist(txt.getText(), editedList, completeList);
+        });
+    }
+
+    @FXML
+    private void clearPlaylistSearch(ActionEvent event)
+    {
+        txtPlaylistSearch.setText("");
+    }
+
+    @FXML
+    private void clearSonglistSearch(ActionEvent event)
+    {
+        txtSongSearch.setText("");
+    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Buttons">
     /**
@@ -222,61 +278,4 @@ public class CreatePlaylistWindowController implements Initializable
         return save;
     }
     //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Unimplimented">
-    @FXML
-    private void playlistSearch(ActionEvent event)
-    {
-    }
-
-    @FXML
-    private void songlistSearch(ActionEvent event)
-    {
-    }
-    //</editor-fold>
-
-    /**
-     * It's bob Ross. No documentation needed.
-     *
-     * @param txt
-     * @param fullList
-     * @param changedList
-     */
-    private void bobRoss(TextField txt,
-                         ObservableList<Music> fullList,
-                         ObservableList<Music> changedList)
-    {
-        txt.textProperty().addListener(
-                (ObservableValue<? extends String> observable,
-                 String oldText,
-                 String newValue) ->
-        {
-            search(txt.getText(), fullList, changedList);
-        });
-    }
-
-    private void search(String txt,
-                        ObservableList<Music> fullList,
-                        ObservableList<Music> changedList)
-    {
-        fullList.clear();
-        List<Music> result = getSearchResult(txt, changedList);
-        fullList.addAll(result);
-    }
-
-    private List<Music> getSearchResult(String txt, ObservableList<Music> list)
-    {
-        List<Music> searchResult = new ArrayList();
-
-        list.forEach((music) ->
-        {
-            if (music.getTitle().toLowerCase().contains(txt.toLowerCase())
-                || music.getArtist().toLowerCase().contains(txt.toLowerCase())
-                || music.getAlbum().toLowerCase().contains(txt.toLowerCase()))
-            {
-                searchResult.add(music);
-            }
-        });
-        return searchResult;
-    }
 }

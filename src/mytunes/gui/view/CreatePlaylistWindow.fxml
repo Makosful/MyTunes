@@ -48,8 +48,13 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtPlaylistSearch" onAction="#playlistSearch" />
-                        <JFXListView fx:id="listPlaylist" prefHeight="350.0" style="-fx-background-color: transparent; -fx-border-color: black;">
+                  <HBox spacing="10.0">
+                     <children>
+                              <TextField fx:id="txtPlaylistSearch" prefWidth="210.0" />
+                        <JFXButton onAction="#clearPlaylistSearch" text="X" />
+                     </children>
+                  </HBox>
+                        <JFXListView fx:id="listPlaylist" prefHeight="350.0">
                             <padding>
                                 <Insets bottom="20.0" />
                             </padding>
@@ -63,8 +68,13 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtSongSearch" onAction="#songlistSearch" />
-                        <JFXListView fx:id="listSonglist" prefHeight="350.0" style="-fx-background-color: transparent; -fx-border-color: black;">
+                  <HBox spacing="10.0">
+                     <children>
+                              <TextField fx:id="txtSongSearch" prefWidth="210.0" />
+                        <JFXButton onAction="#clearSonglistSearch" text="X" />
+                     </children>
+                  </HBox>
+                        <JFXListView fx:id="listSonglist" prefHeight="350.0">
                             <padding>
                                 <Insets bottom="20.0" />
                             </padding>
