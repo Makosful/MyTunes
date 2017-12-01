@@ -466,25 +466,27 @@ public class MainWindowController implements Initializable
     {
         mStatus = mPlayer.getStatus();
 
-        if (mStatus == Status.PLAYING)
+        if (null != mStatus)
+        switch (mStatus)
         {
-            System.out.println("Status is: " + mStatus);
-            mPlayer.stop();
-            isPlaying = false;
-            btnPlayPause.setText("Play");
-            progressSlider.setValue(0.0);
-        }
-        else if (mStatus == Status.STOPPED)
-        {
-            System.out.println("Status is: " + mStatus);
-        }
-        else if (mStatus == Status.PAUSED)
-        {
-            System.out.println("Status is: " + mStatus);
-        }
-        else if (mStatus == Status.UNKNOWN)
-        {
-            System.out.println("Status is: " + mStatus);
+            case PLAYING:
+                System.out.println("Status is: " + mStatus);
+                mPlayer.stop();
+                isPlaying = false;
+                btnPlayPause.setText("Play");
+                progressSlider.setValue(0.0);
+                break;
+            case STOPPED:
+                System.out.println("Status is: " + mStatus);
+                break;
+            case PAUSED:
+                System.out.println("Status is: " + mStatus);
+                break;
+            case UNKNOWN:
+                System.out.println("Status is: " + mStatus);
+                break;
+            default:
+                break;
         }
 
     }
@@ -587,12 +589,17 @@ public class MainWindowController implements Initializable
 
         //It was necessary to time it with 100 to be able to receive 100 possible positions for the mixer. For each number is a %, so 0 is 0%, 1 is 1% --> 100 is 100%
         volSlide.setValue(mPlayer.getVolume() * 100);
-
+        
         //Adds a listener on an observable in the volume slider, which allows users to tweak the volume of the player.
         volSlide.valueProperty().addListener((javafx.beans.Observable observable)
                 ->
         {
-            mPlayer.setVolume(volSlide.getValue() / 100);
+            mPlayer.setVolume(volSlide.getValue());
+            
+            if(mPlayer.getVolume() > 3 && mPlayer.getVolume() < 0)
+            {
+                mPlayer.setVolume(5);
+            }
         });
     }
     //</editor-fold>
@@ -802,7 +809,7 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
     
-    private void progressSliderSetup(MediaPlayer mPlayer)
+    private void progressSliderSetup()
     {
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
