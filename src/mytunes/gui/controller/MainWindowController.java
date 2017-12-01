@@ -299,7 +299,7 @@ public class MainWindowController implements Initializable
         // Loads the stores playlists
         wm.loadPlaylists();
 
-        //setupPlaylistDoubleClick();
+        // Sets up am mouse listener for the playlist
         setupPlaylistMouseListener();
     }
 
@@ -371,13 +371,48 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Queue List">
     /**
      * Sets the list with the queue
      */
     private void setupQueueList()
     {
+        // Loads the queue list
         listQueue.setItems(wm.getQueueList());
+
+        setupQueueMouseListener();
     }
+
+    private void setupQueueMouseListener()
+    {
+        ContextMenu cm = new ContextMenu();
+        setupQueueContextMenu(cm);
+
+        listQueue.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                cm.show(listQueue, event.getScreenX(), event.getScreenY());
+            }
+
+            if (event.getClickCount() == 2)
+            {
+                // Play the selected song
+            }
+        });
+    }
+
+    private void setupQueueContextMenu(ContextMenu cm)
+    {
+        // Creates a test menu item
+        MenuItem test = new MenuItem("Testing");
+        cm.getItems().add(test);
+        test.setOnAction((event) ->
+        {
+            System.out.println("Clicked");
+        });
+    }
+    //</editor-fold>
 
     private void progressSliderSetup(MediaPlayer mPlayer)
     {
