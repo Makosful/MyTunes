@@ -522,7 +522,9 @@ public class MainWindowController implements Initializable
         });
     }
 
-    //A collection of things we execute when we prepare the setups
+    /**
+     * A collection of things we execute when we prepare the setups
+     */
     private void prepareSetup()
     {
         setupMediaPlayer();
@@ -530,7 +532,9 @@ public class MainWindowController implements Initializable
         TimeChangeListener();
     }
 
-    //A preperation of our setup, followed by the play function
+    /**
+     * A preperation of our setup, followed by the play function
+     */
     private void prepareAndPlay()
     {
         if (isPlaying)
@@ -544,7 +548,10 @@ public class MainWindowController implements Initializable
         btnPlayPause.setText("Pause");
     }
 
-    //Under the initialize we disabled all the following objects - here we enable them again, which we will run under the prepareSetup method
+    /**
+     * Under the initialize we disabled all the following objects - here we
+     * enable them again, which we will run under the prepareSetup method
+     */
     private void enableSettings()
     {
         volumeSlider.setDisable(false);
