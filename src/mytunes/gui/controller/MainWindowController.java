@@ -857,7 +857,7 @@ public class MainWindowController implements Initializable
 
         String title = "Elevator Music";
         String album = "PlaceHolder";
-        String artist = "Bond. James Bond";
+        String artist = "YouTube";
 
         Random rnd = new Random();
         int r = rnd.nextInt(2) + 2;
@@ -867,7 +867,7 @@ public class MainWindowController implements Initializable
                               title,
                               album,
                               artist,
-                              0000,
+                              2017,
                               "./res/songs/placeholder/Elevator (Control).mp3");
         }
         else if (r > 3)
@@ -876,7 +876,7 @@ public class MainWindowController implements Initializable
                               title,
                               album,
                               artist,
-                              0000,
+                              2017,
                               "./res/songs/placeholder/Elevator (Caverns).mp3");
         }
         else
@@ -885,7 +885,7 @@ public class MainWindowController implements Initializable
                               title,
                               album,
                               artist,
-                              0000,
+                              2017,
                               "./res/songs/placeholder/elevatormusic.mp3");
         }
 
