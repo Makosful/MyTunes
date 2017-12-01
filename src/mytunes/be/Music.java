@@ -18,7 +18,7 @@ public class Music
     private String genre;
     private String songPathName;
 
-    public Music(int id, String title, String album, int year, String location)
+    public Music(int id, String title, String album, String artist, int year, String location)
     {
         this.id = id;
         this.title = title;
