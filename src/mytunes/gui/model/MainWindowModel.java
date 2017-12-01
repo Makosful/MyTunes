@@ -254,4 +254,60 @@ public class MainWindowModel
         }
     }
 
+    /**
+     * Searches through the given list for a match
+     *
+     * This method will clear the Edited List, then search through the Complete
+     * List for any matching cases of the Text String. All matching results will
+     * be put into the Edited List.
+     *
+     * The Edited List and the Complete List muct nto be the same. Instead, they
+     * should mirror the same list so one can be edited while the other remains
+     * unchanged.
+     *
+     * @param text         The text to search for
+     * @param editedList   The list that will contain the results
+     * @param completeList The list that contains all items to be search through
+     */
+    public void searchPlaylist(String text,
+                               ObservableList<Music> editedList,
+                               ObservableList<Music> completeList)
+    {
+        editedList.clear();
+        List<Music> result = getSearchResultPlaylist(text, completeList);
+        editedList.addAll(result);
+    }
+
+    /**
+     * Gets the search results for the playlist window
+     *
+     * Searches the given list for instances of the given text. If any is found,
+     * it'll be returned as an ArrayList containing Music elements.
+     *
+     * The fields that'll be searched for a match are the Title, the Artist and
+     * the Album
+     *
+     * @param text The text to search for
+     * @param list The ObservableList to search through
+     *
+     * @return Returns an ArrayList containing all the matching results based on
+     *         predetermined search criteria
+     */
+    private List<Music> getSearchResultPlaylist(String text,
+                                                ObservableList<Music> list)
+    {
+        List<Music> searchResult = new ArrayList();
+
+        list.forEach((music) ->
+        {
+            if (music.getTitle().toLowerCase().contains(text.toLowerCase())
+                || music.getArtist().toLowerCase().contains(text.toLowerCase())
+                || music.getAlbum().toLowerCase().contains(text.toLowerCase()))
+            {
+                searchResult.add(music);
+            }
+        });
+        return searchResult;
+    }
+
 }
