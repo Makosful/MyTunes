@@ -38,6 +38,7 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
+
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
     private JFXButton btnPlayPause;
@@ -71,7 +72,7 @@ public class MainWindowController implements Initializable
     private TableColumn<Music, String> clmArtist;
     @FXML
     private TableColumn<Music, String> clmYear;
-    
+
     // Model
     private MainWindowModel wm;
     @FXML
@@ -115,16 +116,16 @@ public class MainWindowController implements Initializable
     private Duration mpduration;
     private Media song;
     private Status mStatus;
-    
+
     Media currentlyPlaying;
     List<Media> medias;
-    
+
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
     private Label lblmPlayerStatus;
 //</editor-fold>
-    
+
     /**
      * Constructor, for all intends and purposes
      *
@@ -272,7 +273,7 @@ public class MainWindowController implements Initializable
         cm.getItems().add(loadSong);
         loadSong.setOnAction(action ->
         {
-            LoadMP3Files(action);
+            LoadMediaFiles(action);
         });
 
         // Creates a new item for the menu and puts it in
@@ -415,7 +416,7 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
-    private void progressSliderSetup(MediaPlayer mPlayer)
+    private void progressSliderSetup()
     {
         //adds a listener to the value, allowing it to determine where to play from when the user drags.
         progressSlider.valueProperty().addListener((Observable ov) ->
@@ -434,7 +435,6 @@ public class MainWindowController implements Initializable
     }
 
     //<editor-fold defaultstate="collapsed" desc="Playback Speed Fold">
-
     /**
      * Handle the settings for the playback
      * In here we simply display the possible playback speeds for the user. May
@@ -534,27 +534,31 @@ public class MainWindowController implements Initializable
     {
         mStatus = mPlayer.getStatus();
 
-        if (mStatus == Status.PLAYING)
+        if (null != mStatus)
         {
-            System.out.println("Status is: " + mStatus);
-            mPlayer.stop();
-            isPlaying = false;
-            btnPlayPause.setText("Play");
-            progressSlider.setValue(0.0);
+            switch (mStatus)
+            {
+                case PLAYING:
+                    System.out.println("Status is: " + mStatus);
+                    mPlayer.stop();
+                    isPlaying = false;
+                    btnPlayPause.setText("Play");
+                    progressSlider.setValue(0.0);
+                    break;
+                case STOPPED:
+                    System.out.println("Status is: " + mStatus);
+                    break;
+                case PAUSED:
+                    mediaView = new MediaView(mPlayer);
+                    mpduration = mPlayer.getTotalDuration();
+                    progressSlider.setValue(0.0);
+                    progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
+                    GetmPlayerStatus();
+                    break;
+                default:
+                    break;
+            }
         }
-        else if (mStatus == Status.STOPPED)
-        {
-            System.out.println("Status is: " + mStatus);
-        }
-        else if (mStatus == Status.PAUSED)
-        {
-            mediaView = new MediaView(mPlayer);
-
-            mpduration = mPlayer.getTotalDuration();
-            progressSlider.setValue(0.0);
-            progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
-            GetmPlayerStatus();
-        });
     }
 
     /**
@@ -573,12 +577,15 @@ public class MainWindowController implements Initializable
     private void prepareAndPlay()
     {
         if (isPlaying)
-            System.out.println("Status is: " + mStatus);
-        }
-        else if (mStatus == Status.UNKNOWN)
         {
-            System.out.println("Status is: " + mStatus);
+            mPlayer.stop();
         }
+        prepareSetup();
+        GetmPlayerStatus();
+        mPlayer.play();
+        isPlaying = true;
+        btnPlayPause.setText("Pause");
+    }
 
     /**
      * Under the initialize we disabled all the following objects - here we
@@ -777,30 +784,6 @@ public class MainWindowController implements Initializable
         mPlayer = new MediaPlayer(song);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="PrepareSetup | PrepareSetupAndPlay Fold">
-    //A collection of things we execute when we prepare the setups
-    private void prepareSetup()
-    {
-        setupMediaPlayer();
-        enableSettings();
-        TimeChangeListener();
-    }
-
-    //A preperation of our setup, followed by the play function
-    private void prepareAndPlay()
-    {
-        if (isPlaying)
-        {
-            mPlayer.stop();
-        }
-        prepareSetup();
-        GetmPlayerStatus();
-        mPlayer.play();
-        isPlaying = true;
-        btnPlayPause.setText("Pause");
-    }
-    //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Create Playlist | Delete Playlist | Random Song Fold">
     /**
      * Creates a new playlist
@@ -906,32 +889,6 @@ public class MainWindowController implements Initializable
         });
     }
     //</editor-fold>
-    
-    private void progressSliderSetup(MediaPlayer mPlayer)
-    {
-        //adds a listener to the value, allowing it to determine where to play from when the user drags.
-        progressSlider.valueProperty().addListener((Observable ov) ->
-        {
-            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
-            if (progressSlider.isValueChanging())
-            {
-                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-            }
-        });
-        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
-        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
-        {
-            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-        });
-    }
-
-    /**
-     * Sets the list with the queue
-     */
-    private void setupQueueList()
-    {
-        listQueue.setItems(wm.getQueueList());
-    }
 
     /**
      * Sets up MediaPlayers
@@ -959,20 +916,6 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Enables the initially disabled settings
-     * Under the initialize we disabled all the following objects - here we enable them again, which we will run under the prepareSetup method
-     * */
-    private void enableSettings()
-    {
-        volumeSlider.setDisable(false);
-        btnLoop.setDisable(false);
-        playbackSpeed.setDisable(false);
-        progressSlider.setDisable(false);
-        lblTimer.setDisable(false);
-        progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
-    }
-
-    /**
      * Loads multiple MP3 files
      * Firstly we create a new FileChooser and add an mp3 filter to disable
      * all other file formats (saves a lot of time troubleshooting what went
@@ -990,7 +933,7 @@ public class MainWindowController implements Initializable
          *
          */
         FileChooser fc = new FileChooser();
-        
+
         FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
         FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
         FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
@@ -998,7 +941,7 @@ public class MainWindowController implements Initializable
         FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
         FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
         FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
-        
+
         fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
