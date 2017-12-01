@@ -205,18 +205,17 @@ public class MainWindowController implements Initializable
         {
             if (event.getClickCount() == 2)
             {
-                System.out.println("Two");
-                /*
-                 * Music selectedItem = tblSongList
-                 * .getSelectionModel()
-                 * .getSelectedItem();
-                 *
-                 * wm.setQueuePlay(selectedItem);
-                 *
-                 * prepareAndPlay();
-                 *
-                 * mPlayer.play();
-                 */
+
+                Music selectedItem = tblSongList
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+                wm.setQueuePlay(selectedItem);
+
+                prepareAndPlay();
+
+                mPlayer.play();
+
             }
 
             if (event.getButton() == MouseButton.SECONDARY)
@@ -288,7 +287,6 @@ public class MainWindowController implements Initializable
     //<editor-fold defaultstate="collapsed" desc="Playlist Fold">
     /**
      * Sets up the panel for the playlists
-     * >>>>>>> master
      */
     private void setupPlaylistPanel()
     {
@@ -316,7 +314,14 @@ public class MainWindowController implements Initializable
         {
             if (event.getClickCount() == 2)
             {
-                System.out.println("One");
+                ObservableList<Music> playlist = playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist();
+
+                wm.setQueuePlay(playlist);
+
+                prepareAndPlay();
             }
 
             if (event.getButton() == MouseButton.SECONDARY)
