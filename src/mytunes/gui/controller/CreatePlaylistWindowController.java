@@ -129,6 +129,48 @@ public class CreatePlaylistWindowController implements Initializable
         });
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Search">
+    /**
+     * Sets up search functionality
+     *
+     * Connects a TextField and an ObservableList to provide a realtime search
+     * of the connected list.
+     * The editedList and the completeList must not be the same, but instead
+     * mirror two versions containing the same entries, as the later list will
+     * be used to check matches while the former list will be used to display
+     * the results
+     *
+     * @param txt          The TextField to add a listener to
+     * @param editedList   The list in which the searhc results should be put in
+     * @param completeList A mirror of the search list, but containing all the
+     *                     entires
+     */
+    private void setupSearchFunctionality(TextField txt,
+                                          ObservableList<Music> editedList,
+                                          ObservableList<Music> completeList)
+    {
+        txt.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newValue) ->
+        {
+            wm.searchPlaylist(txt.getText(), editedList, completeList);
+        });
+    }
+
+    @FXML
+    private void clearPlaylistSearch(ActionEvent event)
+    {
+        txtPlaylistSearch.setText("");
+    }
+
+    @FXML
+    private void clearSonglistSearch(ActionEvent event)
+    {
+        txtSongSearch.setText("");
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Buttons">
     /**
      * Creates a new playlist and saves it in the cache
@@ -236,44 +278,4 @@ public class CreatePlaylistWindowController implements Initializable
         return save;
     }
     //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Unimplimented">
-    @FXML
-    private void playlistSearch(ActionEvent event)
-    {
-    }
-
-    @FXML
-    private void songlistSearch(ActionEvent event)
-    {
-    }
-    //</editor-fold>
-
-    /**
-     * Sets up search functionality
-     *
-     * Connects a TextField and an ObservableList to provide a realtime search
-     * of the connected list.
-     * The editedList and the completeList must not be the same, but instead
-     * mirror two versions containing the same entries, as the later list will
-     * be used to check matches while the former list will be used to display
-     * the results
-     *
-     * @param txt          The TextField to add a listener to
-     * @param editedList   The list in which the searhc results should be put in
-     * @param completeList A mirror of the search list, but containing all the
-     *                     entires
-     */
-    private void setupSearchFunctionality(TextField txt,
-                                          ObservableList<Music> editedList,
-                                          ObservableList<Music> completeList)
-    {
-        txt.textProperty().addListener(
-                (ObservableValue<? extends String> observable,
-                 String oldText,
-                 String newValue) ->
-        {
-            wm.searchPlaylist(txt.getText(), editedList, completeList);
-        });
-    }
 }
