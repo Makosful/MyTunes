@@ -203,15 +203,18 @@ public class MainWindowController implements Initializable
         {
             if (event.getClickCount() == 2)
             {
-                Music selectedItem = tblSongList
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-                wm.setQueuePlay(selectedItem);
-
-                prepareAndPlay();
-
-                mPlayer.play();
+                System.out.println("Two");
+                /*
+                 * Music selectedItem = tblSongList
+                 * .getSelectionModel()
+                 * .getSelectedItem();
+                 *
+                 * wm.setQueuePlay(selectedItem);
+                 *
+                 * prepareAndPlay();
+                 *
+                 * mPlayer.play();
+                 */
             }
         });
     }
@@ -220,9 +223,6 @@ public class MainWindowController implements Initializable
     {
         // Creates a new context menu
         ContextMenu cm = new ContextMenu();
-
-        MenuItem error = new MenuItem("None of these work for now");
-        cm.getItems().add(error);
 
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
@@ -313,8 +313,7 @@ public class MainWindowController implements Initializable
         // Loads the stores playlists
         wm.loadPlaylists();
 
-        setupPlaylistDoubleClick();
-
+        //setupPlaylistDoubleClick();
         createPlaylistContextMenu();
     }
 
@@ -331,16 +330,24 @@ public class MainWindowController implements Initializable
 
     private void createPlaylistContextMenu()
     {
+        // Creates a new context menu
         ContextMenu cm = new ContextMenu();
 
+        // Creates a new item for the menu and puts it in
         MenuItem playPlaylist = new MenuItem("Play List");
         cm.getItems().add(playPlaylist);
 
+        // Creates a new item for the menu and puts it in
         MenuItem addPlaylist = new MenuItem("Add to Queue");
         cm.getItems().add(addPlaylist);
 
         playlistPanel.setOnMouseClicked((MouseEvent event) ->
         {
+            if (event.getClickCount() == 2)
+            {
+                System.out.println("One");
+            }
+
             if (event.getButton() == MouseButton.SECONDARY)
             {
                 cm.show(playlistPanel, event.getScreenX(), event.getScreenY());
@@ -706,7 +713,9 @@ public class MainWindowController implements Initializable
         });
     }
 
-    //Allows for setting up listeners for the change in the progress slider
+    /**
+     * Allows for setting up listeners for the change in the progress slider
+     */
     private void TimeChangeListener()
     {
         mPlayer.currentTimeProperty().addListener((Observable ov) ->
