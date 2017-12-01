@@ -23,11 +23,31 @@ public class SongDAO
         dataBaseSongNames = new ArrayList();
     }
 
-    public List<Music> getAllSongs()
+    public List<Music> getAllSongs() throws SQLServerException, SQLException
     {
-        List<Music> songs = new ArrayList<>();
+        try (Connection con = db.getConnection())
+        {
+        List<Music> allSongs = new ArrayList<>();
+        
+        String sql = "SELECT Songs.title, Artist.artist, Album.album, Album.releasedate, Genre.genre"
+                   + "FROM Songs"
+                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                   + "INNER JOIN Album ON Songs.albumid = Album.id "
+                   + "INNER JOIN Genre ON Songs.genreid = Genre.id ";
+        
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(sql); 
 
-        return songs;
+            
+        while (rs.next())
+        {
+            Music song = createSongFromDB(rs);
+            allSongs.add(song);
+        }
+            
+        return allSongs;
+        
+        }
     }
 
     /**
@@ -70,7 +90,7 @@ public class SongDAO
      * @return list of id's 
      * @throws SQLException 
      */
-    private List getRelationIds(Music song) throws SQLException
+    private List<Integer> getRelationIds(Music song) throws SQLException
     {
         List<Integer> ids = new ArrayList();
         
@@ -338,11 +358,21 @@ public class SongDAO
         }
 
     }
+
+    private Music createSongFromDB(ResultSet rs)
+    {
+        
+        Music song = new Music();
+        
+    
+        //I create the company object and add it to my list of results:
+        
+        return song;
+    }
     
     
     
-    
-    
+
     
     
     
