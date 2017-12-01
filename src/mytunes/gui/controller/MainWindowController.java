@@ -190,15 +190,17 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        //Allows for double clicking the table to instantly play the selected media.
-        setupTableDoubleClick();
-
-        // Defines the context menu for the table
-        createTableContextMenu();
+        // Sets up the mouse listener for the tableview
+        setupTableMouseListner();
     }
 
-    private void setupTableDoubleClick()
+    private void setupTableMouseListner()
     {
+        // Creates a new context menu
+        ContextMenu cm = new ContextMenu();
+
+        setupTableContextMenu(cm);
+
         tblSongList.setOnMouseClicked((MouseEvent event) ->
         {
             if (event.getClickCount() == 2)
@@ -216,84 +218,70 @@ public class MainWindowController implements Initializable
                  * mPlayer.play();
                  */
             }
+
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                cm.show(tblSongList, event.getScreenX(), event.getScreenY());
+            }
         });
     }
 
-    private void createTableContextMenu()
+    /**
+     * Sets up the context menu for the tableview
+     *
+     * @param cm The context menu to work with
+     */
+    private void setupTableContextMenu(ContextMenu cm)
     {
-        // Creates a new context menu
-        ContextMenu cm = new ContextMenu();
-
         // Creates a new item for the menu and puts it in
         MenuItem play = new MenuItem("Play");
         cm.getItems().add(play);
+        play.setOnAction(action ->
+        {
+            ObservableList<Music> selectedItems = tblSongList
+                    .getSelectionModel().getSelectedItems();
+
+            if (!selectedItems.isEmpty())
+            {
+                if (isPlaying)
+                {
+                    this.songStop(action);
+                }
+                wm.setQueuePlay(selectedItems);
+                prepareSetup();
+            }
+        });
 
         // Creates a new item for the menu and puts it in
         MenuItem addQueue = new MenuItem("Add to queue");
         cm.getItems().add(addQueue);
+        addQueue.setOnAction(action ->
+        {
+            ObservableList<Music> selectedItems = tblSongList
+                    .getSelectionModel().getSelectedItems();
+
+            if (!selectedItems.isEmpty())
+            {
+                wm.setQueueAdd(selectedItems);
+                prepareSetup();
+            }
+        });
 
         // Creates a new item for the menu and puts it in
         MenuItem loadSong = new MenuItem("Load Song");
         cm.getItems().add(loadSong);
+        loadSong.setOnAction(action ->
+        {
+            LoadMP3Files(action);
+        });
 
         // Creates a new item for the menu and puts it in
         MenuItem clearQueueContext = new MenuItem("Clear Queue");
         cm.getItems().add(clearQueueContext);
-
-        tblSongList.setRowFactory(tv ->
+        clearQueueContext.setOnAction(action ->
         {
-            TableRow<Music> row = new TableRow();
-            row.setOnMouseClicked(event ->
-            {
-
-                if (event.getButton() == MouseButton.SECONDARY)
-                {
-                    cm.show(tblSongList, event.getScreenX(), event.getScreenY());
-                }
-
-                play.setOnAction(action ->
-                {
-                    ObservableList<Music> selectedItems = tblSongList
-                            .getSelectionModel().getSelectedItems();
-
-                    if (!selectedItems.isEmpty())
-                    {
-                        if (isPlaying)
-                        {
-                            this.songStop(action);
-                        }
-                        wm.setQueuePlay(selectedItems);
-                        prepareSetup();
-                    }
-                });
-
-                addQueue.setOnAction(action ->
-                {
-                    ObservableList<Music> selectedItems = tblSongList
-                            .getSelectionModel().getSelectedItems();
-
-                    if (!selectedItems.isEmpty())
-                    {
-                        wm.setQueueAdd(selectedItems);
-                        prepareSetup();
-                    }
-                });
-
-                loadSong.setOnAction(action ->
-                {
-                    LoadMP3Files(action);
-                });
-
-                clearQueueContext.setOnAction(action ->
-                {
-                    clearQueue(action);
-                });
-
-            }); // END of mouseClick Event
-
-            return row;
-
-        }); // END of table row factory
+            clearQueue(action);
+        });
     }
     //</editor-fold>
 
