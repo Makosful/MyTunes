@@ -72,14 +72,14 @@
                             </padding>
                         </Label>
 
-                    <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Option 1" />
-                            <MenuItem mnemonicParsing="false" text="Option 2" />
-                            <MenuItem mnemonicParsing="false" text="Option 3" />
-                            <MenuItem mnemonicParsing="false" text="Option 4" />
-                        </items>
-                    </MenuButton>
+                        <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Option 1" />
+                                <MenuItem mnemonicParsing="false" text="Option 2" />
+                                <MenuItem mnemonicParsing="false" text="Option 3" />
+                                <MenuItem mnemonicParsing="false" text="Option 4" />
+                            </items>
+                        </MenuButton>
 
                     </children>
                     <FlowPane.margin>
@@ -89,28 +89,28 @@
             </children>
         </FlowPane>
         
-          <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <menus>
-                  <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
-                      <items>
-                          <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMediaFiles" text="Load MP3(s)" />
-                  <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
-                      </items>
-                  </Menu>
-                  <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
-                      <items>
-                          <MenuItem mnemonicParsing="false" text="Delete" />
-                      </items>
-                  </Menu>
-                  <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
-                      <items>
-                          <MenuItem mnemonicParsing="false" text="About" />
-                      </items>
-                  </Menu>
-              </menus>
-          </MenuBar>
+        <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMediaFiles" text="Load MP3(s)" />
+                        <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
+                    </items>
+                </Menu>
+                <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
 
-        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0">
+        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0">
             <columns>
                 <TableColumn fx:id="clmNr" prefWidth="75.0" text="Nr." />
                 <TableColumn fx:id="clmTitle" prefWidth="75.0" text="Title" />
@@ -120,46 +120,46 @@
             </columns>
         </TableView>
 
-      <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0">
-         <children>
-            <VBox>
-               <children>
-                  <HBox prefHeight="27.0" prefWidth="370.0" spacing="60.0">
-                     <children>
-                        <JFXButton fx:id="btnCreatePlaylist" layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
-                           <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
-                           </HBox.margin>
-                        </JFXButton>
-                        <JFXButton fx:id="btnDeletePlaylist" onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
-                           <HBox.margin>
-                              <Insets left="0" right="5.0" />
-                           </HBox.margin>
-                        </JFXButton>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <padding>
-                        <Insets left="25.0" right="25.0" />
-                     </padding>
-                  </HBox>
-                    <JFXListView fx:id="playlistPanel" prefHeight="505.0" prefWidth="420.0" style="-fx-background-color: #ccc;">
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </JFXListView>
-               </children>
-            </VBox>
-         </children>
-      </AnchorPane>
+        <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0">
+            <children>
+                <VBox>
+                    <children>
+                        <HBox prefHeight="27.0" prefWidth="370.0" spacing="60.0">
+                            <children>
+                                <JFXButton fx:id="btnCreatePlaylist" layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
+                                    <HBox.margin>
+                                        <Insets left="5.0" right="5.0" />
+                                    </HBox.margin>
+                                </JFXButton>
+                                <JFXButton fx:id="btnDeletePlaylist" onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
+                                    <HBox.margin>
+                                        <Insets left="0" right="5.0" />
+                                    </HBox.margin>
+                                </JFXButton>
+                            </children>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <padding>
+                                <Insets left="25.0" right="25.0" />
+                            </padding>
+                        </HBox>
+                        <JFXListView fx:id="playlistPanel" prefHeight="505.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;">
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </JFXListView>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
 
-        <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="247.0" prefWidth="420.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
+        <Pane fx:id="bottomPane" layoutX="20.0" layoutY="640.0" prefHeight="247.0" prefWidth="420.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
             <children>
                 <MediaView fx:id="mediaView" fitHeight="250.0" fitWidth="420.0" />
             </children>
         </Pane>
-        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: #ccc;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
         <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
@@ -186,7 +186,7 @@
                                         <Insets left="25.0" right="25.0" />
                                     </padding>
                                 </HBox>
-                                <JFXListView fx:id="listQueue" prefHeight="215.0" prefWidth="420.0" style="-fx-background-color: #ccc;">
+                                <JFXListView fx:id="listQueue" prefHeight="215.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;">
                                     <VBox.margin>
                                         <Insets top="5.0" />
                                     </VBox.margin>
@@ -197,6 +197,6 @@
                 </AnchorPane>
             </children>
         </Pane>
-      <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" />
+        <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" />
     </children>
 </AnchorPane>

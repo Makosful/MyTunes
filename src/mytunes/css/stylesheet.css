@@ -11,6 +11,10 @@ and open the template in the editor.
 /***************************************/
 /* THE FOLLOWING IS FOR Main Window fxml*/
 
+.root {
+    -fx-background-color: #090a0c, linear-gradient(#38424b 0%, #22272c 100%);
+}
+
 .root:focused {
     -fx-background-color: #487597;
 }
@@ -65,6 +69,10 @@ and open the template in the editor.
     -fx-background-radius: 1;
 }
 
+.list-view .list-cell {
+    -fx-text-fill: white;
+}
+
 .list-view .list-cell:even {
     -fx-background-color: #666666;
 }
@@ -105,10 +113,6 @@ and open the template in the editor.
     -fx-text-fill: -fx-text-inner-color;
 }
 
-#window {
-    -fx-background-color: #090a0c, linear-gradient(#38424b 0%, #22272c 100%);
-}
-
 .label {
     -fx-text-fill: white;
 }
@@ -147,7 +151,7 @@ and open the template in the editor.
     -fx-background-color: #38424b;
 }
 
-#btnSettings{
+#btnSettings {
     -fx-background-image: url('settings.png');
     -fx-background-size: 25px;
     -fx-background-repeat: no-repeat;
