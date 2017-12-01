@@ -166,8 +166,7 @@ public class MainWindowModel
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
 
-            plCont.setSongList(this.allSongs);
-
+            //plCont.setSongList(this.allSongs);
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
             Image icon = new Image(ico.toURI().toString());
@@ -214,8 +213,6 @@ public class MainWindowModel
         }
     }
     //</editor-fold>
-
-
 
     /**
      * Goes through song files, and gets their name. Returns a list with their
