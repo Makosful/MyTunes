@@ -29,10 +29,10 @@ public class SongDAO
         {
         List<Music> allSongs = new ArrayList<>();
         
-        String sql = "SELECT Songs.title, Artist.artist, Album.album, Album.releasedate, Genre.genre"
-                   + "FROM Songs"
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+                   + "FROM Songs "
                    + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Album ON Songs.albumid = Album.id "
+                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                    + "INNER JOIN Genre ON Songs.genreid = Genre.id ";
         
         Statement st = con.createStatement();
@@ -350,11 +350,10 @@ public class SongDAO
 
             ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
 
-            while (rsi.next())
-            {
-                id = rsi.getInt(1);
+            rsi.next();
+            
+            id = rsi.getInt(1);
 
-            }
 
             return id;
 
@@ -371,16 +370,146 @@ public class SongDAO
         song.setArtist(rs.getString("artist"));
         song.setAlbum(rs.getString("album"));
         song.setGenre(rs.getString("genre"));
-        song.setId(rs.getInt("id"));
         song.setYear(rs.getInt("releasedate"));
-        song.setSongPathName(rs.getString("pathname"));
+        //song.setSongPathName(rs.getString("pathname"));
         
         return song;
     }
     
     
     
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    public Music getSong(int id) throws SQLServerException, SQLException
+    {
+     
+        
+        try (Connection con = db.getConnection())
+        {
+       
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "WHERE id = ?";
 
+            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+
+            
+            if(rs.next()){
+                Music song = createSongFromDB(rs);
+
+                System.out.println(song.getArtist());
+                
+                return song;
+                
+            }else
+            {
+                return null;
+            }
+            
+            
+        }
+        
+    }  
+ 
+    
+    /**
+     * 
+     * @param id
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public void deleteSong(int id) throws SQLServerException, SQLException
+    {
+     
+        
+        try (Connection con = db.getConnection())
+        {
+       
+            String sql = "DELETE FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "WHERE Songs.id = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeQuery();
+        
+         
+        }
+    }
+    
+    
+     /**
+     * 
+     * @param searchText
+     * @return list of songs
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public List<Music> getSongsFromSearch(String searchText) throws SQLServerException, SQLException
+    {
+        
+        List<String> searchTables = new ArrayList();
+        
+        searchTables.add("Songs.title");
+        searchTables.add("Artist.artist");
+        
+        String sqlSearch = "";
+        boolean firstQm = true;
+        for( int i = 0 ; i < searchTables.size(); i++ ) {
+        
+            if(firstQm == false)
+            {
+                sqlSearch += " OR ";
+            }
+            
+            sqlSearch += searchTables.get(i)+" = ?";
+
+            firstQm = false;
+            
+        }
+
+        try (Connection con = db.getConnection())
+        {
+            List<Music> songs = new ArrayList();
+       
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "WHERE "+sqlSearch;
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            for(int index = 1; index <= searchTables.size(); index++) 
+            {
+               preparedStatement.setString(index, searchText);
+            }
+            ResultSet rs = preparedStatement.executeQuery();
+        
+            while(rs.next())
+            {
+                
+                Music song = createSongFromDB(rs);
+                songs.add(song);
+                System.out.println(song.getArtist());
+            }
+            
+            return songs;
+        }
+    }
     
     
     
