@@ -254,9 +254,9 @@ public class MainWindowModel
     public List<String> getPath(List<File> chosenFiles) throws SQLException
     {
         List<String> songPath = new ArrayList();
-        for (int i = 0; i < chosenFiles.size(); i++)
+        for (int j = 0; j < chosenFiles.size(); j++)
         {
-            songPath.add(chosenFiles.get(i).getName());
+            songPath.add(chosenFiles.get(j).getName());
         }
         return songPath;
     }
@@ -265,10 +265,10 @@ public class MainWindowModel
     {
 
         writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
-        for (int i = 0; i < chosenFiles.size(); i++)
+        for (int j = 0; j < chosenFiles.size(); j++)
 
         {
-            System.out.println(chosenFiles.get(i).getName());
+            System.out.println(chosenFiles.get(j).getName());
         }
     }
 
@@ -501,33 +501,22 @@ public class MainWindowModel
         String artist = "YouTube";
 
         Random rnd = new Random();
-        int r = rnd.nextInt(2) + 2;
-        if (r > 2)
+        int r = rnd.nextInt(3);
+        System.out.println(r);
+        switch (r)
         {
-            track = new Music(0,
-                              title,
-                              album,
-                              artist,
-                              2017,
-                              "./res/songs/placeholder/Elevator (Control).mp3");
-        }
-        else if (r > 3)
-        {
-            track = new Music(0,
-                              title,
-                              album,
-                              artist,
-                              2017,
-                              "./res/songs/placeholder/Elevator (Caverns).mp3");
-        }
-        else
-        {
-            track = new Music(0,
-                              title,
-                              album,
-                              artist,
-                              2017,
-                              "./res/songs/placeholder/elevatormusic.mp3");
+            case 0:
+                track = new Music(0, title, album, artist, 2017,
+                                  "./res/songs/placeholder/Elevator (Control).mp3");
+                break;
+            case 1:
+                track = new Music(0, title, album, artist, 2017,
+                                  "./res/songs/placeholder/Elevator (Caverns).mp3");
+                break;
+            default:
+                track = new Music(0, title, album, artist, 2017,
+                                  "./res/songs/placeholder/elevatormusic.mp3");
+                break;
         }
 
         this.setPlaying(true);
@@ -537,5 +526,49 @@ public class MainWindowModel
     public void newMedias()
     {
         this.medias = new ArrayList<>();
+    }
+
+    // COPY PASTED METHOD TO FORMAT TIME PROPERLY
+    public static String formatTime(Duration elapsed, Duration duration)
+    {
+        int intElapsed = (int) Math.floor(elapsed.toSeconds());
+        int elapsedHours = intElapsed / (60 * 60);
+        if (elapsedHours > 0)
+        {
+            intElapsed -= elapsedHours * 60 * 60;
+        }
+        int elapsedMinutes = intElapsed / 60;
+        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60 - elapsedMinutes * 60;
+
+        if (duration.greaterThan(Duration.ZERO))
+        {
+            int intDuration = (int) Math.floor(duration.toSeconds());
+            int durationHours = intDuration / (60 * 60);
+            if (durationHours > 0)
+            {
+                intDuration -= durationHours * 60 * 60;
+            }
+            int durationMinutes = intDuration / 60;
+            int durationSeconds = intDuration - durationHours * 60 * 60 - durationMinutes * 60;
+            if (durationHours > 0)
+            {
+                return String.format("%d:%02d:%02d/%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds, durationHours, durationMinutes, durationSeconds);
+            }
+            else
+            {
+                return String.format("%02d:%02d/%02d:%02d", elapsedMinutes, elapsedSeconds, durationMinutes, durationSeconds);
+            }
+        }
+        else
+        {
+            if (elapsedHours > 0)
+            {
+                return String.format("%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds);
+            }
+            else
+            {
+                return String.format("%02d:%02d", elapsedMinutes, elapsedSeconds);
+            }
+        }
     }
 }
