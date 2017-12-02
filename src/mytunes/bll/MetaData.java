@@ -3,12 +3,9 @@ package mytunes.bll;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mytunes.be.Music;
 import mytunes.dal.SongDAO;
 import org.jaudiotagger.audio.AudioFile;
@@ -16,11 +13,9 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.id3.ID3v23Tag;
-import org.jaudiotagger.tag.wav.WavTag;
 
 
 
@@ -53,6 +48,10 @@ public class MetaData {
          * @param chosenFiles
          * @throws FileNotFoundException
          * @throws IOException
+         * @throws org.jaudiotagger.audio.exceptions.CannotReadException
+         * @throws org.jaudiotagger.audio.exceptions.ReadOnlyFileException
+         * @throws org.jaudiotagger.tag.TagException
+         * @throws org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
          */
         public void MetaData(List<File> chosenFiles) throws FileNotFoundException, 
                                                             IOException,
@@ -87,6 +86,7 @@ public class MetaData {
                 try
                 {
                     sDAO.setSong(track);
+                    //sDAO.getSongsFromSearch();
                 }
                 catch (SQLException ex)
                 {
@@ -118,42 +118,13 @@ public class MetaData {
         {
             
  
-        
-        String filetype = Files.probeContentType(chosenFile.toPath());
 
-        if(filetype.contains("wave"))
-        {
-             try
-             {   
-             File wavFile = chosenFile;
-             AudioFile f = AudioFileIO.read(wavFile);
-             WavTag tag = (WavTag) f.getTag();
              
-             
-            artist = tag.getFirst(FieldKey.ARTIST);
-            title = tag.getFirst(FieldKey.TITLE);
-            album = tag.getFirst(FieldKey.ALBUM);
-            year = tag.getFirst(FieldKey.YEAR);
-            genre = tag.getFirst(FieldKey.GENRE);
-            description = tag.getFirst(FieldKey.COMMENT);
-            duration = String.valueOf(f.getAudioHeader().getTrackLength());
-            songPathName = chosenFile.getName();
-            System.out.println(artist+" "+title+" "+album+" "+year+" "+genre);
+            File file = chosenFile;
+            AudioFile f = AudioFileIO.read(file);
+            Tag tag = f.getTag();
+
             
-            }
-            catch (InvalidAudioFrameException ex)
-            {
-                Logger.getLogger(MetaData.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        else if(filetype.contains("mpeg"))
-        {
-            File mp3File = chosenFile;
-
-            MP3File f = (MP3File) AudioFileIO.read(mp3File);		
-            ID3v23Tag tag = (ID3v23Tag) f.getTag();
-             
              
             artist = tag.getFirst(FieldKey.ARTIST);
             title = tag.getFirst(FieldKey.TITLE);
@@ -163,11 +134,11 @@ public class MetaData {
             description = tag.getFirst(FieldKey.COMMENT);
             duration = String.valueOf(f.getAudioHeader().getTrackLength());
             songPathName = chosenFile.getName();
-            System.out.println(artist+" "+title+" "+album+" "+year+" "+genre);
-       }
-         
+          
+
+
     
-    }  
+        }  
             
             
 
@@ -181,7 +152,7 @@ public class MetaData {
         private void validateMetaData(File chosenFile)
         {
 
-            if(artist == null && title == null)
+            if(artist.equals("") && title.equals(""))
             {
                 String songName = chosenFile.getName();
 
@@ -207,38 +178,38 @@ public class MetaData {
 
 
             }
-            else if(artist == null)
+            else if(artist.equals(""))
             {
                 artist = "artist";
             }
-            else if(title == null)
+            else if(title.equals(""))
             {
                 title = "title";
             }
             
             
             
-            if(album == null)
+            if(album.equals(""))
             {
                 album = "album";
             }
             
-            if(genre == null)
+            if(genre.equals(""))
             {
                 genre = "genre";
             }
             
-            if(year == null)
+            if(year.equals(""))
             {
                 year = "1337";
             }
             
-            if(description == null)
+            if(description.equals(""))
             {
                 description = "No description";
             }
             
-            if(duration == null)
+            if(duration.equals(""))
             {
                 description = "0";
             }
@@ -264,7 +235,7 @@ public class MetaData {
             track.setAlbum(album);
             track.SetDescription(description);
             track.setYear(Integer.parseInt(year));
-            track.setDuration(Double.parseDouble(duration));
+            track.setDuration(Integer.parseInt(duration));
             track.setSongPathName(songPathName);
             
             return track;

@@ -12,7 +12,7 @@ public class Music
     private String artist;
     private String album;
     private int year;
-    private double duration;
+    private int duration;
     private String description;
     private String location;
     private String genre;
@@ -104,12 +104,12 @@ public class Music
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Duration">
-    public double getDuration()
+    public int getDuration()
     {
         return duration;
     }
 
-    public void setDuration(double duration)
+    public void setDuration(int duration)
     {
         this.duration = duration;
     }
