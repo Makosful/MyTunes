@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,6 +39,7 @@ public class MainWindowModel
     // Lists
     private ObservableList<Music> allSongs;
     private ObservableList<Music> queue;
+    private ObservableList<MediaPlayer> queueMedia;
     private ObservableList<Playlist> playlists;
 
     // Objects
@@ -77,6 +79,7 @@ public class MainWindowModel
             this.bllManager = new BLLManager();
             this.allSongs = FXCollections.observableArrayList();
             this.queue = FXCollections.observableArrayList();
+            this.queueMedia = FXCollections.observableArrayList();
             this.playlists = FXCollections.observableArrayList();
         }
         catch (IOException ex)
@@ -631,6 +634,60 @@ public class MainWindowModel
         getMediaPlayer().setOnReady(() ->
         {
             updateDuration();
+        });
+    }
+
+    public void setupQueueListener()
+    {
+        this.queue.addListener((Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        System.out.println("Ze endo");
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    this.queueMedia.add(mp);
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int j = 0; j < queueMedia.size(); j++)
+                {
+                    // For every entry in the queue media compare it to the
+                    // every entry in the removed list
+                    String storedMedia = queueMedia.get(j).getMedia().getSource();
+
+                    for (int k = 0; k < c.getRemoved().size(); k++)
+                    {
+                        File file = new File(c.getRemoved().get(k).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            queueMedia.remove(j);
+                            j--;
+                        }
+                    }
+
+                }
+            }
         });
     }
 }

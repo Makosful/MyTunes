@@ -27,7 +27,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -618,20 +617,20 @@ public class MainWindowController implements Initializable
             wm.setPlaying(true);
             btnPlayPause.setText("Pause");
             enableSettings();
-            wm.getMediaPlayer().setOnEndOfMedia(() ->
-            {
-                if (!wm.getQueueList().isEmpty())
-                {
-                    List<Media> medias = wm.getMedias();
-
-                    wm.stopMediaPlayer();
-                    wm.getNewSongInQue();
-                    i++;
-                    System.out.println(medias.get(i));
-                    wm.setMediaPlayer(new MediaPlayer(medias.get(i)));
-                    wm.startMediaPlayer();
-                }
-            });
+//            wm.getMediaPlayer().setOnEndOfMedia(() ->
+//            {
+//                if (!wm.getQueueList().isEmpty())
+//                {
+//                    List<Media> medias = wm.getMedias();
+//
+//                    wm.stopMediaPlayer();
+//                    wm.getNewSongInQue();
+//                    i++;
+//                    System.out.println(medias.get(i));
+//                    wm.setMediaPlayer(new MediaPlayer(medias.get(i)));
+//                    wm.startMediaPlayer();
+//                }
+//            });
         }
         // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
         else
