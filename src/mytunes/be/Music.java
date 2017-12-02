@@ -27,12 +27,23 @@ public class Music
         this.year = year;
         this.location = location;
     }
-    
+
     public Music()
     {
-    
+
     }
 
+    @Override
+    public String toString()
+    {
+        String song = this.artist
+                      + " | " + this.title
+                      + " | " + this.album
+                      + " | " + this.year;
+        return song;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="ID">
     public int getId()
     {
         return id;
@@ -42,7 +53,9 @@ public class Music
     {
         this.id = id;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Title">
     public String getTitle()
     {
         return title;
@@ -52,7 +65,9 @@ public class Music
     {
         this.title = title;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Artist">
     public String getArtist()
     {
         return artist;
@@ -62,7 +77,9 @@ public class Music
     {
         this.artist = artist;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Album">
     public String getAlbum()
     {
         return album;
@@ -72,7 +89,9 @@ public class Music
     {
         this.album = album;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Year">
     public int getYear()
     {
         return year;
@@ -82,7 +101,9 @@ public class Music
     {
         this.year = year;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Duration">
     public double getDuration()
     {
         return duration;
@@ -92,7 +113,9 @@ public class Music
     {
         this.duration = duration;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Desc">
     public String getDescription()
     {
         return description;
@@ -102,7 +125,9 @@ public class Music
     {
         this.description = description;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Location">
     public String getLocation()
     {
         return location;
@@ -112,13 +137,9 @@ public class Music
     {
         this.location = location;
     }
+    //</editor-fold>
 
-    @Override
-    public String toString()
-    {
-        return this.title;
-    }
-
+    //<editor-fold defaultstate="collapsed" desc="Genra">
     public String getGenre()
     {
         return genre;
@@ -128,7 +149,9 @@ public class Music
     {
         this.genre = genre;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Song Path Name">
     public String getSongPathName()
     {
         return songPathName;
@@ -138,4 +161,5 @@ public class Music
     {
         this.songPathName = songPathName;
     }
+    //</editor-fold>
 }

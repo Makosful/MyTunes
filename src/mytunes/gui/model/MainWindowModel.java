@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
@@ -169,8 +170,7 @@ public class MainWindowModel
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
 
-            plCont.setSongList(this.allSongs);
-
+            //plCont.setSongList(this.allSongs);
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
             Image icon = new Image(ico.toURI().toString());
@@ -218,8 +218,6 @@ public class MainWindowModel
     }
     //</editor-fold>
 
-
-
     /**
      * Goes through song files, and gets their name. Returns a list with their
      * name.
@@ -266,6 +264,103 @@ public class MainWindowModel
  
                 meta.MetaData(chosenFiles);
 
+    }
+
+    /**
+     * Searches through the given list for a match
+     *
+     * This method will clear the Edited List, then search through the Complete
+     * List for any matching cases of the Text String. All matching results will
+     * be put into the Edited List.
+     *
+     * The Edited List and the Complete List muct nto be the same. Instead, they
+     * should mirror the same list so one can be edited while the other remains
+     * unchanged.
+     *
+     * @param text         The text to search for
+     * @param editedList   The list that will contain the results
+     * @param completeList The list that contains all items to be search through
+     */
+    public void searchPlaylist(String text,
+                               ObservableList<Music> editedList,
+                               ObservableList<Music> completeList)
+    {
+        editedList.clear();
+        List<Music> result = getSearchResultPlaylist(text, completeList);
+        editedList.addAll(result);
+    }
+
+    /**
+     * Gets the search results for the playlist window
+     *
+     * Searches the given list for instances of the given text. If any is found,
+     * it'll be returned as an ArrayList containing Music elements.
+     *
+     * The fields that'll be searched for a match are the Title, the Artist and
+     * the Album
+     *
+     * @param text The text to search for
+     * @param list The ObservableList to search through
+     *
+     * @return Returns an ArrayList containing all the matching results based on
+     *         predetermined search criteria
+     */
+    private List<Music> getSearchResultPlaylist(String text,
+                                                ObservableList<Music> list)
+    {
+        List<Music> searchResult = new ArrayList();
+
+        list.forEach((music) ->
+        {
+            if (music.getTitle().toLowerCase().contains(text.toLowerCase())
+                || music.getArtist().toLowerCase().contains(text.toLowerCase())
+                || music.getAlbum().toLowerCase().contains(text.toLowerCase()))
+            {
+                searchResult.add(music);
+            }
+        });
+        return searchResult;
+    }
+
+    public void setPlayckSpeed(MediaPlayer mPlayer, int playbackIndex)
+    {
+        switch (playbackIndex)
+        {
+            /*
+             * in the first case we set the text to 50% and set the play back
+             * rate to 0.5 (0 being 0% --> 2 being 200%)
+             */
+            case 0:
+                System.out.println("50%");
+                mPlayer.setRate(0.5);
+                break;
+            case 1:
+                System.out.println("75%");
+                mPlayer.setRate(0.75);
+                break;
+            case 2:
+                System.out.println("100%");
+                mPlayer.setRate(1.0);
+                break;
+            case 3:
+                System.out.println("125%");
+                mPlayer.setRate(1.25);
+                break;
+            case 4:
+                System.out.println("150%");
+                mPlayer.setRate(1.5);
+                break;
+            case 5:
+                System.out.println("175%");
+                mPlayer.setRate(1.75);
+                break;
+            case 6:
+                System.out.println("200%");
+                mPlayer.setRate(2.0);
+                break;
+            default:
+                break;
+        }
     }
 
 }
