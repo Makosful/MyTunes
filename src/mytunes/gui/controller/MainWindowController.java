@@ -430,24 +430,6 @@ public class MainWindowController implements Initializable
     }
     //</editor-fold>
 
-    private void progressSliderSetup()
-    {
-        //adds a listener to the value, allowing it to determine where to play from when the user drags.
-        progressSlider.valueProperty().addListener((Observable ov) ->
-        {
-            //if the value of the slider is currently 'changing' referring to the listeners task it'll set the value to percentage from the song, where max length = song duration.
-            if (progressSlider.isValueChanging())
-            {
-                mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-            }
-        });
-        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
-        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
-        {
-            mPlayer.seek(mpduration.multiply(progressSlider.getValue() / 100.0));
-        });
-    }
-
     //<editor-fold defaultstate="collapsed" desc="Playback Speed Fold">
     /**
      * Handle the settings for the playback
@@ -754,6 +736,8 @@ public class MainWindowController implements Initializable
     private void updateSliderAndTimer()
     {
         Duration currentTime = mPlayer.getCurrentTime();
+        
+        
         lblTimer.setText(formatTime(currentTime, mpduration));
 
         //Adds a listener to the value, allowing it to automatically adjust to where it is - displaying the progress to the user.
@@ -876,7 +860,8 @@ public class MainWindowController implements Initializable
                               2017,
                               "./res/songs/placeholder/elevatormusic.mp3");
         }
-
+        
+        isPlaying = true;
         wm.getQueueList().add(track);
     }
     //</editor-fold>
