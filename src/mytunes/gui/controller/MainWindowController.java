@@ -55,6 +55,8 @@ public class MainWindowController implements Initializable
 
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
+    private Slider progressSlider;
+    @FXML
     private JFXButton btnPlayPause;
     @FXML
     private JFXSlider volumeSlider;
@@ -126,7 +128,6 @@ public class MainWindowController implements Initializable
     private Duration mpduration;
     private Media song;
     private Status mStatus;
-    private Slider progressSlider;
 
     private static final double startFreq = 250;
     private static final int amountOfBands = 7; // the minimum amount (keeping it simple)
