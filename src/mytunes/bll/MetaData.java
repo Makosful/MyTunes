@@ -89,7 +89,7 @@ public class MetaData {
                 try
                 {
                     sDAO.setSong(track);
-                    sDAO.getAllSongs();
+                    sDAO.getSongsFromSearch();
                 }
                 catch (SQLException ex)
                 {
