@@ -53,8 +53,6 @@ public class MetaData {
          * @param chosenFiles
          * @throws FileNotFoundException
          * @throws IOException
-         * @throws SAXException
-         * @throws TikaException 
          */
         public void MetaData(List<File> chosenFiles) throws FileNotFoundException, 
                                                             IOException,
