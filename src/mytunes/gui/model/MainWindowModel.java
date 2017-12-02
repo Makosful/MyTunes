@@ -4,14 +4,18 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
@@ -36,7 +40,26 @@ public class MainWindowModel
 
     // Objects
     private BLLManager bllManager;
+
+    //<editor-fold defaultstate="collapsed" desc="Instance Variables">
+    private boolean playing;
+    private boolean looping;
+
+    private MediaPlayer mPlayer;
+    private Duration mpduration;
+    private Media song;
+    private MediaPlayer.Status mStatus;
+
+    private Media currentlyPlaying;
+    private List<Media> medias;
+
+    private int i = 0;
+    private File newFile;
+    private List<File> pathNames;
+
     private MetaData meta;
+    //</editor-fold>
+
     /**
      * Constructor
      */
@@ -322,7 +345,7 @@ public class MainWindowModel
         return searchResult;
     }
 
-    public void setPlayckSpeed(MediaPlayer mPlayer, int playbackIndex)
+    public void setPlayckSpeed(int playbackIndex)
     {
         switch (playbackIndex)
         {
@@ -363,4 +386,156 @@ public class MainWindowModel
         }
     }
 
+    public void setPlaying(boolean isPlaying)
+    {
+        this.playing = isPlaying;
+    }
+
+    public boolean isPlaying()
+    {
+        return playing;
+    }
+
+    public void updateStatus()
+    {
+        this.mStatus = this.mPlayer.getStatus();
+    }
+
+    public Status getMediaStatus()
+    {
+        return this.mStatus;
+    }
+
+    public void stopMediaPlayer()
+    {
+        this.mPlayer.stop();
+    }
+
+    public void updateDuration()
+    {
+        this.mpduration = this.mPlayer.getTotalDuration();
+    }
+
+    public MediaPlayer getMediaPlayer()
+    {
+        return this.mPlayer;
+    }
+
+    public void startMediaPlayer()
+    {
+        this.mPlayer.play();
+    }
+
+    public List<Media> getMedias()
+    {
+        return this.medias;
+    }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer)
+    {
+        this.mPlayer = mediaPlayer;
+    }
+
+    public void reverseLooping()
+    {
+        this.looping = !this.looping;
+    }
+
+    public void pauseMediaPlayer()
+    {
+        this.mPlayer.pause();
+    }
+
+    public void setLooping()
+    {
+        this.mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        this.looping = false;
+    }
+
+    public double getVolume()
+    {
+        return (this.mPlayer.getVolume() * 100.0) / 100.0;
+    }
+
+    public void setVolume(double value)
+    {
+        this.mPlayer.setVolume(value);
+        if (value > 3 && value < 0)
+        {
+            mPlayer.setVolume(5);
+        }
+    }
+
+    public Duration getCurrentTime()
+    {
+        return this.mPlayer.getCurrentTime();
+    }
+
+    public Duration getduration()
+    {
+        return this.mpduration;
+    }
+
+    public void seek(Duration seconds)
+    {
+        this.mPlayer.seek(seconds);
+    }
+
+    public void setSong(Media media)
+    {
+        this.song = media;
+
+        this.setMediaPlayer(new MediaPlayer(this.song));
+    }
+
+    /**
+     * Adds a random song to the playlist
+     * if no song has been selected by the user (Empty list & user clicks Play)
+     */
+    public void addElevatorMusic()
+    {
+        Music track;
+
+        String title = "Elevator Music";
+        String album = "PlaceHolder";
+        String artist = "YouTube";
+
+        Random rnd = new Random();
+        int r = rnd.nextInt(2) + 2;
+        if (r > 2)
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              2017,
+                              "./res/songs/placeholder/Elevator (Control).mp3");
+        }
+        else if (r > 3)
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              2017,
+                              "./res/songs/placeholder/Elevator (Caverns).mp3");
+        }
+        else
+        {
+            track = new Music(0,
+                              title,
+                              album,
+                              artist,
+                              2017,
+                              "./res/songs/placeholder/elevatormusic.mp3");
+        }
+
+        this.setPlaying(true);
+        this.queue.add(track);
+    }
+
+    public void newMedias()
+    {
+        this.medias = new ArrayList<>();
+    }
 }
