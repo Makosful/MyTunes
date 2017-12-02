@@ -609,4 +609,28 @@ public class MainWindowModel
             //gridEqualizer.add(eb, 0, 0);
         }
     }
+
+    /**
+     * Gets ahold of the new song in queue by checking the index of the list.
+     * When the media is ready to play we set the duration of the new
+     * MediaPlayer
+     *
+     * //TODO : Needs to add MORE than just mpduration (I think?)
+     */
+    public void getNewSongInQue()
+    {
+        newMedias();
+        stopMediaPlayer();
+
+        for (int index = 0; index < getQueueList().size(); index++)
+        {
+            newFile = new File(getQueueList().get(index).getLocation());
+            song = new Media(newFile.toURI().toString());
+            getMedias().add(song);
+        }
+        getMediaPlayer().setOnReady(() ->
+        {
+            updateDuration();
+        });
+    }
 }

@@ -611,7 +611,7 @@ public class MainWindowController implements Initializable
                     List<Media> medias = wm.getMedias();
 
                     wm.stopMediaPlayer();
-                    getNewSongInQue();
+                    wm.getNewSongInQue();
                     i++;
                     System.out.println(medias.get(i));
                     wm.setMediaPlayer(new MediaPlayer(medias.get(i)));
@@ -811,32 +811,8 @@ public class MainWindowController implements Initializable
     {
         if (!wm.getQueueList().isEmpty())
         {
-            getNewSongInQue();
+            wm.getNewSongInQue();
         }
-    }
-
-    /**
-     * Gets ahold of the new song in queue by checking the index of the list.
-     * When the media is ready to play we set the duration of the new
-     * MediaPlayer
-     *
-     * //TODO : Needs to add MORE than just mpduration (I think?)
-     */
-    private void getNewSongInQue()
-    {
-        wm.newMedias();
-        wm.stopMediaPlayer();
-
-        for (int index = 0; index < wm.getQueueList().size(); index++)
-        {
-            File newFile = new File(wm.getQueueList().get(index).getLocation());
-            Media song = new Media(newFile.toURI().toString());
-            wm.getMedias().add(song);
-        }
-        wm.getMediaPlayer().setOnReady(() ->
-        {
-            wm.updateDuration();
-        });
     }
     //</editor-fold>
 
@@ -861,7 +837,6 @@ public class MainWindowController implements Initializable
             wm.updateDuration();
             progressSlider.setValue(0.0);
             progressSlider.setMax(wm.getduration().toSeconds());
-//            progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
             GetMediaPlayerStatus();
         });
     }
