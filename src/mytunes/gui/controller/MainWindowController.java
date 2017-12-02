@@ -391,6 +391,8 @@ public class MainWindowController implements Initializable
         listQueue.setItems(wm.getQueueList());
 
         setupQueueMouseListener();
+
+        wm.setupQueueListener();
     }
 
     /**
@@ -423,12 +425,24 @@ public class MainWindowController implements Initializable
      */
     private void setupQueueContextMenu(ContextMenu cm)
     {
-        // Creates a test menu item
-        MenuItem test = new MenuItem("Testing");
-        cm.getItems().add(test);
-        test.setOnAction((event) ->
+        // Creates an option to remove the selected item from the list
+        MenuItem remove = new MenuItem("Remove");
+        cm.getItems().add(remove);
+        remove.setOnAction((event) ->
         {
-            System.out.println("Clicked");
+            ObservableList<Music> selectedItems = listQueue
+                    .getSelectionModel().getSelectedItems();
+
+            wm.getQueueList().removeAll(selectedItems);
+        });
+
+        // Creates an option for clearing the entire list
+        MenuItem clear = new MenuItem("Clear");
+        cm.getItems().add(clear);
+        clear.setOnAction((event) ->
+        {
+            wm.stopMediaPlayer();
+            wm.clearQueueList();
         });
     }
     //</editor-fold>
