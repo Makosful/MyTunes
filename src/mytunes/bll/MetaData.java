@@ -89,6 +89,7 @@ public class MetaData {
                 try
                 {
                     sDAO.setSong(track);
+                    sDAO.getAllSongs();
                 }
                 catch (SQLException ex)
                 {
@@ -122,10 +123,11 @@ public class MetaData {
  
 
              
-             File file = chosenFile;
-             AudioFile f = AudioFileIO.read(file);
-             Tag tag = f.getTag();
-             
+            File file = chosenFile;
+            AudioFile f = AudioFileIO.read(file);
+            Tag tag = f.getTag();
+
+            
              
             artist = tag.getFirst(FieldKey.ARTIST);
             title = tag.getFirst(FieldKey.TITLE);
@@ -135,7 +137,7 @@ public class MetaData {
             description = tag.getFirst(FieldKey.COMMENT);
             duration = String.valueOf(f.getAudioHeader().getTrackLength());
             songPathName = chosenFile.getName();
-            System.out.println(artist+" "+title+" "+album+" "+year+" "+genre);
+          
 
 
     

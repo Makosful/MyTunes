@@ -29,10 +29,10 @@ public class SongDAO
         {
         List<Music> allSongs = new ArrayList<>();
         
-        String sql = "SELECT Songs.title, Artist.artist, Album.album, Album.releasedate, Genre.genre"
-                   + "FROM Songs"
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+                   + "FROM Songs "
                    + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Album ON Songs.albumid = Album.id "
+                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                    + "INNER JOIN Genre ON Songs.genreid = Genre.id ";
         
         Statement st = con.createStatement();
@@ -43,7 +43,7 @@ public class SongDAO
         {
             Music song = createSongFromDB(rs);
             
-            System.out.println(song.getAlbum());
+            System.out.println(song.getArtist());
             allSongs.add(song);
         }
          
@@ -371,10 +371,8 @@ public class SongDAO
         song.setArtist(rs.getString("artist"));
         song.setAlbum(rs.getString("album"));
         song.setGenre(rs.getString("genre"));
-        song.setId(rs.getInt("id"));
         song.setYear(rs.getInt("releasedate"));
-        song.setSongPathName(rs.getString("pathname"));
-        
+
         return song;
     }
     
