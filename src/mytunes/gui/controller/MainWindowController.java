@@ -494,7 +494,6 @@ public class MainWindowController implements Initializable
         mStatus = mPlayer.getStatus();
 
         if (null != mStatus)
-
         {
             switch (mStatus)
             {
@@ -579,10 +578,9 @@ public class MainWindowController implements Initializable
     {
         if (wm.getQueueList().isEmpty() && !isPlaying)
         {
-            enableSettings();
             addElevatorMusic();
-            prepareSetup();
-            mPlayer.play();
+            prepareAndPlay();
+            enableSettings();
         }
         else if (!isPlaying)
         {
@@ -817,8 +815,6 @@ public class MainWindowController implements Initializable
                               2017,
                               "./res/songs/placeholder/elevatormusic.mp3");
         }
-
-        isPlaying = true;
         wm.getQueueList().add(track);
     }
     //</editor-fold>
