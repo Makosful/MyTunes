@@ -55,6 +55,10 @@ public class MetaData {
          * @param chosenFiles
          * @throws FileNotFoundException
          * @throws IOException
+         * @throws org.jaudiotagger.audio.exceptions.CannotReadException
+         * @throws org.jaudiotagger.audio.exceptions.ReadOnlyFileException
+         * @throws org.jaudiotagger.tag.TagException
+         * @throws org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
          */
         public void MetaData(List<File> chosenFiles) throws FileNotFoundException, 
                                                             IOException,
@@ -89,7 +93,7 @@ public class MetaData {
                 try
                 {
                     sDAO.setSong(track);
-                    sDAO.getSongsFromSearch();
+                    //sDAO.getSongsFromSearch();
                 }
                 catch (SQLException ex)
                 {
@@ -155,7 +159,7 @@ public class MetaData {
         private void validateMetaData(File chosenFile)
         {
 
-            if(artist == "" && title == "")
+            if(artist.equals("") && title.equals(""))
             {
                 String songName = chosenFile.getName();
 
@@ -181,38 +185,38 @@ public class MetaData {
 
 
             }
-            else if(artist == "")
+            else if(artist.equals(""))
             {
                 artist = "artist";
             }
-            else if(title == null)
+            else if(title.equals(""))
             {
                 title = "title";
             }
             
             
             
-            if(album == "")
+            if(album.equals(""))
             {
                 album = "album";
             }
             
-            if(genre == "")
+            if(genre.equals(""))
             {
                 genre = "genre";
             }
             
-            if(year == "")
+            if(year.equals(""))
             {
                 year = "1337";
             }
             
-            if(description == "")
+            if(description.equals(""))
             {
                 description = "No description";
             }
             
-            if(duration == "")
+            if(duration.equals(""))
             {
                 description = "0";
             }
