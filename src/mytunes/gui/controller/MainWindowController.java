@@ -735,6 +735,8 @@ public class MainWindowController implements Initializable
     private void updateSliderAndTimer()
     {
         Duration currentTime = mPlayer.getCurrentTime();
+        
+        
         lblTimer.setText(formatTime(currentTime, mpduration));
 
         //Adds a listener to the value, allowing it to automatically adjust to where it is - displaying the progress to the user.
@@ -857,7 +859,8 @@ public class MainWindowController implements Initializable
                               2017,
                               "./res/songs/placeholder/elevatormusic.mp3");
         }
-
+        
+        isPlaying = true;
         wm.getQueueList().add(track);
     }
     //</editor-fold>
