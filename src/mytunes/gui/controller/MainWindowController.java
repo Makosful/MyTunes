@@ -122,7 +122,7 @@ public class MainWindowController implements Initializable
     //<editor-fold defaultstate="collapsed" desc="Instance Variables">
     private boolean isPlaying;
     private boolean isLooping;
-   
+
     private MediaPlayer mPlayer;
     private Duration mpduration;
     private Media song;
@@ -663,12 +663,7 @@ public class MainWindowController implements Initializable
         volSlide.valueProperty().addListener((javafx.beans.Observable observable)
                 ->
         {
-            mPlayer.setVolume(volSlide.getValue());
-
-            if (mPlayer.getVolume() > 3 && mPlayer.getVolume() < 0)
-            {
-                mPlayer.setVolume(5);
-            }
+            mPlayer.setVolume(volSlide.getValue() / 100);
         });
     }
     //</editor-fold>
@@ -699,8 +694,7 @@ public class MainWindowController implements Initializable
     private void updateSliderAndTimer()
     {
         Duration currentTime = mPlayer.getCurrentTime();
-        
-        
+
         lblTimer.setText(formatTime(currentTime, mpduration));
 
         //Adds a listener to the value, allowing it to automatically adjust to where it is - displaying the progress to the user.
@@ -823,7 +817,7 @@ public class MainWindowController implements Initializable
                               2017,
                               "./res/songs/placeholder/elevatormusic.mp3");
         }
-        
+
         isPlaying = true;
         wm.getQueueList().add(track);
     }
@@ -937,18 +931,18 @@ public class MainWindowController implements Initializable
             double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
 
             double scale = 0.4 * (1 + Math.cos(theta));
-            
+
             double gain = eqMin + median + (median * scale);
-            
-            bands.add(new EqualizerBand(freq, freq/2, gain));
-            
+
+            bands.add(new EqualizerBand(freq, freq / 2, gain));
+
             freq *= 2;
         }
-        
+
         for (int i = 0; i < bands.size(); i++)
         {
             EqualizerBand eb = bands.get(i);
-            
+
             //gridEqualizer.add(eb, 0, 0);
         }
     }
@@ -996,7 +990,7 @@ public class MainWindowController implements Initializable
             }
         }
     }
-    
+
     /**
      * Loads multiple MP3 files
      * Firstly we create a new FileChooser and add an mp3 filter to disable
@@ -1062,7 +1056,7 @@ public class MainWindowController implements Initializable
     {
 
     }
-    
+
     /**
      * Clears the queue
      * We check if queue is empty, if it is not we force all songs to stop,
