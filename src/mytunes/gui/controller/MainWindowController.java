@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -28,11 +30,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.EqualizerBand;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.*;
 import javafx.scene.media.MediaPlayer.Status;
-import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import javax.sound.sampled.AudioInputStream;
@@ -64,7 +63,6 @@ public class MainWindowController implements Initializable
     @FXML
     private Label lblTimer;
     @FXML
-    private Slider progressSlider;
     private MediaView mediaView;
     @FXML
     private ComboBox<String> playbackSpeed;
@@ -111,9 +109,17 @@ public class MainWindowController implements Initializable
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
+    @FXML
+    private AnchorPane paneEqualizer;
+    @FXML
+    private GridPane gridEqualizer;
+    @FXML
+    private Label lblmPlayerStatus;
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Instance Variables">
     // Instance variables
+    private Slider progressSlider;
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     private boolean isLooping;
@@ -121,8 +127,8 @@ public class MainWindowController implements Initializable
     private Media song;
     private Status mStatus;
 
-    private static double startFreq = 250;
-    private static int amountOfBands = 7; // the minimum amount (keeping it simple)
+    private static final double startFreq = 250;
+    private static final int amountOfBands = 7; // the minimum amount (keeping it simple)
 
     Media currentlyPlaying;
     List<Media> medias;
@@ -130,13 +136,8 @@ public class MainWindowController implements Initializable
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
-    @FXML
-    private Label lblmPlayerStatus;
 //</editor-fold>
-    @FXML
-    private AnchorPane paneEqualizer;
-    @FXML
-    private GridPane gridEqualizer;
+
 
     /**
      * Constructor, for all intends and purposes
@@ -800,7 +801,7 @@ public class MainWindowController implements Initializable
         song = new Media(file.toURI().toString());
 
         mPlayer = new MediaPlayer(song);
-        
+
         try
         {
             FileInputStream inputStream = new FileInputStream(file);
@@ -943,92 +944,6 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Loads multiple MP3 files
-     * Firstly we create a new FileChooser and add an mp3 filter to disable
-     * all other file formats (saves a lot of time troubleshooting what went
-     * wrong) then followingly we create a LIST of files rather than just a
-     * file, so we can load in multiple mp3 files. If the list contains
-     * items then we will determine their path and put them in the queue.
-     * Otherwise the list of files is empty and we determine that there was
-     * an error or that none were selected. Lastly we setup the mediaplayer
-     * so that we can play the now selected song(s)
-     */
-    @FXML
-    private void LoadMediaFiles(ActionEvent event)
-    {
-        /*
-         *
-         */
-        FileChooser fc = new FileChooser();
-
-        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
-        FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
-        FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
-        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 Files", "*.mp4");
-        FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
-        FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
-        FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
-
-        fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
-
-        List<File> chosenFiles = fc.showOpenMultipleDialog(null);
-
-        //wm.setPathAndName(chosenFiles);
-        if (chosenFiles != null)
-        {
-            for (int index = 0; index < chosenFiles.size(); index++)
-            {
-                wm.getQueueList().add(new Music(
-                        0,
-                        chosenFiles.get(index).getName(),
-                        chosenFiles.get(index).getName(),
-                        chosenFiles.get(index).getName(),
-                        9999,
-                        chosenFiles.get(index).getAbsolutePath()
-                ));
-            }
-        }
-        else
-        {
-            System.out.println("One or more invalid file(s) / None selected");
-            return;
-        }
-
-        if (!wm.getQueueList().isEmpty())
-        {
-            prepareSetup();
-
-        }
-
-        pathNames = chosenFiles;
-
-    }
-
-    /**
-     * Clears the queue
-     * We check if queue is empty, if it is not we force all songs to stop,
-     * followed by a method to clear our queue and
-     * finally set the isPlaying boolean accordingly and the text of the
-     * Play/Pause button
-     */
-    @FXML
-    private void clearQueue(ActionEvent event)
-    {
-        // Checks if the queue is empty
-        if (!wm.getQueueList().isEmpty())
-        // If it's not empty, stop all songs from playing
-        {
-            songStop(event);
-        }
-
-        // Clears the queue list
-        wm.clearQueueList();
-
-        isPlaying = false;
-        btnPlayPause.setText("Play");
-    }
-
-    /**
      * A method to listen to the MediaPlayer Status
      * A listener which gives feedback on what status the MediaPlayer currently
      * has (for visual debugging)
@@ -1062,23 +977,34 @@ public class MainWindowController implements Initializable
 
     private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
     {
-//        AudioInputStream originalInputStream = AudioSystem.getAudioInputStream(inputStream);
+        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
 
-//        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
-//        
-//        bands.clear();
-//        
-//        double eqMin = EqualizerBand.MIN_GAIN;
-//        double eqMax = EqualizerBand.MAX_GAIN;
-//        double freq = startFreq;
-//        double median = eqMax - eqMin;
-//        
-//        for (int j = 0; amountOfBands; j++)
-//        {
-//            double theta = (double)j / (double)(amountOfBands -1) * (2 * Math.PI);
-//            
-//            double scale = 0.4 * (1 + Math.cos(theta));
-//        }
+        bands.clear();
+
+        double eqMin = EqualizerBand.MIN_GAIN;
+        double eqMax = EqualizerBand.MAX_GAIN;
+        double freq = startFreq;
+        double median = eqMax - eqMin;
+
+        for (int j = 0; j < amountOfBands; j++)
+        {
+            double theta = (double) j / (double) (amountOfBands - 1) * (2 * Math.PI);
+
+            double scale = 0.4 * (1 + Math.cos(theta));
+            
+            double gain = eqMin + median + (median * scale);
+            
+            bands.add(new EqualizerBand(freq, freq/2, gain));
+            
+            freq *= 2;
+        }
+        
+        for (int i = 0; i < bands.size(); i++)
+        {
+            EqualizerBand eb = bands.get(i);
+            
+            //gridEqualizer.add(eb, 0, 0);
+        }
     }
 
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
@@ -1124,6 +1050,62 @@ public class MainWindowController implements Initializable
             }
         }
     }
+    
+    /**
+     * Loads multiple MP3 files
+     * Firstly we create a new FileChooser and add an mp3 filter to disable
+     * all other file formats (saves a lot of time troubleshooting what went
+     * wrong) then followingly we create a LIST of files rather than just a
+     * file, so we can load in multiple mp3 files. If the list contains
+     * items then we will determine their path and put them in the queue.
+     * Otherwise the list of files is empty and we determine that there was
+     * an error or that none were selected. Lastly we setup the mediaplayer
+     * so that we can play the now selected song(s)
+     */
+    @FXML
+    private void LoadMediaFiles(ActionEvent event)
+    {
+        FileChooser fc = new FileChooser();
+
+        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
+        FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
+        FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
+        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 Files", "*.mp4");
+        FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
+        FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
+        FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
+
+        fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
+
+        List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+
+        //wm.setPathAndName(chosenFiles);
+        if (chosenFiles != null)
+        {
+            for (int index = 0; index < chosenFiles.size(); index++)
+            {
+                wm.getQueueList().add(new Music(
+                        0,
+                        chosenFiles.get(index).getName(),
+                        chosenFiles.get(index).getName(),
+                        chosenFiles.get(index).getName(),
+                        9999,
+                        chosenFiles.get(index).getAbsolutePath()
+                ));
+            }
+        }
+        else
+        {
+            System.out.println("One or more invalid file(s) / None selected");
+            return;
+        }
+
+        if (!wm.getQueueList().isEmpty())
+        {
+            prepareSetup();
+        }
+        pathNames = chosenFiles;
+    }
 
     /**
      * Replaced by listener
@@ -1133,5 +1115,29 @@ public class MainWindowController implements Initializable
     private void progressDrag(MouseEvent event)
     {
 
+    }
+    
+    /**
+     * Clears the queue
+     * We check if queue is empty, if it is not we force all songs to stop,
+     * followed by a method to clear our queue and
+     * finally set the isPlaying boolean accordingly and the text of the
+     * Play/Pause button
+     */
+    @FXML
+    private void clearQueue(ActionEvent event)
+    {
+        // Checks if the queue is empty
+        if (!wm.getQueueList().isEmpty())
+        // If it's not empty, stop all songs from playing
+        {
+            songStop(event);
+        }
+
+        // Clears the queue list
+        wm.clearQueueList();
+
+        isPlaying = false;
+        btnPlayPause.setText("Play");
     }
 }
