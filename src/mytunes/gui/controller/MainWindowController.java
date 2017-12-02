@@ -28,15 +28,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.MediaView;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
@@ -47,6 +44,13 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
+
+    // Static variables
+    private static final double START_FREQ = 250;
+    private static final int AMOUNT_OF_BANDS = 7; // the minimum amount
+
+    // Model
+    private MainWindowModel wm;
 
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
@@ -65,7 +69,6 @@ public class MainWindowController implements Initializable
     private Label lblTimer;
     @FXML
     private Slider progressSlider;
-    private MediaView mediaView;
     @FXML
     private ComboBox<String> playbackSpeed;
     @FXML
@@ -80,9 +83,6 @@ public class MainWindowController implements Initializable
     private TableColumn<Music, String> clmArtist;
     @FXML
     private TableColumn<Music, String> clmYear;
-
-    // Model
-    private MainWindowModel wm;
     @FXML
     private FlowPane playbackPanel;
     @FXML
@@ -111,9 +111,15 @@ public class MainWindowController implements Initializable
     private JFXButton btnLoadMP3Multi;
     @FXML
     private JFXButton btnClearMP3;
+    @FXML
+    private AnchorPane paneEqualizer;
+    @FXML
+    private GridPane gridEqualizer;
+    @FXML
+    private Label lblmPlayerStatus;
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Instance Variables">
-    // Instance variables
     private MediaPlayer mPlayer;
     private boolean isPlaying;
     private boolean isLooping;
@@ -121,22 +127,15 @@ public class MainWindowController implements Initializable
     private Media song;
     private Status mStatus;
 
-    private static double startFreq = 250;
-    private static int amountOfBands = 7; // the minimum amount (keeping it simple)
+    private MediaView mediaView;
 
-    Media currentlyPlaying;
-    List<Media> medias;
+    private Media currentlyPlaying;
+    private List<Media> medias;
 
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
-    @FXML
-    private Label lblmPlayerStatus;
 //</editor-fold>
-    @FXML
-    private AnchorPane paneEqualizer;
-    @FXML
-    private GridPane gridEqualizer;
 
     /**
      * Constructor, for all intends and purposes
