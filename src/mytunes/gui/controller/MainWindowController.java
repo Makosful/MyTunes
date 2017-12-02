@@ -563,7 +563,6 @@ public class MainWindowController implements Initializable
                     System.out.println("Status is: " + mStatus);
                     break;
                 case PAUSED:
-                    mediaView = new MediaView(mPlayer);
                     mpduration = mPlayer.getTotalDuration();
                     progressSlider.setValue(0.0);
                     progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
@@ -934,8 +933,6 @@ public class MainWindowController implements Initializable
         //As soon as the media player is ready to play a song we allow for manipulating the media file (playback speed, volume etc.)
         mPlayer.setOnReady(() ->
         {
-            mediaView = new MediaView(mPlayer);
-
             mpduration = mPlayer.getTotalDuration();
             progressSlider.setValue(0.0);
             progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
