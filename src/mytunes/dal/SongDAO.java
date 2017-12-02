@@ -42,9 +42,12 @@ public class SongDAO
         while (rs.next())
         {
             Music song = createSongFromDB(rs);
+            
+            System.out.println(song.getAlbum());
             allSongs.add(song);
         }
-            
+         
+        
         return allSongs;
         
         }
@@ -359,13 +362,18 @@ public class SongDAO
 
     }
 
-    private Music createSongFromDB(ResultSet rs)
+    private Music createSongFromDB(ResultSet rs) throws SQLException
     {
         
         Music song = new Music();
         
-    
-        //I create the company object and add it to my list of results:
+        song.setTitle(rs.getString("title"));
+        song.setArtist(rs.getString("artist"));
+        song.setAlbum(rs.getString("album"));
+        song.setGenre(rs.getString("genre"));
+        song.setId(rs.getInt("id"));
+        song.setYear(rs.getInt("releasedate"));
+        song.setSongPathName(rs.getString("pathname"));
         
         return song;
     }
