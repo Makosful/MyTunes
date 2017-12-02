@@ -26,7 +26,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -42,11 +41,6 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
-
-    // Static variables
-    private static final double START_FREQ = 250;
-    private static final int AMOUNT_OF_BANDS = 7; // the minimum amount
-
     // Model
     private MainWindowModel wm;
 
@@ -142,7 +136,7 @@ public class MainWindowController implements Initializable
         wm = new MainWindowModel();
 
         wm.setPlaying(false);
-        volumeSlider.setValue(50);
+        volumeSlider.setValue(100);
         volumeSlider.setDisable(true);
         btnLoop.setDisable(true);
         playbackSpeed.setDisable(true);
@@ -529,7 +523,7 @@ public class MainWindowController implements Initializable
                     wm.updateDuration();
                     progressSlider.setValue(0.0);
                     progressSlider.setMax(wm.getMediaPlayer().getTotalDuration().toSeconds());
-                    GetmPlayerStatus();
+                    GetMediaPlayerStatus();
                     break;
                 default:
                     break;
@@ -557,7 +551,7 @@ public class MainWindowController implements Initializable
             wm.stopMediaPlayer();
         }
         prepareSetup();
-        GetmPlayerStatus();
+        GetMediaPlayerStatus();
         wm.startMediaPlayer();
         wm.setPlaying(true);
         btnPlayPause.setText("Pause");
@@ -719,7 +713,7 @@ public class MainWindowController implements Initializable
         Duration currentTime = wm.getCurrentTime();
         Duration mpduration = wm.getduration();
 
-        lblTimer.setText(formatTime(currentTime, mpduration));
+        lblTimer.setText(MainWindowModel.formatTime(currentTime, mpduration));
 
         // Adds a listener to the value, allowing it to automatically adjust to
         // where it is - displaying the progress to the user.
@@ -868,7 +862,7 @@ public class MainWindowController implements Initializable
             progressSlider.setValue(0.0);
             progressSlider.setMax(wm.getduration().toSeconds());
 //            progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
-            GetmPlayerStatus();
+            GetMediaPlayerStatus();
         });
     }
 
@@ -877,110 +871,13 @@ public class MainWindowController implements Initializable
      * A listener which gives feedback on what status the MediaPlayer currently
      * has (for visual debugging)
      */
-    private void GetmPlayerStatus()
+    private void GetMediaPlayerStatus()
     {
         wm.getMediaPlayer().statusProperty()
                 .addListener((observable, oldValue, newValue)
-                        -> lblmPlayerStatus.setText("MediaPlayer Status: "
-                                            + newValue.toString().toLowerCase()));
-
-//        if (mPlayer.getStatus() == Status.UNKNOWN)
-//        {
-//            mPlayerStatus = mPlayerStatus = Status.UNKNOWN.toString();
-//        }
-//
-//        if (mPlayer.getStatus() == Status.PAUSED)
-//        {
-//            mPlayerStatus = Status.PAUSED.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.PLAYING)
-//        {
-//            mPlayerStatus = Status.PLAYING.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.STOPPED)
-//        {
-//            mPlayerStatus = Status.STOPPED.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.READY)
-//        {
-//            mPlayerStatus = Status.READY.toString();
-//        }
-    }
-
-    private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
-    {
-        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
-
-        bands.clear();
-
-        double eqMin = EqualizerBand.MIN_GAIN;
-        double eqMax = EqualizerBand.MAX_GAIN;
-        double freq = START_FREQ;
-        double median = eqMax - eqMin;
-
-        for (int j = 0; j < AMOUNT_OF_BANDS; j++)
-        {
-            double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
-
-            double scale = 0.4 * (1 + Math.cos(theta));
-
-            double gain = eqMin + median + (median * scale);
-
-            bands.add(new EqualizerBand(freq, freq / 2, gain));
-
-            freq *= 2;
-        }
-
-        for (int i = 0; i < bands.size(); i++)
-        {
-            EqualizerBand eb = bands.get(i);
-
-            //gridEqualizer.add(eb, 0, 0);
-        }
-    }
-
-    // COPY PASTED METHOD TO FORMAT TIME PROPERLY
-    private static String formatTime(Duration elapsed, Duration duration)
-    {
-        int intElapsed = (int) Math.floor(elapsed.toSeconds());
-        int elapsedHours = intElapsed / (60 * 60);
-        if (elapsedHours > 0)
-        {
-            intElapsed -= elapsedHours * 60 * 60;
-        }
-        int elapsedMinutes = intElapsed / 60;
-        int elapsedSeconds = intElapsed - elapsedHours * 60 * 60 - elapsedMinutes * 60;
-
-        if (duration.greaterThan(Duration.ZERO))
-        {
-            int intDuration = (int) Math.floor(duration.toSeconds());
-            int durationHours = intDuration / (60 * 60);
-            if (durationHours > 0)
-            {
-                intDuration -= durationHours * 60 * 60;
-            }
-            int durationMinutes = intDuration / 60;
-            int durationSeconds = intDuration - durationHours * 60 * 60 - durationMinutes * 60;
-            if (durationHours > 0)
-            {
-                return String.format("%d:%02d:%02d/%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds, durationHours, durationMinutes, durationSeconds);
-            }
-            else
-            {
-                return String.format("%02d:%02d/%02d:%02d", elapsedMinutes, elapsedSeconds, durationMinutes, durationSeconds);
-            }
-        }
-        else
-        {
-            if (elapsedHours > 0)
-            {
-                return String.format("%d:%02d:%02d", elapsedHours, elapsedMinutes, elapsedSeconds);
-            }
-            else
-            {
-                return String.format("%02d:%02d", elapsedMinutes, elapsedSeconds);
-            }
-        }
+                        -> lblmPlayerStatus
+                        .setText("MediaPlayer Status: "
+                                 + newValue.toString().toLowerCase()));
     }
 
     /**
