@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
+import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -40,6 +42,10 @@ public class MainWindowModel
 
     // Objects
     private BLLManager bllManager;
+
+    // Static variables
+    private static final double START_FREQ = 250;
+    private static final int AMOUNT_OF_BANDS = 7; // the minimum amount
 
     //<editor-fold defaultstate="collapsed" desc="Instance Variables">
     private boolean playing;
@@ -569,6 +575,38 @@ public class MainWindowModel
             {
                 return String.format("%02d:%02d", elapsedMinutes, elapsedSeconds);
             }
+        }
+    }
+
+    private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
+    {
+        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
+
+        bands.clear();
+
+        double eqMin = EqualizerBand.MIN_GAIN;
+        double eqMax = EqualizerBand.MAX_GAIN;
+        double freq = START_FREQ;
+        double median = eqMax - eqMin;
+
+        for (int j = 0; j < AMOUNT_OF_BANDS; j++)
+        {
+            double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
+
+            double scale = 0.4 * (1 + Math.cos(theta));
+
+            double gain = eqMin + median + (median * scale);
+
+            bands.add(new EqualizerBand(freq, freq / 2, gain));
+
+            freq *= 2;
+        }
+
+        for (int j = 0; j < bands.size(); j++)
+        {
+            EqualizerBand eb = bands.get(j);
+
+            //gridEqualizer.add(eb, 0, 0);
         }
     }
 }

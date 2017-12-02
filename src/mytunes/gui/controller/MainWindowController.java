@@ -26,7 +26,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -42,11 +41,6 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
-
-    // Static variables
-    private static final double START_FREQ = 250;
-    private static final int AMOUNT_OF_BANDS = 7; // the minimum amount
-
     // Model
     private MainWindowModel wm;
 
@@ -905,38 +899,6 @@ public class MainWindowController implements Initializable
 //        {
 //            mPlayerStatus = Status.READY.toString();
 //        }
-    }
-
-    private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
-    {
-        ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
-
-        bands.clear();
-
-        double eqMin = EqualizerBand.MIN_GAIN;
-        double eqMax = EqualizerBand.MAX_GAIN;
-        double freq = START_FREQ;
-        double median = eqMax - eqMin;
-
-        for (int j = 0; j < AMOUNT_OF_BANDS; j++)
-        {
-            double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
-
-            double scale = 0.4 * (1 + Math.cos(theta));
-
-            double gain = eqMin + median + (median * scale);
-
-            bands.add(new EqualizerBand(freq, freq / 2, gain));
-
-            freq *= 2;
-        }
-
-        for (int j = 0; j < bands.size(); j++)
-        {
-            EqualizerBand eb = bands.get(j);
-
-            //gridEqualizer.add(eb, 0, 0);
-        }
     }
 
     /**
