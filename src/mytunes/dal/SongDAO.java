@@ -449,55 +449,18 @@ public class SongDAO
          
         }
     }
-
-    
-     /**
-     * 
-     * @param title
-     * @return 
-     * @throws SQLServerException
-     * @throws SQLException 
-     */
-    public List<Music> getSongsFromTitleSearch(String title) throws SQLServerException, SQLException
-    {
-     
-        
-        try (Connection con = db.getConnection())
-        {
-            List<Music> songs = new ArrayList();
-       
-            String sql = "DELETE FROM Songs "
-                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                       + "WHERE Songs.title = ?";
-
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            preparedStatement.setString(1, title);
-            ResultSet rs = preparedStatement.executeQuery();
-        
-            while(rs.next())
-            {
-                
-                Music song = createSongFromDB(rs);
-                songs.add(song);
-            }
-            
-            return songs;
-        }
-    }
     
     
      /**
      * 
-     * @param title
-     * @return 
+     * @param searchText
+     * @return list of songs
      * @throws SQLServerException
      * @throws SQLException 
      */
-    public List<Music> getSongsFromSearch() throws SQLServerException, SQLException
+    public List<Music> getSongsFromSearch(String searchText) throws SQLServerException, SQLException
     {
-        System.out.println("!!!!!!!!!!!!!");
+        
         List<String> searchTables = new ArrayList();
         
         searchTables.add("Songs.title");
@@ -517,7 +480,7 @@ public class SongDAO
             firstQm = false;
             
         }
-        System.out.println(sqlSearch);
+
         try (Connection con = db.getConnection())
         {
             List<Music> songs = new ArrayList();
@@ -529,11 +492,10 @@ public class SongDAO
                        + "INNER JOIN Genre ON Songs.genreid = Genre.id "
                        + "WHERE "+sqlSearch;
 
-            System.out.println(sql);
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             for(int index = 1; index <= searchTables.size(); index++) 
             {
-               preparedStatement.setString(index, "title");
+               preparedStatement.setString(index, searchText);
             }
             ResultSet rs = preparedStatement.executeQuery();
         
