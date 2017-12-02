@@ -202,9 +202,9 @@ public class MetaData {
                 }
                 else
                 {
-                    artist = songName;
+                    artist = "artist";
 
-                    title = "title";
+                    title = songName;
                 }
 
 
