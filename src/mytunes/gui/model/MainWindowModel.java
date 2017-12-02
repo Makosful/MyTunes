@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
@@ -308,6 +309,47 @@ public class MainWindowModel
             }
         });
         return searchResult;
+    }
+
+    public void setPlayckSpeed(MediaPlayer mPlayer, int playbackIndex)
+    {
+        switch (playbackIndex)
+        {
+            /*
+             * in the first case we set the text to 50% and set the play back
+             * rate to 0.5 (0 being 0% --> 2 being 200%)
+             */
+            case 0:
+                System.out.println("50%");
+                mPlayer.setRate(0.5);
+                break;
+            case 1:
+                System.out.println("75%");
+                mPlayer.setRate(0.75);
+                break;
+            case 2:
+                System.out.println("100%");
+                mPlayer.setRate(1.0);
+                break;
+            case 3:
+                System.out.println("125%");
+                mPlayer.setRate(1.25);
+                break;
+            case 4:
+                System.out.println("150%");
+                mPlayer.setRate(1.5);
+                break;
+            case 5:
+                System.out.println("175%");
+                mPlayer.setRate(1.75);
+                break;
+            case 6:
+                System.out.println("200%");
+                mPlayer.setRate(2.0);
+                break;
+            default:
+                break;
+        }
     }
 
 }
