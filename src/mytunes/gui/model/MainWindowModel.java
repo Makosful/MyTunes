@@ -1,9 +1,6 @@
 package mytunes.gui.model;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,12 @@ import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
+import mytunes.bll.MetaData;
 import mytunes.gui.controller.CreatePlaylistWindowController;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 
 /**
  *
@@ -54,6 +56,8 @@ public class MainWindowModel
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
+
+    private MetaData meta;
     //</editor-fold>
 
     /**
@@ -63,6 +67,7 @@ public class MainWindowModel
     {
         try
         {
+            this.meta = new MetaData();
             this.bllManager = new BLLManager();
             this.allSongs = FXCollections.observableArrayList();
             this.queue = FXCollections.observableArrayList();
@@ -274,6 +279,14 @@ public class MainWindowModel
         {
             writer.write(path);
         }
+    }
+    
+    
+    public void setMetaData(List<File> chosenFiles) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException
+    { 
+ 
+                meta.MetaData(chosenFiles);
+
     }
 
     /**

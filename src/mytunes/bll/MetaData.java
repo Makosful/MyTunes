@@ -1,23 +1,27 @@
 package mytunes.bll;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mytunes.be.Music;
 import mytunes.dal.SongDAO;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.mp3.Mp3Parser;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.id3.ID3v23Tag;
+import org.jaudiotagger.tag.wav.WavTag;
+
 
 
 /**
@@ -52,7 +56,13 @@ public class MetaData {
          * @throws SAXException
          * @throws TikaException 
          */
-        public void MetaData(List<File> chosenFiles) throws FileNotFoundException, IOException, SAXException, TikaException{
+        public void MetaData(List<File> chosenFiles) throws FileNotFoundException, 
+                                                            IOException,
+                                                            CannotReadException,
+                                                            TagException,
+                                                            ReadOnlyFileException,
+                                                            InvalidAudioFrameException
+        {
 
 
             List<Music> tracks = new ArrayList();
@@ -70,15 +80,6 @@ public class MetaData {
 
                 tracks.add(track);
 
-                /*
-                System.out.println("Artist: "+tracks.get(i).getArtist());   
-                System.out.println("Title: "+tracks.get(i).getTitle());
-                System.out.println("Genre: "+tracks.get(i).getGenre());
-                System.out.println("Album: "+tracks.get(i).getAlbum());
-                System.out.println("Description: "+tracks.get(i).getDescription());
-                System.out.println("Year: "+tracks.get(i).getYear());
-                System.out.println("Duration: "+tracks.get(i).getDuration());
-                */
 
             }
 
@@ -87,6 +88,7 @@ public class MetaData {
             {
                 try
                 {
+                    System.out.println(track.getArtist()); 
                     sDAO.setSong(track);
                 }
                 catch (SQLException ex)
@@ -110,31 +112,67 @@ public class MetaData {
          * @throws SAXException
          * @throws TikaException 
          */
-        private void setMetaData(File chosenFile)throws FileNotFoundException, IOException, SAXException, TikaException
+        private void setMetaData(File chosenFile)throws FileNotFoundException,
+                                                        IOException,
+                                                        CannotReadException,
+                                                        TagException,
+                                                        ReadOnlyFileException,
+                                                        InvalidAudioFrameException
         {
-
-
-            Metadata meta;
-            try (InputStream input = new FileInputStream(new File(chosenFile.getAbsolutePath()))) {
-                ContentHandler handler = (ContentHandler) new DefaultHandler();
-                meta = new Metadata();
-                Parser parser = new Mp3Parser();
-                ParseContext parseCtx  = new ParseContext();
-                parser.parse(input, handler, meta, parseCtx);
-            }
-
-
-            artist = meta.get("xmpDM:artist");
-            title = meta.get("title");
-            album = meta.get("xmpDM:album");
-            year = meta.get("xmpDM:releaseDate");
-            genre = meta.get("xmpDM:genre");
-            description = meta.get("xmpDM:logComment"); 
-            duration = meta.get("xmpDM:duration");     
             
+ 
+        
+        String filetype = Files.probeContentType(chosenFile.toPath());
+
+        if(filetype.contains("wave"))
+        {
+             try
+             {   
+             File wavFile = chosenFile;
+             AudioFile f = AudioFileIO.read(wavFile);
+             WavTag tag = (WavTag) f.getTag();
+             
+             
+            artist = tag.getFirst(FieldKey.ARTIST);
+            title = tag.getFirst(FieldKey.TITLE);
+            album = tag.getFirst(FieldKey.ALBUM);
+            year = tag.getFirst(FieldKey.YEAR);
+            genre = tag.getFirst(FieldKey.GENRE);
+            description = tag.getFirst(FieldKey.COMMENT);
+            duration = String.valueOf(f.getAudioHeader().getTrackLength());
             songPathName = chosenFile.getName();
             
+            }
+            catch (InvalidAudioFrameException ex)
+            {
+                Logger.getLogger(MetaData.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
+        else if(filetype.contains("mpeg"))
+        {
+            File mp3File = chosenFile;
+
+            MP3File f = (MP3File) AudioFileIO.read(mp3File);		
+            ID3v23Tag tag = (ID3v23Tag) f.getTag();
+             
+             
+            artist = tag.getFirst(FieldKey.ARTIST);
+            title = tag.getFirst(FieldKey.TITLE);
+            album = tag.getFirst(FieldKey.ALBUM);
+            year = tag.getFirst(FieldKey.YEAR);
+            genre = tag.getFirst(FieldKey.GENRE);
+            description = tag.getFirst(FieldKey.COMMENT);
+            duration = String.valueOf(f.getAudioHeader().getTrackLength());
+            songPathName = chosenFile.getName();
+            System.out.println(artist+" "+title+" "+album+" "+year+" "+genre);
+       }
+         
+    
+    }  
+            
+            
+
     
 
 
@@ -164,9 +202,9 @@ public class MetaData {
                 }
                 else
                 {
-                    artist = songName;
+                    artist = "artist";
 
-                    title = "title";
+                    title = songName;
                 }
 
 
@@ -233,143 +271,4 @@ public class MetaData {
             
             return track;
         }
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //OLD CODE
-    /*
-    private String artist;
-    private String title;
-    private String album;
-    private String year;
-    private String genre;
-    private String description;
-    private int iterations;
-    
-    SongDAO songDAO;
-    
-    public MetaData()
-    {
-        try {
-            this.songDAO = new SongDAO();
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-    
-    /**
-    *  Adds the mp3's metadata to music objects, then adds them to an arraylist and sends it to bllManager
-    * @param chosenFiles 
-    
-    public void MetaData(List<File> chosenFiles){
-        
-        
-            List<Music> tracks = new ArrayList();
-
-            Music track = new Music();
-            
-            for(int i = 0; i < chosenFiles.size(); i++){
-            
-                String fileString = chosenFiles.get(i).getAbsolutePath();
-
-                Media song = new Media(new File(fileString.toLowerCase()).toURI().toString());
-                
-                 System.out.println(song.getMetadata().entrySet().toString()); 
-                
-                song.getMetadata().addListener((MapChangeListener<String, Object>) change -> {
-                    
-                    if (change.wasAdded()) {
-
-                        if ("artist".equals(change.getKey())) 
-                        {
-                            artist = change.getValueAdded().toString();
-
-                        } else if ("title".equals(change.getKey())) 
-                        {
-                            title = change.getValueAdded().toString();
-
-                        } else if ("album".equals(change.getKey())) 
-                        {
-                            album = change.getValueAdded().toString();
-
-                        } else if("year".equals(change.getKey()))
-                        {
-                            year = change.getValueAdded().toString();
-
-                        } else if("genre".equals(change.getKey()))
-                        {
-                            genre = change.getValueAdded().toString();
-
-                        } else if("comment-N".equals(change.getKey()))
-                        {
-                            description = change.getValueAdded().toString();
-
-                        }
-                        
-                        System.out.println(iterations);
-                        if(artist != null && title != null && album != null && year != null){
-                            iterations++;
-                            track.setArtist(artist);
-                            track.setTitle(title);
-                            track.setAlbum(album);
-                            track.setYear(Integer.parseInt(year));
-                            track.setGenre(genre);
-                            track.SetDescription(description);
-                            
-                            tracks.add(track);
-                        
-                            finished(tracks);
-                            
-                        }
-                        
-                    }
-
-
-                });
-            
-            }
-         
-            if(track.getArtist().isEmpty())
-            {
-
-                if(fileString.contains("."))
-                {
-                   track.setArtist(chosenFiles.get(i).getName().substring(0, chosenFiles.get(i).getName().lastIndexOf(".")));
-                }
-
-            }
-
-            
-           
-            
-       
-  
-    }
-    
-    private void finished(List<Music> tracks)
-    {
- 
-        
-            System.out.println(tracks.get(0).getGenre());
-     }
- **/   
 }
