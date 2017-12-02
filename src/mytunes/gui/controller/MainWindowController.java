@@ -128,9 +128,6 @@ public class MainWindowController implements Initializable
     private Media song;
     private Status mStatus;
 
-    private static final double startFreq = 250;
-    private static final int amountOfBands = 7; // the minimum amount (keeping it simple)
-
     private Media currentlyPlaying;
     private List<Media> medias;
 
@@ -932,12 +929,12 @@ public class MainWindowController implements Initializable
 
         double eqMin = EqualizerBand.MIN_GAIN;
         double eqMax = EqualizerBand.MAX_GAIN;
-        double freq = startFreq;
+        double freq = START_FREQ;
         double median = eqMax - eqMin;
 
-        for (int j = 0; j < amountOfBands; j++)
+        for (int j = 0; j < AMOUNT_OF_BANDS; j++)
         {
-            double theta = (double) j / (double) (amountOfBands - 1) * (2 * Math.PI);
+            double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
 
             double scale = 0.4 * (1 + Math.cos(theta));
             
