@@ -523,7 +523,7 @@ public class MainWindowController implements Initializable
                     wm.updateDuration();
                     progressSlider.setValue(0.0);
                     progressSlider.setMax(wm.getMediaPlayer().getTotalDuration().toSeconds());
-                    GetmPlayerStatus();
+                    GetMediaPlayerStatus();
                     break;
                 default:
                     break;
@@ -551,7 +551,7 @@ public class MainWindowController implements Initializable
             wm.stopMediaPlayer();
         }
         prepareSetup();
-        GetmPlayerStatus();
+        GetMediaPlayerStatus();
         wm.startMediaPlayer();
         wm.setPlaying(true);
         btnPlayPause.setText("Pause");
@@ -862,7 +862,7 @@ public class MainWindowController implements Initializable
             progressSlider.setValue(0.0);
             progressSlider.setMax(wm.getduration().toSeconds());
 //            progressSlider.setMax(mPlayer.getTotalDuration().toSeconds());
-            GetmPlayerStatus();
+            GetMediaPlayerStatus();
         });
     }
 
@@ -871,34 +871,13 @@ public class MainWindowController implements Initializable
      * A listener which gives feedback on what status the MediaPlayer currently
      * has (for visual debugging)
      */
-    private void GetmPlayerStatus()
+    private void GetMediaPlayerStatus()
     {
         wm.getMediaPlayer().statusProperty()
                 .addListener((observable, oldValue, newValue)
-                        -> lblmPlayerStatus.setText("MediaPlayer Status: "
-                                            + newValue.toString().toLowerCase()));
-
-//        if (mPlayer.getStatus() == Status.UNKNOWN)
-//        {
-//            mPlayerStatus = mPlayerStatus = Status.UNKNOWN.toString();
-//        }
-//
-//        if (mPlayer.getStatus() == Status.PAUSED)
-//        {
-//            mPlayerStatus = Status.PAUSED.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.PLAYING)
-//        {
-//            mPlayerStatus = Status.PLAYING.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.STOPPED)
-//        {
-//            mPlayerStatus = Status.STOPPED.toString();
-//        }
-//        else if (mPlayer.getStatus() == Status.READY)
-//        {
-//            mPlayerStatus = Status.READY.toString();
-//        }
+                        -> lblmPlayerStatus
+                        .setText("MediaPlayer Status: "
+                                 + newValue.toString().toLowerCase()));
     }
 
     /**
