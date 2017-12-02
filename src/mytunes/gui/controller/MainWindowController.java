@@ -7,6 +7,7 @@ import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -34,6 +35,10 @@ import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 
 /**
  *
@@ -269,7 +274,30 @@ public class MainWindowController implements Initializable
         cm.getItems().add(loadSong);
         loadSong.setOnAction(action ->
         {
-            LoadMediaFiles(action);
+            try
+            {
+                LoadMediaFiles(action);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (CannotReadException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (ReadOnlyFileException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (TagException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (InvalidAudioFrameException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         // Creates a new item for the menu and puts it in
@@ -892,7 +920,7 @@ public class MainWindowController implements Initializable
      * so that we can play the now selected song(s)
      */
     @FXML
-    private void LoadMediaFiles(ActionEvent event)
+    private void LoadMediaFiles(ActionEvent event) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException, InvalidAudioFrameException
     {
         FileChooser fc = new FileChooser();
 
@@ -908,7 +936,15 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-        //wm.setPathAndName(chosenFiles);
+        try
+        {
+            wm.setMetaData(chosenFiles);
+        }
+        catch (InvalidAudioFrameException ex)
+        {
+            System.out.println(ex.getMessage()); 
+        }
+        
         if (chosenFiles != null)
         {
             for (int index = 0; index < chosenFiles.size(); index++)
