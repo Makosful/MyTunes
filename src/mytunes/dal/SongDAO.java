@@ -29,7 +29,7 @@ public class SongDAO
         {
             List<Music> allSongs = new ArrayList<>();
 
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -73,7 +73,7 @@ public class SongDAO
         {
 
             String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
             preparedStatementInsert.setString(1, song.getTitle());
             preparedStatementInsert.setInt(2, artistId);
             preparedStatementInsert.setInt(3, albumId);
@@ -300,7 +300,7 @@ public class SongDAO
 
     }
 
-    private Music createSongFromDB(ResultSet rs) throws SQLException
+    public Music createSongFromDB(ResultSet rs) throws SQLException
     {
         
         Music song = new Music();
@@ -310,7 +310,7 @@ public class SongDAO
         song.setAlbum(rs.getString("album"));
         song.setGenre(rs.getString("genre"));
         song.setYear(rs.getInt("releasedate"));
-        //song.setSongPathName(rs.getString("pathname"));
+        song.setSongPathName(rs.getString("pathname"));
         
         return song;
     }
@@ -330,33 +330,33 @@ public class SongDAO
         
         try (Connection con = db.getConnection())
         {
-       
-        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
-                   + "FROM Songs "
-                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                   + "INNER JOIN Path ON Songs.pathid = path.id "
-                   + "WHERE id = ?";
 
-            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setInt(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
+                       + "WHERE id = ?";
+
+                PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                preparedStatement.setInt(1, id);
+                ResultSet rs = preparedStatement.executeQuery();
 
 
-            
-            if(rs.next()){
-                Music song = createSongFromDB(rs);
 
-                System.out.println(song.getArtist());
-                
-                return song;
-                
-            }else
-            {
-                return null;
-            }
-            
+                if(rs.next()){
+                    Music song = createSongFromDB(rs);
+
+                    System.out.println(song.getArtist());
+
+                    return song;
+
+                }else
+                {
+                    return null;
+                }
+
             
         }
         
@@ -376,18 +376,17 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
        
-        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
-                   + "FROM Songs "
-                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                   + "INNER JOIN Path ON Songs.pathid = path.id "
-                   + "WHERE Songs.id = ?";
+            String sql = "DELETE FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
+                       + "WHERE Songs.id = ?";
 
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeQuery();
-        
+                PreparedStatement preparedStatement = con.prepareStatement(sql);
+                preparedStatement.setInt(1, id);
+                preparedStatement.executeQuery();
+
          
         }
     }
@@ -409,33 +408,33 @@ public class SongDAO
         {
             
        
-        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
-                   + "FROM Songs "
-                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                   + "INNER JOIN Path ON Songs.pathid = path.id "
-                   + "WHERE "+sqlSearch;
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
+                       + "WHERE "+sqlSearch;
 
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            for(int index = 1; index <= length; index++) 
-            {
-               preparedStatement.setString(index, searchText);
-            }
-            ResultSet rs = preparedStatement.executeQuery();
-            
-            
-            List<Music> songs = new ArrayList();
-            
-            while(rs.next())
-            {
-                
-                Music song = createSongFromDB(rs);
-                songs.add(song);
-                System.out.println(song.getArtist());
-            }
-            
-            return songs;
+                PreparedStatement preparedStatement = con.prepareStatement(sql);
+                for(int index = 1; index <= length; index++) 
+                {
+                   preparedStatement.setString(index, searchText);
+                }
+                ResultSet rs = preparedStatement.executeQuery();
+
+
+                List<Music> songs = new ArrayList();
+               
+                while(rs.next())
+                {
+
+                    Music song = createSongFromDB(rs);
+                    songs.add(song);
+                    System.out.println(song.getArtist());
+                }
+
+                return songs;
         }
     }
     

@@ -55,7 +55,7 @@ public class BLLManager
      *
      * @param playlist
      */
-    public void addPlaylist(Playlist playlist)
+    public void addPlaylist(Playlist playlist) throws SQLException
     {
         plDAO.addPlaylist(playlist);
     }
@@ -65,9 +65,9 @@ public class BLLManager
      *
      * @param playlist
      */
-    public void removePlaylist(Playlist playlist)
+    public void removePlaylist(Playlist playlist) throws SQLException
     {
-        plDAO.removePlaylist(playlist);
+        plDAO.removePlaylist(playlist.getId());
     }
     
     

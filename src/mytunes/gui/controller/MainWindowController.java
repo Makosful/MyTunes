@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -813,7 +814,7 @@ public class MainWindowController implements Initializable
      * and adds it to the list of playlists
      */
     @FXML
-    private void createPlaylist(ActionEvent event)
+    private void createPlaylist(ActionEvent event) throws SQLException
     {
         wm.createPlaylistWindow();
     }

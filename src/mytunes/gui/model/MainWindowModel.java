@@ -182,7 +182,7 @@ public class MainWindowModel
     /**
      * Displays the window for creating new playlists
      */
-    public void createPlaylistWindow()
+    public void createPlaylistWindow() throws SQLException
     {
         try
         {

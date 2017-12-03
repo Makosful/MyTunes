@@ -1,7 +1,15 @@
 package mytunes.dal;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mytunes.be.Music;
 import mytunes.be.Playlist;
 
 /**
@@ -10,11 +18,18 @@ import mytunes.be.Playlist;
  */
 public class PlaylistDAO
 {
-
-    public PlaylistDAO()
+    
+    DataBaseConnector db;
+    SongDAO sDAO; 
+    
+    public PlaylistDAO() throws IOException
     {
+        
+        db = new DataBaseConnector();
+        sDAO = new SongDAO();
+        
     }
-
+    
     public ObservableList<Playlist> getPlaylists()
     {
         ObservableList<Playlist> list = FXCollections.observableArrayList();
@@ -36,8 +51,16 @@ public class PlaylistDAO
      *
      * @param playlist
      */
-    public void addPlaylist(Playlist playlist)
+    public void addPlaylist(Playlist playlist) throws SQLServerException, SQLException
     {
+        try (Connection con = db.getConnection())
+        {
+            String sqlInsert = "INSERT INTO Playlists SET (playlist) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+            preparedStatementInsert.setString(1, playlist.getTitle());
+            preparedStatementInsert.executeUpdate();
+        }
+
     }
 
     /**
@@ -45,7 +68,53 @@ public class PlaylistDAO
      *
      * @param playlist
      */
-    public void removePlaylist(Playlist playlist)
+    public void removePlaylist(int id) throws SQLServerException, SQLException
     {
+        
+        try (Connection con = db.getConnection())
+        {
+            String sqlDelete = "DELETE FROM Playlists WHERE id = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlDelete);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+        
     }
+    
+    
+    public List<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            List<Music> allSongs = new ArrayList<>();
+
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
+                       + "INNER JOIN playlist_with_songs ON Songs.id = playlist_with_songs.songid "
+                       + "WHERE playlist_with_songs.playlistid = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            ResultSet rs = preparedStatement.executeQuery(); 
+            
+
+            while (rs.next())
+            {
+
+               Music song = sDAO.createSongFromDB(rs);
+
+               allSongs.add(song);
+            }
+
+
+            return allSongs;
+
+        }
+        
+        
+    } 
 }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.dal.PlaylistDAO;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -36,10 +37,12 @@ public class MetaData {
     
     
     BLLManager bllManager;
-
+    PlaylistDAO pDAO;
+    
     public MetaData() throws IOException
     {
         this.bllManager = new BLLManager();
+        this.pDAO = new PlaylistDAO();
     }
     
     
@@ -86,7 +89,7 @@ public class MetaData {
                 try
                 {
                     bllManager.setRelationIds(track);
-                    //sDAO.getSongsFromSearch();
+                    pDAO.getPlaylistSongs(1);
                 }
                 catch (SQLException ex)
                 {
