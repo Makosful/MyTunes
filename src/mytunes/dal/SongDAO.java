@@ -4,7 +4,9 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import mytunes.be.Music;
 
 /**
@@ -453,37 +455,18 @@ public class SongDAO
     
      /**
      * 
+     * @param sqlSearch
      * @param searchText
      * @return list of songs
      * @throws SQLServerException
      * @throws SQLException 
      */
-    public List<Music> getSongsFromSearch(String searchText) throws SQLServerException, SQLException
+    public List<Music> getSongsFromSearch(int length, String sqlSearch, String searchText) throws SQLServerException, SQLException
     {
         
-        List<String> searchTables = new ArrayList();
-        
-        searchTables.add("Songs.title");
-        searchTables.add("Artist.artist");
-        
-        String sqlSearch = "";
-        boolean firstQm = true;
-        for( int i = 0 ; i < searchTables.size(); i++ ) {
-        
-            if(firstQm == false)
-            {
-                sqlSearch += " OR ";
-            }
-            
-            sqlSearch += searchTables.get(i)+" = ?";
-
-            firstQm = false;
-            
-        }
-
         try (Connection con = db.getConnection())
         {
-            List<Music> songs = new ArrayList();
+            
        
             String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
                        + "FROM Songs "
@@ -493,12 +476,15 @@ public class SongDAO
                        + "WHERE "+sqlSearch;
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
-            for(int index = 1; index <= searchTables.size(); index++) 
+            for(int index = 1; index <= length; index++) 
             {
                preparedStatement.setString(index, searchText);
             }
             ResultSet rs = preparedStatement.executeQuery();
-        
+            
+            
+            List<Music> songs = new ArrayList();
+            
             while(rs.next())
             {
                 
@@ -511,6 +497,6 @@ public class SongDAO
         }
     }
     
-    
+
     
 }
