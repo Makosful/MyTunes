@@ -74,7 +74,7 @@ public class BLLManager
     
     
      /**
-     * Determines with id should be used in the song table, if the artist/album/genre 
+     * Determines which id should be used in the song table, if the artist/album/genre 
      * already exists get the id from those, else get the newly inserted id's
      * @param song
      * @throws SQLException 
