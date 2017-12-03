@@ -31,11 +31,12 @@ public class SongDAO
         {
         List<Music> allSongs = new ArrayList<>();
         
-        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
                    + "FROM Songs "
                    + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                    + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                   + "INNER JOIN Genre ON Songs.genreid = Genre.id ";
+                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                   + "INNER JOIN Path ON Songs.pathid = path.id ";
         
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery(sql); 
@@ -394,12 +395,13 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
        
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
-                       + "FROM Songs "
-                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                       + "WHERE id = ?";
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
+                   + "FROM Songs "
+                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                   + "INNER JOIN Path ON Songs.pathid = path.id "
+                   + "WHERE id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
@@ -438,11 +440,13 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
        
-            String sql = "DELETE FROM Songs "
-                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                       + "WHERE Songs.id = ?";
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
+                   + "FROM Songs "
+                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                   + "INNER JOIN Path ON Songs.pathid = path.id "
+                   + "WHERE Songs.id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -455,6 +459,7 @@ public class SongDAO
     
      /**
      * 
+     * @param length
      * @param sqlSearch
      * @param searchText
      * @return list of songs
@@ -468,12 +473,13 @@ public class SongDAO
         {
             
        
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
-                       + "FROM Songs "
-                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                       + "WHERE "+sqlSearch;
+        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname"
+                   + "FROM Songs "
+                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                   + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                   + "INNER JOIN Path ON Songs.pathid = path.id "
+                   + "WHERE "+sqlSearch;
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             for(int index = 1; index <= length; index++) 

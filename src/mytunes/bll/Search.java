@@ -35,7 +35,8 @@ public class Search
      * @throws SQLException 
      */
     public List<Music> prepareSearch(List<String> criterias, String searchText) throws SQLException
-    {
+    {   
+        
         List<String> searchTables = new ArrayList();
         for(String criteria : criterias){
             
