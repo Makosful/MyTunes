@@ -77,10 +77,9 @@ public class BLLManager
      * Determines with id should be used in the song table, if the artist/album/genre 
      * already exists get the id from those, else get the newly inserted id's
      * @param song
-     * @return list of id's 
      * @throws SQLException 
      */
-    private void setRelationIds(Music song) throws SQLException
+    public void setRelationIds(Music song) throws SQLException
     {
         List<Integer> ids = new ArrayList();
         

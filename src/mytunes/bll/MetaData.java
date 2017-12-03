@@ -3,26 +3,19 @@ package mytunes.bll;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mytunes.be.Music;
-import mytunes.dal.SongDAO;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.id3.ID3v23Tag;
-import org.jaudiotagger.tag.id3.ID3v24Tag;
-import org.jaudiotagger.tag.wav.WavTag;
+
 
 
 
@@ -42,11 +35,11 @@ public class MetaData {
     private String songPathName;
     
     
-    SongDAO sDAO;
+    BLLManager bllManager;
 
     public MetaData() throws IOException
     {
-        this.sDAO = new SongDAO();
+        this.bllManager = new BLLManager();
     }
     
     
@@ -92,7 +85,7 @@ public class MetaData {
             {
                 try
                 {
-                    sDAO.setSong(track);
+                    bllManager.setRelationIds(track);
                     //sDAO.getSongsFromSearch();
                 }
                 catch (SQLException ex)

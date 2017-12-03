@@ -85,66 +85,7 @@ public class SongDAO
     }
     
     
-    /**
      * Determines with id should be used in the song table, if the artist/album/genre 
-     * already exists get the id from those, else get the newly inserted id's
-     * @param song
-     * @return list of id's 
-     * @throws SQLException 
-     */
-    private List<Integer> getRelationIds(Music song) throws SQLException
-    {
-        List<Integer> ids = new ArrayList();
-        
-        int artistId;
-        int albumId;
-        int genreId;
-        int pathId;
-        
-        //Determine if the artist already is in the db, and get the resulting id
-        int getArtistId = getExistingArtist(song.getArtist());
-        if(getArtistId != 0){
-            
-            artistId = getArtistId;
-        }
-        else
-        {
-            artistId = setArtist(song.getArtist());
-        }
-        
-        //Determine if the album already is in the db, and get the resulting id
-        int getAlbumId = getExistingAlbum(song.getAlbum());
-        if(getAlbumId != 0){ 
-            
-            albumId = getAlbumId;
-        }
-        else
-        {
-            albumId = setAlbum(song.getAlbum(), song.getYear());
-        }
-        
-        //Determine if the genre already is in the db, and get the resulting id
-        int getGenreId = getExistingGenre(song.getGenre());
-        if(getGenreId != 0){
-            
-            genreId = getGenreId;
-            
-        }
-        else
-        {
-            genreId = setGenre(song.getGenre());
-        }
-
-
-        pathId = setPath(song.getSongPathName());
-        
-        ids.add(artistId);
-        ids.add(albumId);
-        ids.add(genreId);
-        ids.add(pathId);
-        
-        return ids;
-    }
 
     
     /**
