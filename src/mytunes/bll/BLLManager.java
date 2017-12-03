@@ -2,6 +2,7 @@ package mytunes.bll;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
@@ -68,4 +69,72 @@ public class BLLManager
     {
         plDAO.removePlaylist(playlist);
     }
+    
+    
+    
+    
+     /**
+     * Determines with id should be used in the song table, if the artist/album/genre 
+     * already exists get the id from those, else get the newly inserted id's
+     * @param song
+     * @return list of id's 
+     * @throws SQLException 
+     */
+    private void setRelationIds(Music song) throws SQLException
+    {
+        List<Integer> ids = new ArrayList();
+        
+        int artistId;
+        int albumId;
+        int genreId;
+        int pathId;
+        
+        //Determine if the artist already is in the db, and get the resulting id
+        int getArtistId = songDAO.getExistingArtist(song.getArtist());
+        if(getArtistId != 0){
+            
+            artistId = getArtistId;
+        }
+        else
+        {
+            artistId = songDAO.setArtist(song.getArtist());
+        }
+        
+        //Determine if the album already is in the db, and get the resulting id
+        int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
+        if(getAlbumId != 0){ 
+            
+            albumId = getAlbumId;
+        }
+        else
+        {
+            albumId = songDAO.setAlbum(song.getAlbum(), song.getYear());
+        }
+        
+        //Determine if the genre already is in the db, and get the resulting id
+        int getGenreId = songDAO.getExistingGenre(song.getGenre());
+        if(getGenreId != 0){
+            
+            genreId = getGenreId;
+            
+        }
+        else
+        {
+            genreId = songDAO.setGenre(song.getGenre());
+        }
+
+
+        pathId = songDAO.setPath(song.getSongPathName());
+        
+        ids.add(artistId);
+        ids.add(albumId);
+        ids.add(genreId);
+        ids.add(pathId);
+        
+        songDAO.setSong(song, ids);
+       
+    }
+    
+    
+    
 }
