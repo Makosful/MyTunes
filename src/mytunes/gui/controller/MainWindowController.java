@@ -5,15 +5,12 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,6 +38,7 @@ import mytunes.gui.model.MainWindowModel;
  */
 public class MainWindowController implements Initializable
 {
+
     // Model
     private MainWindowModel wm;
 
@@ -112,6 +110,10 @@ public class MainWindowController implements Initializable
     //</editor-fold>
 
     private int i;
+    @FXML
+    private JFXButton btnPrev;
+    @FXML
+    private JFXButton btnForward;
 
     /**
      * Constructor, for all intends and purposes
@@ -151,6 +153,10 @@ public class MainWindowController implements Initializable
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
+
+        // Sets the progress sliders width to be dynamic relative to the width
+        progressSlider.prefWidthProperty().bind(
+                playbackPanel.widthProperty().subtract(730));
     }
 
     //<editor-fold defaultstate="collapsed" desc="Table View Fold">
@@ -204,7 +210,8 @@ public class MainWindowController implements Initializable
             if (event.getClickCount() == 2)
             {
                 // Extracts the item that's been clicked on
-                Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+                Music selectedItem = tblSongList.getSelectionModel()
+                        .getSelectedItem();
 
                 // Adds the selected item to the queue
                 wm.setQueuePlay(selectedItem);
@@ -245,7 +252,7 @@ public class MainWindowController implements Initializable
                     this.songStop(action);
                 }
                 wm.setQueuePlay(selectedItems);
-                prepareSetup();
+                prepareAndPlay();
             }
         });
 
@@ -342,8 +349,10 @@ public class MainWindowController implements Initializable
     }
 
     /**
-     * Setsup the context menu, their options and the action of those options,
-     * for the playlist
+     * Setup Playlist Context Menu
+     *
+     * This method sets up the context menu for the playlist by defining the
+     * menu's items and the actions asociated with that item
      *
      * @param cm The context to work with
      */
@@ -390,9 +399,11 @@ public class MainWindowController implements Initializable
         // Loads the queue list
         listQueue.setItems(wm.getQueueList());
 
+        // Sets up a mouse listener for the queue
         setupQueueMouseListener();
 
-        //wm.setupQueueListener();
+        // Sets up change listener for the queue list
+        setupQueueListener();
     }
 
     /**
@@ -415,7 +426,10 @@ public class MainWindowController implements Initializable
 
             if (event.getClickCount() == 2)
             {
-                // Play the selected song
+                wm.stopMediaPlayer();
+                Music selectedItem = listQueue.getSelectionModel().getSelectedItem();
+                wm.skipToSong(selectedItem);
+                prepareAndPlay();
             }
         });
     }
@@ -537,7 +551,7 @@ public class MainWindowController implements Initializable
                     wm.updateDuration();
                     progressSlider.setValue(0.0);
                     progressSlider.setMax(wm.getMediaPlayer().getTotalDuration().toSeconds());
-                    GetMediaPlayerStatus();
+                    getMediaPlayerStatus();
                     break;
                 default:
                     break;
@@ -565,13 +579,15 @@ public class MainWindowController implements Initializable
             wm.stopMediaPlayer();
         }
         prepareSetup();
-        GetMediaPlayerStatus();
+        getMediaPlayerStatus();
         wm.startMediaPlayer();
         wm.setPlaying(true);
         btnPlayPause.setText("Pause");
     }
 
     /**
+     * Enables the interface settings
+     *
      * Under the initialize we disabled all the following objects - here we
      * enable them again, which we will run under the prepareSetup method
      */
@@ -618,20 +634,20 @@ public class MainWindowController implements Initializable
             wm.setPlaying(true);
             btnPlayPause.setText("Pause");
             enableSettings();
-            wm.getMediaPlayer().setOnEndOfMedia(() ->
-            {
-                if (!wm.getQueueList().isEmpty())
-                {
-                    List<Media> medias = wm.getMedias();
-
-                    wm.stopMediaPlayer();
-                    wm.getNewSongInQue();
-                    i++;
-                    System.out.println(medias.get(i));
-                    wm.setMediaPlayer(new MediaPlayer(medias.get(i)));
-                    wm.startMediaPlayer();
-                }
-            });
+//            wm.getMediaPlayer().setOnEndOfMedia(() ->
+//            {
+//                if (!wm.getQueueList().isEmpty())
+//                {
+//                    List<Media> medias = wm.getMedias();
+//
+//                    wm.stopMediaPlayer();
+//                    wm.getNewSongInQue();
+//                    i++;
+//                    System.out.println(medias.get(i));
+//                    wm.setMediaPlayer(new MediaPlayer(medias.get(i)));
+//                    wm.startMediaPlayer();
+//                }
+//            });
         }
         // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
         else
@@ -760,37 +776,31 @@ public class MainWindowController implements Initializable
     //</editor-fold>
 
     /**
+     * Possibly obsolete
+     *
      * Chooses the file(s)
      * Handles the file chooser and allows multiple selections of files to add (
      * NEEDS A FIX TO ADD MEDIA PLAYER TO ALL FILES )
      */
     private void choosingFiles()
     {
-        File file;
+//        File file;
+//
+//        // Checks if the queue is empty.
+//        if (wm.getQueueList().isEmpty())
+//        {
+//            // If the queue is empty. Add a place holder track
+//            //wm.addElevatorMusic();
+//            //file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
+//        }
+//        else
+//        {
+//            // Otherwise just play the first track in the queue
+//            //file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
+//        }
+//        //wm.setSong(new Media(file.toURI().toString()));
+//        //FileInputStream inputStream = new FileInputStream(file);
 
-        // Checks if the queue is empty.
-        if (wm.getQueueList().isEmpty())
-        {
-            // If the queue is empty. Add a place holder track
-            wm.addElevatorMusic();
-            file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
-        }
-        else
-        {
-            // Otherwise just play the first track in the queue
-            file = new File(wm.getQueueList().get(0).getLocation().toLowerCase());
-        }
-
-        wm.setSong(new Media(file.toURI().toString()));
-
-        try
-        {
-            FileInputStream inputStream = new FileInputStream(file);
-        }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     //<editor-fold defaultstate="collapsed" desc="Create Playlist | Delete Playlist | Random Song Fold">
@@ -832,6 +842,7 @@ public class MainWindowController implements Initializable
 
     /**
      * Sets up MediaPlayers
+     *
      * Sets up the Media Player by first running the fileChooser method and
      * afterwards - once the media is ready - it creates a mediaview for it,
      * acquires its duration, sets the
@@ -842,7 +853,7 @@ public class MainWindowController implements Initializable
      */
     private void setupMediaPlayer()
     {
-        choosingFiles(); //Needs a fix as mentioned in the method
+        //choosingFiles(); //Needs a fix as mentioned in the method
 
         // As soon as the media player is ready to play a song we allow for
         // manipulating the media file (playback speed, volume etc.)
@@ -851,7 +862,7 @@ public class MainWindowController implements Initializable
             wm.updateDuration();
             progressSlider.setValue(0.0);
             progressSlider.setMax(wm.getduration().toSeconds());
-            GetMediaPlayerStatus();
+            getMediaPlayerStatus();
         });
     }
 
@@ -860,7 +871,7 @@ public class MainWindowController implements Initializable
      * A listener which gives feedback on what status the MediaPlayer currently
      * has (for visual debugging)
      */
-    private void GetMediaPlayerStatus()
+    private void getMediaPlayerStatus()
     {
         wm.getMediaPlayer().statusProperty()
                 .addListener((observable, oldValue, newValue)
@@ -952,5 +963,92 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
+    }
+
+    private void setupQueueListener()
+    {
+        wm.getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        playNextSong();
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    wm.getQueueListMedia().add(mp);
+
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int i = 0; i < wm.getQueueListMedia().size(); i++)
+                {
+                    // Gets the full path for the current media
+                    String storedMedia = wm.getQueueListMedia().get(i).getMedia().getSource();
+
+                    // Goes through
+                    for (int j = 0; j < c.getRemoved().size(); j++)
+                    {
+                        File file = new File(c.getRemoved().get(j).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            wm.getQueueListMedia().remove(i);
+                            i--;
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void playNextSong()
+    {
+        int queueSize = wm.getQueueList().size() - 1;
+
+        // If the currently playing song is at an index smaller than the queue
+        // size, then it has a next
+        if (wm.getCurrentSong() < queueSize)
+        {
+            wm.currentSongNext();
+            wm.setSong(wm.getQueueListMedia().get(wm.getCurrentSong()).getMedia());
+            prepareAndPlay();
+        }
+        // Else do nothing
+        // This will get it to stop playing entirely
+    }
+
+    @FXML
+    private void prevSong(ActionEvent event)
+    {
+        wm.stopMediaPlayer();
+        wm.skipToPrevSong();
+        prepareAndPlay();
+    }
+
+    @FXML
+    private void nextSong(ActionEvent event)
+    {
+        wm.stopMediaPlayer();
+        wm.skipToNextSong();
+        prepareAndPlay();
     }
 }
