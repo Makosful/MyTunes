@@ -1,12 +1,16 @@
 package mytunes.bll;
 
+import com.sun.javaws.Main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.be.Path;
 import mytunes.dal.PlaylistDAO;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -31,9 +35,10 @@ public class MetaData {
     private String album;
     private String year;
     private String genre;
-    private String duration;
+    private int duration;
     private String description;
     private String songPathName;
+    private String location;
     
     
     BLLManager bllManager;
@@ -89,15 +94,15 @@ public class MetaData {
                 try
                 {
                     bllManager.setRelationIds(track);
-                    pDAO.getPlaylistSongs(1);
                 }
                 catch (SQLException ex)
                 {
                     System.out.println(ex.getMessage());
                 }
+                
             });
            
-           
+            
 
         }
     
@@ -135,17 +140,14 @@ public class MetaData {
             year = tag.getFirst(FieldKey.YEAR);
             genre = tag.getFirst(FieldKey.GENRE);
             description = tag.getFirst(FieldKey.COMMENT);
-            duration = String.valueOf(f.getAudioHeader().getTrackLength());
+            duration = f.getAudioHeader().getTrackLength();
             songPathName = chosenFile.getName();
-          
-
-
+            location = chosenFile.getAbsolutePath().replace(songPathName, "");
+            
     
         }  
             
-            
 
-    
 
 
         /**
@@ -212,11 +214,7 @@ public class MetaData {
                 description = "No description";
             }
             
-            if(duration.equals(""))
-            {
-                description = "0";
-            }
-
+           
         }
 
         
@@ -238,8 +236,9 @@ public class MetaData {
             track.setAlbum(album);
             track.SetDescription(description);
             track.setYear(Integer.parseInt(year));
-            track.setDuration(Integer.parseInt(duration));
+            track.setDuration(duration);
             track.setSongPathName(songPathName);
+            track.SetLocation(location);
             
             return track;
         }

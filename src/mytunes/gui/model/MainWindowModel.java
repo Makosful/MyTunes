@@ -89,7 +89,7 @@ public class MainWindowModel
     /**
      * Loads all the songs into the program
      */
-    public void loadSongList()
+    public void loadSongList() throws SQLException
     {
         try
         {
@@ -290,8 +290,8 @@ public class MainWindowModel
     
     public void setMetaData(List<File> chosenFiles) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException
     { 
- 
-                meta.MetaData(chosenFiles);
+               
+               meta.MetaData(chosenFiles);
 
     }
 

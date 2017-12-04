@@ -4,9 +4,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import mytunes.be.Music;
 
 /**
@@ -29,7 +27,7 @@ public class SongDAO
         {
             List<Music> allSongs = new ArrayList<>();
 
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -58,6 +56,7 @@ public class SongDAO
      * Gets the ids and inserts the song parameters/ creates the song in the songs table
      * @param song
      * @param relationIds
+     * @return 
      * @throws SQLServerException
      * @throws SQLException
      */
@@ -71,15 +70,19 @@ public class SongDAO
 
         try (Connection con = db.getConnection())
         {
-
-            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?)";
+            
+            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
             preparedStatementInsert.setString(1, song.getTitle());
             preparedStatementInsert.setInt(2, artistId);
             preparedStatementInsert.setInt(3, albumId);
             preparedStatementInsert.setInt(4, genreId);
             preparedStatementInsert.setInt(5, pathId);
+            preparedStatementInsert.setString(6, song.getDescription());
+            preparedStatementInsert.setInt(7, song.getDuration());
+            preparedStatementInsert.setInt(8, song.getYear());
             preparedStatementInsert.executeUpdate();
+            
 
         }
     }
@@ -180,22 +183,20 @@ public class SongDAO
     /**
      * Insert the album and get the artistId
      * @param album
-     * @param releasedate
      * @return
      * @throws SQLServerException
      * @throws SQLException
      */
-    public int setAlbum(String album, int releasedate) throws SQLServerException, SQLException
+    public int setAlbum(String album) throws SQLServerException, SQLException
     {
 
         try (Connection con = db.getConnection())
         {
             int id;
 
-            String sqlInsert = "INSERT INTO Albums (album, releasedate) VALUES (?, ?)";
+            String sqlInsert = "INSERT INTO Albums (album) VALUES (?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, album);
-            preparedStatementInsert.setInt(2, releasedate);
             preparedStatementInsert.executeUpdate();
 
             ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -269,6 +270,37 @@ public class SongDAO
     }
     
 
+     /**
+     * If the path already exsists in the path table get the id
+     * @param path
+     * @param locationid
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int getExistingPath(String path, int locationid) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
+
+            String sqlSelect = "SELECT id FROM Path WHERE pathname = ? AND locationid = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, path);
+            preparedStatement.setInt(2, locationid);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+            {
+                id = rs.getInt("id");
+                
+            }
+            
+            return id;
+        }
+    }
+    
+    
     /**
      * Sets the path/name of the mp3 file and returns the id  
      * @param songPathName
@@ -276,15 +308,16 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException
      */
-    public int setPath(String songPathName) throws SQLServerException, SQLException
+    public int setPath(String songPathName, int locationId) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
-            int id = 0;
+            int id;
 
-            String sqlInsert = "INSERT INTO Path (pathname) VALUES (?)";
+            String sqlInsert = "INSERT INTO Path (pathname, locationid) VALUES (?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, songPathName);
+            preparedStatementInsert.setInt(2, locationId);
             preparedStatementInsert.executeUpdate();
 
             ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -299,7 +332,68 @@ public class SongDAO
         }
 
     }
+    
+    
+     /**
+     * If the loaction already exsists in the loaction table get the id
+     * @param location
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int getExistingLocation(String location) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
 
+            String sqlSelect = "SELECT id FROM Location WHERE location = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, location);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+            {
+                id = rs.getInt("id");
+                
+            }
+            
+            return id;
+        }
+    }
+    
+     /**
+     * Sets the location of the folder and returns the id  
+     * @param location
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    public int setLocation(String location) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id;
+
+            String sqlInsert = "INSERT INTO Location (location) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.setString(1, location);
+            preparedStatementInsert.executeUpdate();
+
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+            
+            id = rsi.getInt(1);
+
+
+            return id;
+
+        }
+
+    }
+    
+    
     public Music createSongFromDB(ResultSet rs) throws SQLException
     {
         
@@ -311,6 +405,8 @@ public class SongDAO
         song.setGenre(rs.getString("genre"));
         song.setYear(rs.getInt("releasedate"));
         song.setSongPathName(rs.getString("pathname"));
+        song.SetDescription(rs.getString("description"));
+        song.setDuration(rs.getInt("duration"));
         
         return song;
     }
@@ -331,7 +427,7 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -408,7 +504,7 @@ public class SongDAO
         {
             
        
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "

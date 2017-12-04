@@ -2,7 +2,10 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
@@ -68,8 +71,15 @@ public class CreatePlaylistWindowController implements Initializable
         this.songlist = FXCollections.observableArrayList();
         this.songlistBackup = FXCollections.observableArrayList();
 
-        // Loads the song list
-        wm.loadSongList();
+        try
+        {
+            // Loads the song list
+            wm.loadSongList();
+        }
+        catch (SQLException ex)
+        {
+            Logger.getLogger(CreatePlaylistWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         songlist.addAll(wm.getSongList());
         playlistBackup.addAll(playlist);
         songlistBackup.addAll(songlist);

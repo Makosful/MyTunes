@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="window" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane id="window" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
@@ -183,7 +183,6 @@
             </GridPane>
          </children>
       </AnchorPane>
-        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
         <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
@@ -222,5 +221,20 @@
             </children>
         </Pane>
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" />
+        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+      <Label fx:id="lblArtist" layoutX="1260.0" layoutY="363.0" text="Artist" />
+      <Label fx:id="lblTitle" layoutX="1260.0" layoutY="393.0" text="Title" />
+      <Label fx:id="lblAlbum" layoutX="1260.0" layoutY="423.0" text="Album" />
+      <Label fx:id="lblYear" layoutX="1260.0" layoutY="453.0" text="Year" />
+      <Label fx:id="lblDescription" layoutX="1260.0" layoutY="483.0" text="Description" />
+      <Label fx:id="lblGenre" layoutX="1260.0" layoutY="513.0" text="Genre" />
+      <Label fx:id="lblDuration" layoutX="1260.0" layoutY="543.0" text="Duration" />
+      <Label layoutX="1170.0" layoutY="363.0" text="Artist:" />
+      <Label layoutX="1170.0" layoutY="393.0" text="Title:" />
+      <Label layoutX="1170.0" layoutY="423.0" text="Album:" />
+      <Label layoutX="1170.0" layoutY="453.0" text="Year:" />
+      <Label layoutX="1170.0" layoutY="483.0" text="Description:" />
+      <Label layoutX="1170.0" layoutY="513.0" text="Genre:" />
+      <Label layoutX="1170.0" layoutY="543.0" text="Duration:" />
     </children>
 </AnchorPane>

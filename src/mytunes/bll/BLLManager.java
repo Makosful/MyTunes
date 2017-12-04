@@ -29,9 +29,9 @@ public class BLLManager
         this.mm = new MockMusic();
     }
 
-    public List<Music> getSongList() throws IOException
+    public List<Music> getSongList() throws IOException, SQLException
     {
-        return mm.getAllSongsLocal();
+        return songDAO.getAllSongs();
     }
 
     public void createSongPath(String setPath) throws SQLException
@@ -76,7 +76,7 @@ public class BLLManager
      /**
      * Determines which id should be used in the song table, if the artist/album/genre 
      * already exists get the id from those, else get the newly inserted id's
-     * @param song
+     * @param song 
      * @throws SQLException 
      */
     public void setRelationIds(Music song) throws SQLException
@@ -87,6 +87,7 @@ public class BLLManager
         int albumId;
         int genreId;
         int pathId;
+        int locationId;
         
         //Determine if the artist already is in the db, and get the resulting id
         int getArtistId = songDAO.getExistingArtist(song.getArtist());
@@ -107,30 +108,51 @@ public class BLLManager
         }
         else
         {
-            albumId = songDAO.setAlbum(song.getAlbum(), song.getYear());
+            albumId = songDAO.setAlbum(song.getAlbum());
         }
         
         //Determine if the genre already is in the db, and get the resulting id
         int getGenreId = songDAO.getExistingGenre(song.getGenre());
         if(getGenreId != 0){
             
-            genreId = getGenreId;
+            genreId = getGenreId; 
             
         }
         else
         {
+            
             genreId = songDAO.setGenre(song.getGenre());
+            
         }
 
+        //Determine if the location already is in the db, and get the resulting id
+        int getLocationId = songDAO.getExistingLocation(song.getLocation());
+        if(getLocationId != 0)
+        {
+            locationId = getLocationId;
+        }
+        else
+        {
+            locationId = songDAO.setLocation(song.getLocation());
+        }
+        
+        
+        int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
+        if(getPathId == 0){
+            
 
-        pathId = songDAO.setPath(song.getSongPathName());
+            pathId = songDAO.setPath(song.getSongPathName(), locationId);
+
+
+            ids.add(artistId);
+            ids.add(albumId);
+            ids.add(genreId);
+            ids.add(pathId);
+
+
+            songDAO.setSong(song, ids);
         
-        ids.add(artistId);
-        ids.add(albumId);
-        ids.add(genreId);
-        ids.add(pathId);
-        
-        songDAO.setSong(song, ids);
+        }
        
     }
     

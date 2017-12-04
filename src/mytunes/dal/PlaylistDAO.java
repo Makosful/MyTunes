@@ -117,4 +117,27 @@ public class PlaylistDAO
         
         
     } 
+    
+    
+    public void insertPlaylistSong(int playlistid, int songid) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            
+
+            String sql = "INSERT INTO playlist_with_songs (playlistid, songid) VALUES (?, ?)";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, playlistid);
+            preparedStatement.setInt(2, songid);
+            
+            preparedStatement.executeUpdate();
+            
+
+        } 
+    
+    }
+    
+    
+    
 }
