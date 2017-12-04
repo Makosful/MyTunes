@@ -110,6 +110,10 @@ public class MainWindowController implements Initializable
     //</editor-fold>
 
     private int i;
+    @FXML
+    private JFXButton btnPrev;
+    @FXML
+    private JFXButton btnForward;
 
     /**
      * Constructor, for all intends and purposes
@@ -149,6 +153,10 @@ public class MainWindowController implements Initializable
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();
+
+        // Sets the progress sliders width to be dynamic relative to the width
+        progressSlider.prefWidthProperty().bind(
+                playbackPanel.widthProperty().subtract(730));
     }
 
     //<editor-fold defaultstate="collapsed" desc="Table View Fold">
@@ -418,7 +426,10 @@ public class MainWindowController implements Initializable
 
             if (event.getClickCount() == 2)
             {
-                // Play the selected song
+                wm.stopMediaPlayer();
+                Music selectedItem = listQueue.getSelectionModel().getSelectedItem();
+                wm.skipToSong(selectedItem);
+                prepareAndPlay();
             }
         });
     }
@@ -954,7 +965,7 @@ public class MainWindowController implements Initializable
     {
     }
 
-    public void setupQueueListener()
+    private void setupQueueListener()
     {
         wm.getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
         {
@@ -1023,5 +1034,15 @@ public class MainWindowController implements Initializable
         }
         // Else do nothing
         // This will get it to stop playing entirely
+    }
+
+    @FXML
+    private void prevSong(ActionEvent event)
+    {
+    }
+
+    @FXML
+    private void nextSong(ActionEvent event)
+    {
     }
 }

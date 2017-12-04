@@ -731,6 +731,11 @@ public class MainWindowModel
         currentSong++;
     }
 
+    private void currentSongPrev()
+    {
+        currentSong--;
+    }
+
     public int getCurrentSong()
     {
         return currentSong;
@@ -739,5 +744,42 @@ public class MainWindowModel
     public ObservableList<MediaPlayer> getQueueListMedia()
     {
         return this.queueMedia;
+    }
+
+    /**
+     * Changes the currently playing song to the given music
+     *
+     * Note: This will only change which song to play. You must manually set the
+     * song to be played
+     *
+     * @param music The music to play
+     */
+    public void skipToSong(Music music)
+    {
+        int index = bllManager.getIndexOf(music, this.queue);
+
+        currentSong = index;
+    }
+
+    /**
+     * Skips ahead to the next song if applicable
+     */
+    public void skipToNextSong()
+    {
+        if (currentSong < queue.size())
+        {
+            currentSongNext();
+        }
+    }
+
+    /**
+     * Skips back to the previous song if applicable
+     */
+    public void skipToPrevSong()
+    {
+        if (currentSong > 0)
+        {
+            currentSongPrev();
+        }
     }
 }
