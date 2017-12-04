@@ -15,54 +15,55 @@ public class SongDAO
 {
 
     DataBaseConnector db;
-    List<String> dataBaseSongNames;
 
     public SongDAO() throws IOException
     {
         db = new DataBaseConnector();
-        dataBaseSongNames = new ArrayList();
     }
 
     public List<Music> getAllSongs() throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
-        List<Music> allSongs = new ArrayList<>();
-        
-        String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
-                   + "FROM Songs "
-                   + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                   + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                   + "INNER JOIN Genre ON Songs.genreid = Genre.id ";
-        
-        Statement st = con.createStatement();
-        ResultSet rs = st.executeQuery(sql); 
 
-            
-        while (rs.next())
-        {
-            Music song = createSongFromDB(rs);
-            
-            System.out.println(song.getAlbum());
-            allSongs.add(song);
-        }
-         
-        
-        return allSongs;
-        
+            List<Music> allSongs = new ArrayList<>();
+
+            String sql = "SELECT Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname "
+                       + "FROM Songs "
+                       + "INNER JOIN Artist ON Songs.artistid = Artist.id "
+                       + "INNER JOIN Albums ON Songs.albumid = Albums.id "
+                       + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id ";
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql); 
+
+
+            while (rs.next())
+            {
+                Music song = createSongFromDB(rs);
+
+                System.out.println(song.getAlbum());
+                allSongs.add(song);
+            }
+
+
+            return allSongs;
+
+
         }
     }
 
     /**
      * Gets the ids and inserts the song parameters/ creates the song in the songs table
      * @param song
+     * @param relationIds
+     * @return 
      * @throws SQLServerException
      * @throws SQLException
      */
-    public void setSong(Music song) throws SQLServerException, SQLException
+    public void setSong(Music song, List<Integer> relationIds) throws SQLServerException, SQLException
     {
-        
-        List<Integer> relationIds = getRelationIds(song);
         
         int artistId = relationIds.get(0);
         int albumId = relationIds.get(1);
@@ -71,81 +72,24 @@ public class SongDAO
 
         try (Connection con = db.getConnection())
         {
-
-            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            
+            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
             preparedStatementInsert.setString(1, song.getTitle());
             preparedStatementInsert.setInt(2, artistId);
             preparedStatementInsert.setInt(3, albumId);
             preparedStatementInsert.setInt(4, genreId);
             preparedStatementInsert.setInt(5, pathId);
+            preparedStatementInsert.setString(6, song.getDescription());
+            preparedStatementInsert.setInt(7, song.getDuration());
+            preparedStatementInsert.setInt(8, song.getYear());
             preparedStatementInsert.executeUpdate();
+            
 
-            // ResultSet rs = preparedStatementInsert.getGeneratedKeys();
         }
     }
     
     
-    /**
-     * Determines with id should be used in the song table, if the artist/album/genre 
-     * already exists get the id from those, else get the newly inserted id's
-     * @param song
-     * @return list of id's 
-     * @throws SQLException 
-     */
-    private List<Integer> getRelationIds(Music song) throws SQLException
-    {
-        List<Integer> ids = new ArrayList();
-        
-        int artistId;
-        int albumId;
-        int genreId;
-        int pathId;
-        
-        //Determine if the artist already is in the db, and get the resulting id
-        int getArtistId = getExistingArtist(song.getArtist());
-        if(getArtistId != 0){
-            
-            artistId = getArtistId;
-        }
-        else
-        {
-            artistId = setArtist(song.getArtist());
-        }
-        
-        //Determine if the album already is in the db, and get the resulting id
-        int getAlbumId = getExistingAlbum(song.getAlbum());
-        if(getAlbumId != 0){ 
-            
-            albumId = getAlbumId;
-        }
-        else
-        {
-            albumId = setAlbum(song.getAlbum(), song.getYear());
-        }
-        
-        //Determine if the genre already is in the db, and get the resulting id
-        int getGenreId = getExistingGenre(song.getGenre());
-        if(getGenreId != 0){
-            
-            genreId = getGenreId;
-            
-        }
-        else
-        {
-            genreId = setGenre(song.getGenre());
-        }
-
-
-        pathId = setPath(song.getSongPathName());
-        
-        ids.add(artistId);
-        ids.add(albumId);
-        ids.add(genreId);
-        ids.add(pathId);
-        
-        return ids;
-    }
 
     
     /**
@@ -155,7 +99,7 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException 
      */
-    private int getExistingArtist(String artist) throws SQLServerException, SQLException
+    public int getExistingArtist(String artist) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
@@ -184,7 +128,7 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException
      */
-    private int setArtist(String artist) throws SQLServerException, SQLException
+    public int setArtist(String artist) throws SQLServerException, SQLException
     {
 
         try (Connection con = db.getConnection())
@@ -215,7 +159,7 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException 
      */
-    private int getExistingAlbum(String album) throws SQLServerException, SQLException
+    public int getExistingAlbum(String album) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
@@ -241,22 +185,20 @@ public class SongDAO
     /**
      * Insert the album and get the artistId
      * @param album
-     * @param releasedate
      * @return
      * @throws SQLServerException
      * @throws SQLException
      */
-    private int setAlbum(String album, int releasedate) throws SQLServerException, SQLException
+    public int setAlbum(String album) throws SQLServerException, SQLException
     {
 
         try (Connection con = db.getConnection())
         {
             int id;
 
-            String sqlInsert = "INSERT INTO Albums (album, releasedate) VALUES (?, ?)";
+            String sqlInsert = "INSERT INTO Albums (album) VALUES (?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, album);
-            preparedStatementInsert.setInt(2, releasedate);
             preparedStatementInsert.executeUpdate();
 
             ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -277,7 +219,7 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException 
      */
-    private int getExistingGenre(String genre) throws SQLServerException, SQLException
+    public int getExistingGenre(String genre) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
@@ -306,7 +248,7 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException
      */
-    private int setGenre(String genre) throws SQLServerException, SQLException
+    public int setGenre(String genre) throws SQLServerException, SQLException
     {
 
         try (Connection con = db.getConnection())
@@ -330,6 +272,37 @@ public class SongDAO
     }
     
 
+     /**
+     * If the path already exsists in the path table get the id
+     * @param path
+     * @param locationid
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int getExistingPath(String path, int locationid) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
+
+            String sqlSelect = "SELECT id FROM Path WHERE pathname = ? AND locationid = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, path);
+            preparedStatement.setInt(2, locationid);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+            {
+                id = rs.getInt("id");
+                
+            }
+            
+            return id;
+        }
+    }
+    
+    
     /**
      * Sets the path/name of the mp3 file and returns the id  
      * @param songPathName
@@ -337,15 +310,16 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException
      */
-    private int setPath(String songPathName) throws SQLServerException, SQLException
+    public int setPath(String songPathName, int locationId) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
-            int id = 0;
+            int id;
 
-            String sqlInsert = "INSERT INTO Path (pathname) VALUES (?)";
+            String sqlInsert = "INSERT INTO Path (pathname, locationid) VALUES (?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, songPathName);
+            preparedStatementInsert.setInt(2, locationId);
             preparedStatementInsert.executeUpdate();
 
             ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
@@ -360,8 +334,69 @@ public class SongDAO
         }
 
     }
+    
+    
+     /**
+     * If the loaction already exsists in the loaction table get the id
+     * @param location
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
+    public int getExistingLocation(String location) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id = 0;
 
-    private Music createSongFromDB(ResultSet rs) throws SQLException
+            String sqlSelect = "SELECT id FROM Location WHERE location = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, location);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+            {
+                id = rs.getInt("id");
+                
+            }
+            
+            return id;
+        }
+    }
+    
+     /**
+     * Sets the location of the folder and returns the id  
+     * @param location
+     * @return
+     * @throws SQLServerException
+     * @throws SQLException
+     */
+    public int setLocation(String location) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            int id;
+
+            String sqlInsert = "INSERT INTO Location (location) VALUES (?)";
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            preparedStatementInsert.setString(1, location);
+            preparedStatementInsert.executeUpdate();
+
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+            
+            id = rsi.getInt(1);
+
+
+            return id;
+
+        }
+
+    }
+    
+    
+    public Music createSongFromDB(ResultSet rs) throws SQLException
     {
         
         Music song = new Music();
@@ -371,7 +406,10 @@ public class SongDAO
         song.setAlbum(rs.getString("album"));
         song.setGenre(rs.getString("genre"));
         song.setYear(rs.getInt("releasedate"));
-        //song.setSongPathName(rs.getString("pathname"));
+        song.setSongPathName(rs.getString("pathname"));
+        song.SetDescription(rs.getString("description"));
+        song.setDuration(rs.getInt("duration"));
+
         
         return song;
     }
@@ -391,32 +429,34 @@ public class SongDAO
         
         try (Connection con = db.getConnection())
         {
-       
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+
+
+            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                        + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
                        + "WHERE id = ?";
 
-            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setInt(1, id);
-            ResultSet rs = preparedStatement.executeQuery();
+                PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                preparedStatement.setInt(1, id);
+                ResultSet rs = preparedStatement.executeQuery();
 
 
-            
-            if(rs.next()){
-                Music song = createSongFromDB(rs);
 
-                System.out.println(song.getArtist());
-                
-                return song;
-                
-            }else
-            {
-                return null;
-            }
-            
+                if(rs.next()){
+                    Music song = createSongFromDB(rs);
+
+                    System.out.println(song.getArtist());
+
+                    return song;
+
+                }else
+                {
+                    return null;
+                }
+
             
         }
         
@@ -451,66 +491,53 @@ public class SongDAO
     }
     
     
+    
      /**
      * 
+     * @param length
+     * @param sqlSearch
      * @param searchText
      * @return list of songs
      * @throws SQLServerException
      * @throws SQLException 
      */
-    public List<Music> getSongsFromSearch(String searchText) throws SQLServerException, SQLException
+    public List<Music> getSongsFromSearch(int length, String sqlSearch, String searchText) throws SQLServerException, SQLException
     {
         
-        List<String> searchTables = new ArrayList();
-        
-        searchTables.add("Songs.title");
-        searchTables.add("Artist.artist");
-        
-        String sqlSearch = "";
-        boolean firstQm = true;
-        for( int i = 0 ; i < searchTables.size(); i++ ) {
-        
-            if(firstQm == false)
-            {
-                sqlSearch += " OR ";
-            }
-            
-            sqlSearch += searchTables.get(i)+" = ?";
-
-            firstQm = false;
-            
-        }
-
         try (Connection con = db.getConnection())
         {
-            List<Music> songs = new ArrayList();
+            
        
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre "
+            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                        + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                       + "INNER JOIN Path ON Songs.pathid = path.id "
                        + "WHERE "+sqlSearch;
 
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
-            for(int index = 1; index <= searchTables.size(); index++) 
-            {
-               preparedStatement.setString(index, searchText);
-            }
-            ResultSet rs = preparedStatement.executeQuery();
-        
-            while(rs.next())
-            {
-                
-                Music song = createSongFromDB(rs);
-                songs.add(song);
-                System.out.println(song.getArtist());
-            }
-            
-            return songs;
+                PreparedStatement preparedStatement = con.prepareStatement(sql);
+                for(int index = 1; index <= length; index++) 
+                {
+                   preparedStatement.setString(index, searchText);
+                }
+                ResultSet rs = preparedStatement.executeQuery();
+
+
+                List<Music> songs = new ArrayList();
+               
+                while(rs.next())
+                {
+
+                    Music song = createSongFromDB(rs);
+                    songs.add(song);
+                    System.out.println(song.getArtist());
+                }
+
+                return songs;
         }
     }
     
-    
+
     
 }

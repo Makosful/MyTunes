@@ -11,6 +11,9 @@ public class Playlist
 {
 
     private String title;
+    private int id;
+
+
     private ObservableList<Music> playlist;
     private boolean favorite;
 
@@ -59,6 +62,17 @@ public class Playlist
     {
         this.favorite = favorite;
     }
+    
+        public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+    
     //</editor-fold>
 
 }

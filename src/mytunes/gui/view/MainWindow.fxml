@@ -25,6 +25,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+
 <AnchorPane id="window" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -167,6 +168,7 @@
                 </VBox>
             </children>
         </AnchorPane>
+
         <AnchorPane fx:id="paneEqualizer" layoutX="20.0" layoutY="589.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
             <children>
                 <GridPane fx:id="gridEqualizer" prefHeight="247.0" prefWidth="420.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -196,6 +198,7 @@
             </children>
         </AnchorPane>
         <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+
         <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
@@ -233,6 +236,24 @@
                 </AnchorPane>
             </children>
         </Pane>
+
+        <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" />
+        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+      <Label fx:id="lblArtist" layoutX="1260.0" layoutY="363.0" text="Artist" />
+      <Label fx:id="lblTitle" layoutX="1260.0" layoutY="393.0" text="Title" />
+      <Label fx:id="lblAlbum" layoutX="1260.0" layoutY="423.0" text="Album" />
+      <Label fx:id="lblYear" layoutX="1260.0" layoutY="453.0" text="Year" />
+      <Label fx:id="lblDescription" layoutX="1260.0" layoutY="483.0" text="Description" />
+      <Label fx:id="lblGenre" layoutX="1260.0" layoutY="513.0" text="Genre" />
+      <Label fx:id="lblDuration" layoutX="1260.0" layoutY="543.0" text="Duration" />
+      <Label layoutX="1170.0" layoutY="363.0" text="Artist:" />
+      <Label layoutX="1170.0" layoutY="393.0" text="Title:" />
+      <Label layoutX="1170.0" layoutY="423.0" text="Album:" />
+      <Label layoutX="1170.0" layoutY="453.0" text="Year:" />
+      <Label layoutX="1170.0" layoutY="483.0" text="Description:" />
+      <Label layoutX="1170.0" layoutY="513.0" text="Genre:" />
+      <Label layoutX="1170.0" layoutY="543.0" text="Duration:" />
+
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" />
       <TextField fx:id="txtTableSearch" layoutX="450.0" layoutY="40.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0" />
       <HBox alignment="CENTER_RIGHT" layoutX="440.0" layoutY="60.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="70.0">
@@ -248,5 +269,6 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </HBox>
+
     </children>
 </AnchorPane>

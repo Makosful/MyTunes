@@ -1,5 +1,6 @@
 package mytunes.bll;
 
+import com.sun.javaws.Main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,7 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
-import mytunes.dal.SongDAO;
+import mytunes.be.Path;
+import mytunes.dal.PlaylistDAO;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -16,6 +18,7 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
+
 
 
 
@@ -30,16 +33,19 @@ public class MetaData {
     private String album;
     private String year;
     private String genre;
-    private String duration;
+    private int duration;
     private String description;
     private String songPathName;
+    private String location;
     
     
-    SongDAO sDAO;
-
+    BLLManager bllManager;
+    PlaylistDAO pDAO;
+    
     public MetaData() throws IOException
     {
-        this.sDAO = new SongDAO();
+        this.bllManager = new BLLManager();
+        this.pDAO = new PlaylistDAO();
     }
     
     
@@ -85,16 +91,18 @@ public class MetaData {
             {
                 try
                 {
-                    sDAO.setSong(track);
-                    //sDAO.getSongsFromSearch();
+
+                    bllManager.setRelationIds(track);
+                  
                 }
                 catch (SQLException ex)
                 {
                     System.out.println(ex.getMessage());
                 }
+                
             });
            
-           
+            
 
         }
     
@@ -132,17 +140,14 @@ public class MetaData {
             year = tag.getFirst(FieldKey.YEAR);
             genre = tag.getFirst(FieldKey.GENRE);
             description = tag.getFirst(FieldKey.COMMENT);
-            duration = String.valueOf(f.getAudioHeader().getTrackLength());
+            duration = f.getAudioHeader().getTrackLength();
             songPathName = chosenFile.getName();
-          
-
-
+            location = chosenFile.getAbsolutePath().replace(songPathName, "");
+            
     
         }  
             
-            
 
-    
 
 
         /**
@@ -209,11 +214,7 @@ public class MetaData {
                 description = "No description";
             }
             
-            if(duration.equals(""))
-            {
-                description = "0";
-            }
-
+           
         }
 
         
@@ -235,8 +236,9 @@ public class MetaData {
             track.setAlbum(album);
             track.SetDescription(description);
             track.setYear(Integer.parseInt(year));
-            track.setDuration(Integer.parseInt(duration));
+            track.setDuration(duration);
             track.setSongPathName(songPathName);
+            track.SetLocation(location);
             
             return track;
         }

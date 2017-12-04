@@ -88,7 +88,7 @@ public class MainWindowModel
     /**
      * Loads all the songs into the program
      */
-    public void loadSongList()
+    public void loadSongList() throws SQLException
     {
         try
         {
@@ -264,7 +264,7 @@ public class MainWindowModel
     /**
      * Displays the window for creating new playlists
      */
-    public void createPlaylistWindow()
+    public void createPlaylistWindow() throws SQLException
     {
         try
         {
@@ -327,6 +327,57 @@ public class MainWindowModel
             this.playlists.removeAll(playlists);
         }
     }
+
+    //</editor-fold>
+
+    /**
+     * Goes through song files, and gets their name. Returns a list with their
+     * name.
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public List<String> getPath(List<File> chosenFiles) throws SQLException
+    {
+        List<String> songPath = new ArrayList();
+        for (int j = 0; j < chosenFiles.size(); j++)
+        {
+            songPath.add(chosenFiles.get(j).getName());
+        }
+        return songPath;
+    }
+
+    public void setPathAndName(List<File> chosenFiles) throws IOException
+    {
+
+        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
+        for (int j = 0; j < chosenFiles.size(); j++)
+
+        {
+            System.out.println(chosenFiles.get(j).getName());
+        }
+    }
+
+    public void writeMusicFolderPath(String path) throws IOException
+    {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
+        {
+            writer.write(path);
+        }
+    }
+    
+    
+    public void setMetaData(List<File> chosenFiles) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException
+    { 
+               
+               meta.MetaData(chosenFiles);
+
+    }
+
 
     /**
      * Searches through the given list for a match

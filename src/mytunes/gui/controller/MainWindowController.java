@@ -2,6 +2,11 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +34,10 @@ import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 
 /**
  *
@@ -50,7 +59,7 @@ public class MainWindowController implements Initializable
     @FXML
     private JFXListView<Music> listQueue;
     @FXML
-    private JFXListView<?> listMetaData;
+    private JFXListView<String> listMetaData;
     @FXML
     private JFXToggleButton btnLoop;
     @FXML
@@ -125,6 +134,24 @@ public class MainWindowController implements Initializable
     private JFXCheckBox searchTagGenre;
     //</editor-fold>
 
+    private int i;
+    @FXML
+    private Label lblArtist;
+    @FXML
+    private Label lblTitle;
+    @FXML
+    private Label lblAlbum;
+    @FXML
+    private Label lblYear;
+    @FXML
+    private Label lblDescription;
+    @FXML
+    private Label lblGenre;
+    @FXML
+    private Label lblDuration;
+
+
+
     /**
      * Constructor, for all intends and purposes
      *
@@ -155,8 +182,16 @@ public class MainWindowController implements Initializable
         progressSlider.setDisable(true);
         lblTimer.setDisable(true);
 
-        // Sets up and connects the various lists to the model
-        setupSongList();
+        try
+        {
+            // Sets up and connects the various lists to the model
+            setupSongList();
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+        
         setupQueueList();
         setupPlaybackSpeedSettings();
         setupPlaylistPanel();
@@ -173,7 +208,7 @@ public class MainWindowController implements Initializable
     /**
      * Sets up the table & list containing all the songs
      */
-    private void setupSongList()
+    private void setupSongList() throws SQLException
     {
         // Sets the table colums ids
         clmNr.setCellValueFactory(new PropertyValueFactory("id"));
@@ -231,7 +266,28 @@ public class MainWindowController implements Initializable
                 // Plays the queue
                 prepareAndPlay();
             }
-
+            
+            if(event.getClickCount() == 1)
+            {
+                Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+                
+                lblArtist.setText(selectedItem.getArtist());
+                
+                lblTitle.setText(selectedItem.getTitle());
+                
+                lblAlbum.setText(selectedItem.getTitle());
+                
+                lblYear.setText(String.valueOf(selectedItem.getYear()));
+                
+                lblDescription.setText(selectedItem.getDescription());
+                
+                lblGenre.setText(selectedItem.getGenre());
+                
+                lblDuration.setText(String.valueOf(selectedItem.getDuration()));
+                
+            }
+                
+                
             // Right click - Context Menu
             if (event.getButton() == MouseButton.SECONDARY)
             {
@@ -359,7 +415,34 @@ public class MainWindowController implements Initializable
         cm.getItems().add(loadSong);
         loadSong.setOnAction(action ->
         {
-            LoadMediaFiles(action);
+            try
+            {
+                LoadMediaFiles(action);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (CannotReadException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (ReadOnlyFileException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (TagException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (InvalidAudioFrameException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (SQLException ex)
+            {
+                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         // Creates a new item for the menu and puts it in
@@ -977,7 +1060,7 @@ public class MainWindowController implements Initializable
      * and adds it to the list of playlists
      */
     @FXML
-    private void createPlaylist(ActionEvent event)
+    private void createPlaylist(ActionEvent event) throws SQLException
     {
         wm.createPlaylistWindow();
     }
@@ -1060,7 +1143,7 @@ public class MainWindowController implements Initializable
      * so that we can play the now selected song(s)
      */
     @FXML
-    private void LoadMediaFiles(ActionEvent event)
+    private void LoadMediaFiles(ActionEvent event) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException, InvalidAudioFrameException, SQLException
     {
         FileChooser fc = new FileChooser();
 
@@ -1076,9 +1159,23 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-        //wm.setPathAndName(chosenFiles);
+  
+        
         if (chosenFiles != null)
         {
+          
+            
+            try
+            {
+                    wm.setMetaData(chosenFiles);
+                    wm.loadSongList();
+                    tblSongList.setItems(wm.getSongList());
+            }
+            catch (InvalidAudioFrameException ex)
+            {
+                System.out.println(ex.getMessage()); 
+            }
+            
             for (int index = 0; index < chosenFiles.size(); index++)
             {
                 wm.getQueueList().add(new Music(
@@ -1090,6 +1187,8 @@ public class MainWindowController implements Initializable
                         chosenFiles.get(index).getAbsolutePath()
                 ));
             }
+            
+            
         }
         else
         {
@@ -1143,6 +1242,7 @@ public class MainWindowController implements Initializable
     {
     }
 
+
     @FXML
     private void prevSong(ActionEvent event)
     {
@@ -1158,4 +1258,5 @@ public class MainWindowController implements Initializable
         wm.skipToNextSong();
         prepareAndPlay();
     }
+
 }
