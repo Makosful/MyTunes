@@ -1,11 +1,9 @@
 package mytunes.gui.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.*;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
@@ -107,13 +105,25 @@ public class MainWindowController implements Initializable
     private GridPane gridEqualizer;
     @FXML
     private Label lblmPlayerStatus;
-    //</editor-fold>
-
-    private int i;
     @FXML
     private JFXButton btnPrev;
     @FXML
     private JFXButton btnForward;
+    @FXML
+    private TextField txtTableSearch;
+    @FXML
+    private JFXCheckBox searchTagTitle;
+    @FXML
+    private JFXCheckBox searchTagArtist;
+    @FXML
+    private JFXCheckBox searchTagAlbum;
+    @FXML
+    private JFXCheckBox searchTagDesc;
+    @FXML
+    private JFXCheckBox searchTagYear;
+    @FXML
+    private JFXCheckBox searchTagGenre;
+    //</editor-fold>
 
     /**
      * Constructor, for all intends and purposes
@@ -187,6 +197,8 @@ public class MainWindowController implements Initializable
 
         // Sets up the mouse listener for the tableview
         setupTableMouseListner();
+
+        setupTableSearchListener();
     }
 
     /**
@@ -228,6 +240,77 @@ public class MainWindowController implements Initializable
                 cm.show(tblSongList, event.getScreenX(), event.getScreenY());
             }
         });
+    }
+
+    /**
+     * Creates a listener for the table to search
+     *
+     * This method sets up a litener for the search field above the song table,
+     * which listen for changes to the input. Whenever a change has occured,
+     * it'll search the database for results matching the current search
+     * criteria (Entered tex and the filters)
+     */
+    private void setupTableSearchListener()
+    {
+        txtTableSearch.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newText) ->
+        {
+            wm.songSearch(txtTableSearch.getText(), getFilters());
+        });
+    }
+
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    private ArrayList<String> getFilters()
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
+    }
+
+    /**
+     * Search the song table
+     *
+     * This method will search the song table whenever a checkbox has been acted
+     * on
+     *
+     * @param event
+     */
+    @FXML
+    private void searchTable(ActionEvent event)
+    {
+        wm.songSearch(txtTableSearch.getText(), getFilters());
     }
 
     /**
@@ -458,6 +541,91 @@ public class MainWindowController implements Initializable
             wm.stopMediaPlayer();
             wm.clearQueueList();
         });
+    }
+
+    /**
+     * Creates a change listener for the queue
+     *
+     * This method creates a change listener for the queue.
+     * Whenever a Music has been added the the list, it'll create a MediaPlayer
+     * with that Music and add it to a mirror list, which contain all the
+     * MediaPlayers used by this application
+     * Whenever a Music has been removed from the queue, this will look for the
+     * MediaPayer with the same Media and remove it from the list as well,
+     * preventing it from being played
+     */
+    private void setupQueueListener()
+    {
+        wm.getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        playNextSong();
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    wm.getQueueListMedia().add(mp);
+
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int i = 0; i < wm.getQueueListMedia().size(); i++)
+                {
+                    // Gets the full path for the current media
+                    String storedMedia = wm.getQueueListMedia().get(i).getMedia().getSource();
+
+                    // Goes through
+                    for (int j = 0; j < c.getRemoved().size(); j++)
+                    {
+                        File file = new File(c.getRemoved().get(j).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            wm.getQueueListMedia().remove(i);
+                            i--;
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    /**
+     * Plays the next song in the queue
+     */
+    private void playNextSong()
+    {
+        int queueSize = wm.getQueueList().size() - 1;
+
+        // If the currently playing song is at an index smaller than the queue
+        // size, then it has a next
+        if (wm.getCurrentSong() < queueSize)
+        {
+            wm.currentSongNext();
+            wm.setSong(wm.getQueueListMedia().get(wm.getCurrentSong()).getMedia());
+            prepareAndPlay();
+        }
+        // Else do nothing
+        // This will get it to stop playing entirely
     }
     //</editor-fold>
 
@@ -940,7 +1108,17 @@ public class MainWindowController implements Initializable
      * Clears the queue
      * We check if queue is empty, if it is not we force all songs to stop,
      * followed by a method to clear our queue and
-     * finally set the isPlaying boolean accordingly and the text of the
+     * finally set the isPlaying boolean {
+     * }
+     *
+     * @FXML
+     * private void prevSong(ActionEvent event)
+     * {
+     * }
+     *
+     * @FXML
+     * private void nextSong(ActionEvent event)
+     * accordingly and the text of the
      * Play/Pause button
      */
     @FXML
@@ -963,77 +1141,6 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
-    }
-
-    private void setupQueueListener()
-    {
-        wm.getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
-        {
-            // Must be called to initiate the change listener
-            c.next();
-
-            // If there has been added something to the queue
-            if (!c.getAddedSubList().isEmpty())
-            {
-                // Go though each new item and make a mediaplayer for them
-                c.getAddedSubList().forEach((music) ->
-                {
-                    File file = new File(music.getLocation());
-                    Media media = new Media(file.toURI().toString());
-                    MediaPlayer mp = new MediaPlayer(media);
-
-                    mp.setOnEndOfMedia(() ->
-                    {
-                        playNextSong();
-                    });
-
-                    // Add this new media player to a parallel list to the queue
-                    wm.getQueueListMedia().add(mp);
-
-                });
-            }
-
-            // If some thing has been removed from the list
-            if (!c.getRemoved().isEmpty())
-            {
-                // Go through the queue media list
-                for (int i = 0; i < wm.getQueueListMedia().size(); i++)
-                {
-                    // Gets the full path for the current media
-                    String storedMedia = wm.getQueueListMedia().get(i).getMedia().getSource();
-
-                    // Goes through
-                    for (int j = 0; j < c.getRemoved().size(); j++)
-                    {
-                        File file = new File(c.getRemoved().get(j).getLocation());
-                        String removedMedia = file.toURI().toString();
-
-                        if (storedMedia.equals(removedMedia))
-                        {
-                            wm.getQueueListMedia().remove(i);
-                            i--;
-                        }
-                    }
-
-                }
-            }
-        });
-    }
-
-    private void playNextSong()
-    {
-        int queueSize = wm.getQueueList().size() - 1;
-
-        // If the currently playing song is at an index smaller than the queue
-        // size, then it has a next
-        if (wm.getCurrentSong() < queueSize)
-        {
-            wm.currentSongNext();
-            wm.setSong(wm.getQueueListMedia().get(wm.getCurrentSong()).getMedia());
-            prepareAndPlay();
-        }
-        // Else do nothing
-        // This will get it to stop playing entirely
     }
 
     @FXML
