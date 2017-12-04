@@ -41,9 +41,11 @@ public class MainWindowModel
     private ObservableList<Music> queue;
     private ObservableList<MediaPlayer> queueMedia;
     private ObservableList<Playlist> playlists;
+    private ObservableList<Media> medias;
 
-    // Objects
+    // Class references
     private BLLManager bllManager;
+    private MetaData meta;
 
     // Static variables
     private static final double START_FREQ = 250;
@@ -53,19 +55,13 @@ public class MainWindowModel
     private boolean playing;
     private boolean looping;
 
-    private MediaPlayer mPlayer;
+    private MediaPlayer mediaPlayer;
     private Duration mpduration;
     private Media song;
-    private MediaPlayer.Status mStatus;
-
-    private Media currentlyPlaying;
-    private List<Media> medias;
-
-    private int i = 0;
+    private Status mStatus;
     private File newFile;
-    private List<File> pathNames;
 
-    private MetaData meta;
+    private int currentSong = 0;
     //</editor-fold>
 
     /**
@@ -161,6 +157,89 @@ public class MainWindowModel
     {
         this.queue.addAll(selectedItems);
     }
+
+    public void setupQueueListener()
+    {
+        this.queue.addListener((Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        playNextSong();
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    this.queueMedia.add(mp);
+                    System.out.println("Added: " + music.getTitle());
+
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int i = 0; i < queueMedia.size(); i++)
+                {
+                    // For every entry in the queue media compare it to the
+                    // every entry in the removed list
+                    String storedMedia = queueMedia.get(i).getMedia().getSource();
+
+                    for (int j = 0; j < c.getRemoved().size(); j++)
+                    {
+                        File file = new File(c.getRemoved().get(j).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            queueMedia.remove(i);
+                            i--;
+                            System.out.println("Removed: " + removedMedia);
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    /**
+     * Gets the next song in the queue
+     *
+     * Gets ahold of the new song in queue by checking the index of the list.
+     * When the media is ready to play we set the duration of the new
+     * MediaPlayer
+     *
+     * //TODO : Needs to add MORE than just mpduration (I think?)
+     */
+    public void getNewSongInQue()
+    {
+        newMedias();
+        stopMediaPlayer();
+
+        for (int index = 0; index < getQueueList().size(); index++)
+        {
+            newFile = new File(getQueueList().get(index).getLocation());
+            song = new Media(newFile.toURI().toString());
+            getMedias().add(song);
+        }
+        getMediaPlayer().setOnReady(() ->
+        {
+            updateDuration();
+        });
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
@@ -248,55 +327,6 @@ public class MainWindowModel
             this.playlists.removeAll(playlists);
         }
     }
-    //</editor-fold>
-
-    /**
-     * Goes through song files, and gets their name. Returns a list with their
-     * name.
-     *
-     * @param chosenFiles
-     *
-     * @return
-     *
-     * @throws SQLException
-     */
-    public List<String> getPath(List<File> chosenFiles) throws SQLException
-    {
-        List<String> songPath = new ArrayList();
-        for (int j = 0; j < chosenFiles.size(); j++)
-        {
-            songPath.add(chosenFiles.get(j).getName());
-        }
-        return songPath;
-    }
-
-    public void setPathAndName(List<File> chosenFiles) throws IOException
-    {
-
-        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
-        for (int j = 0; j < chosenFiles.size(); j++)
-
-        {
-            System.out.println(chosenFiles.get(j).getName());
-        }
-    }
-
-    public void writeMusicFolderPath(String path) throws IOException
-    {
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
-        {
-            writer.write(path);
-        }
-    }
-    
-    
-    public void setMetaData(List<File> chosenFiles) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException
-    { 
- 
-                meta.MetaData(chosenFiles);
-
-    }
 
     /**
      * Searches through the given list for a match
@@ -353,6 +383,97 @@ public class MainWindowModel
         });
         return searchResult;
     }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters">
+    /**
+     * Goes through song files, and gets their name. Returns a list with their
+     * name.
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public List<String> getPath(List<File> chosenFiles) throws SQLException
+    {
+        List<String> songPath = new ArrayList();
+        for (int i = 0; i < chosenFiles.size(); i++)
+        {
+            songPath.add(chosenFiles.get(i).getName());
+        }
+        return songPath;
+    }
+
+    public boolean isPlaying()
+    {
+        return playing;
+    }
+
+    public void updateStatus()
+    {
+//        this.mStatus = this.mPlayer.getStatus();
+        this.mStatus = this.queueMedia.get(currentSong).getStatus();
+    }
+
+    public Status getMediaStatus()
+    {
+        return this.mStatus;
+    }
+
+    public MediaPlayer getMediaPlayer()
+    {
+//        return this.mPlayer;
+        return this.queueMedia.get(currentSong);
+    }
+
+    public List<Media> getMedias()
+    {
+        return this.medias;
+    }
+
+    public double getVolume()
+    {
+//        return (this.mPlayer.getVolume() * 100.0) / 100.0;
+        return (this.queueMedia.get(currentSong).getVolume() * 100.0) / 100.0;
+    }
+
+    public Duration getCurrentTime()
+    {
+//        return this.mPlayer.getCurrentTime();
+        return this.queueMedia.get(currentSong).getCurrentTime();
+    }
+
+    public Duration getduration()
+    {
+        return this.mpduration;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Setters">
+    public void setPathAndName(List<File> chosenFiles) throws IOException
+    {
+
+        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
+        for (int i = 0; i < chosenFiles.size(); i++)
+
+        {
+            System.out.println(chosenFiles.get(i).getName());
+        }
+    }
+
+    public void setMetaData(List<File> chosenFiles) throws IOException,
+                                                           CannotReadException,
+                                                           FileNotFoundException,
+                                                           ReadOnlyFileException,
+                                                           TagException,
+                                                           InvalidAudioFrameException
+    {
+
+        meta.MetaData(chosenFiles);
+
+    }
 
     public void setPlayckSpeed(int playbackIndex)
     {
@@ -364,31 +485,31 @@ public class MainWindowModel
              */
             case 0:
                 System.out.println("50%");
-                mPlayer.setRate(0.5);
+                this.queueMedia.get(playbackIndex).setRate(0.5);
                 break;
             case 1:
                 System.out.println("75%");
-                mPlayer.setRate(0.75);
+                this.queueMedia.get(playbackIndex).setRate(0.75);
                 break;
             case 2:
                 System.out.println("100%");
-                mPlayer.setRate(1.0);
+                this.queueMedia.get(playbackIndex).setRate(1.0);
                 break;
             case 3:
                 System.out.println("125%");
-                mPlayer.setRate(1.25);
+                this.queueMedia.get(playbackIndex).setRate(1.25);
                 break;
             case 4:
                 System.out.println("150%");
-                mPlayer.setRate(1.5);
+                this.queueMedia.get(playbackIndex).setRate(1.5);
                 break;
             case 5:
                 System.out.println("175%");
-                mPlayer.setRate(1.75);
+                this.queueMedia.get(playbackIndex).setRate(1.75);
                 break;
             case 6:
                 System.out.println("200%");
-                mPlayer.setRate(2.0);
+                this.queueMedia.get(playbackIndex).setRate(2.0);
                 break;
             default:
                 break;
@@ -400,49 +521,63 @@ public class MainWindowModel
         this.playing = isPlaying;
     }
 
-    public boolean isPlaying()
+    public void setMediaPlayer(MediaPlayer mediaPlayer)
     {
-        return playing;
+        this.mediaPlayer = mediaPlayer;
     }
 
-    public void updateStatus()
+    public void setLooping()
     {
-        this.mStatus = this.mPlayer.getStatus();
+//        this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        this.queueMedia.get(currentSong).setCycleCount(MediaPlayer.INDEFINITE);
+        this.looping = false;
     }
 
-    public Status getMediaStatus()
+    public void setVolume(double value)
     {
-        return this.mStatus;
+//        this.mediaPlayer.setVolume(value);
+        this.queueMedia.get(currentSong).setVolume(value);
+        if (value > 3 && value < 0)
+        {
+//            mediaPlayer.setVolume(5);
+            this.queueMedia.get(currentSong).setVolume(5);
+        }
+    }
+
+    public void setSong(Media media)
+    {
+        this.song = media;
+
+        this.setMediaPlayer(new MediaPlayer(this.song));
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Commands">
+    public void writeMusicFolderPath(String path) throws IOException
+    {
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
+        {
+            writer.write(path);
+        }
     }
 
     public void stopMediaPlayer()
     {
-        this.mPlayer.stop();
+//        this.mediaPlayer.stop();
+        this.queueMedia.get(currentSong).stop();
     }
 
     public void updateDuration()
     {
-        this.mpduration = this.mPlayer.getTotalDuration();
-    }
-
-    public MediaPlayer getMediaPlayer()
-    {
-        return this.mPlayer;
+//        this.mpduration = this.mediaPlayer.getTotalDuration();
+        this.mpduration = this.queueMedia.get(currentSong).getTotalDuration();
     }
 
     public void startMediaPlayer()
     {
-        this.mPlayer.play();
-    }
-
-    public List<Media> getMedias()
-    {
-        return this.medias;
-    }
-
-    public void setMediaPlayer(MediaPlayer mediaPlayer)
-    {
-        this.mPlayer = mediaPlayer;
+//        this.mediaPlayer.play();
+        this.queueMedia.get(currentSong).play();
     }
 
     public void reverseLooping()
@@ -452,49 +587,14 @@ public class MainWindowModel
 
     public void pauseMediaPlayer()
     {
-        this.mPlayer.pause();
-    }
-
-    public void setLooping()
-    {
-        this.mPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        this.looping = false;
-    }
-
-    public double getVolume()
-    {
-        return (this.mPlayer.getVolume() * 100.0) / 100.0;
-    }
-
-    public void setVolume(double value)
-    {
-        this.mPlayer.setVolume(value);
-        if (value > 3 && value < 0)
-        {
-            mPlayer.setVolume(5);
-        }
-    }
-
-    public Duration getCurrentTime()
-    {
-        return this.mPlayer.getCurrentTime();
-    }
-
-    public Duration getduration()
-    {
-        return this.mpduration;
+//        this.mediaPlayer.pause();
+        this.queueMedia.get(currentSong).pause();
     }
 
     public void seek(Duration seconds)
     {
-        this.mPlayer.seek(seconds);
-    }
-
-    public void setSong(Media media)
-    {
-        this.song = media;
-
-        this.setMediaPlayer(new MediaPlayer(this.song));
+//        this.mediaPlayer.seek(seconds);
+        this.queueMedia.get(currentSong).seek(seconds);
     }
 
     /**
@@ -534,7 +634,7 @@ public class MainWindowModel
 
     public void newMedias()
     {
-        this.medias = new ArrayList<>();
+        this.medias = FXCollections.observableArrayList();
     }
 
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
@@ -592,9 +692,9 @@ public class MainWindowModel
         double freq = START_FREQ;
         double median = eqMax - eqMin;
 
-        for (int j = 0; j < AMOUNT_OF_BANDS; j++)
+        for (int i = 0; i < AMOUNT_OF_BANDS; i++)
         {
-            double theta = (double) j / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
+            double theta = (double) i / (double) (AMOUNT_OF_BANDS - 1) * (2 * Math.PI);
 
             double scale = 0.4 * (1 + Math.cos(theta));
 
@@ -605,89 +705,24 @@ public class MainWindowModel
             freq *= 2;
         }
 
-        for (int j = 0; j < bands.size(); j++)
+        for (int i = 0; i < bands.size(); i++)
         {
-            EqualizerBand eb = bands.get(j);
+            EqualizerBand eb = bands.get(i);
 
             //gridEqualizer.add(eb, 0, 0);
         }
     }
+    //</editor-fold>
 
-    /**
-     * Gets ahold of the new song in queue by checking the index of the list.
-     * When the media is ready to play we set the duration of the new
-     * MediaPlayer
-     *
-     * //TODO : Needs to add MORE than just mpduration (I think?)
-     */
-    public void getNewSongInQue()
+    private void playNextSong()
     {
-        newMedias();
-        stopMediaPlayer();
+        int queueSize = this.queue.size() - 1;
+        System.out.println(queueSize);
 
-        for (int index = 0; index < getQueueList().size(); index++)
-        {
-            newFile = new File(getQueueList().get(index).getLocation());
-            song = new Media(newFile.toURI().toString());
-            getMedias().add(song);
-        }
-        getMediaPlayer().setOnReady(() ->
-        {
-            updateDuration();
-        });
-    }
-
-    public void setupQueueListener()
-    {
-        this.queue.addListener((Change<? extends Music> c) ->
-        {
-            // Must be called to initiate the change listener
-            c.next();
-
-            // If there has been added something to the queue
-            if (!c.getAddedSubList().isEmpty())
-            {
-                // Go though each new item and make a mediaplayer for them
-                c.getAddedSubList().forEach((music) ->
-                {
-                    File file = new File(music.getLocation());
-                    Media media = new Media(file.toURI().toString());
-                    MediaPlayer mp = new MediaPlayer(media);
-
-                    mp.setOnEndOfMedia(() ->
-                    {
-                        System.out.println("Ze endo");
-                    });
-
-                    // Add this new media player to a parallel list to the queue
-                    this.queueMedia.add(mp);
-                });
-            }
-
-            // If some thing has been removed from the list
-            if (!c.getRemoved().isEmpty())
-            {
-                // Go through the queue media list
-                for (int j = 0; j < queueMedia.size(); j++)
-                {
-                    // For every entry in the queue media compare it to the
-                    // every entry in the removed list
-                    String storedMedia = queueMedia.get(j).getMedia().getSource();
-
-                    for (int k = 0; k < c.getRemoved().size(); k++)
-                    {
-                        File file = new File(c.getRemoved().get(k).getLocation());
-                        String removedMedia = file.toURI().toString();
-
-                        if (storedMedia.equals(removedMedia))
-                        {
-                            queueMedia.remove(j);
-                            j--;
-                        }
-                    }
-
-                }
-            }
-        });
+        // If queue does not have next stop playing
+        // If queue has next play next
+        currentSong++;
+        setSong(this.queueMedia.get(currentSong).getMedia());
+        startMediaPlayer();
     }
 }
