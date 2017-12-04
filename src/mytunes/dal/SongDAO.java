@@ -25,6 +25,7 @@ public class SongDAO
     {
         try (Connection con = db.getConnection())
         {
+
             List<Music> allSongs = new ArrayList<>();
 
             String sql = "SELECT Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname "
@@ -48,6 +49,7 @@ public class SongDAO
 
 
             return allSongs;
+
 
         }
     }
@@ -407,6 +409,7 @@ public class SongDAO
         song.setSongPathName(rs.getString("pathname"));
         song.SetDescription(rs.getString("description"));
         song.setDuration(rs.getInt("duration"));
+
         
         return song;
     }
@@ -426,6 +429,7 @@ public class SongDAO
         
         try (Connection con = db.getConnection())
         {
+
 
             String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
@@ -476,16 +480,16 @@ public class SongDAO
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                        + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                       + "INNER JOIN Path ON Songs.pathid = path.id "
                        + "WHERE Songs.id = ?";
 
-                PreparedStatement preparedStatement = con.prepareStatement(sql);
-                preparedStatement.setInt(1, id);
-                preparedStatement.executeQuery();
-
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeQuery();
+        
          
         }
     }
+    
     
     
      /**

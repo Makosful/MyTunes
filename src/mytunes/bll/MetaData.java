@@ -4,8 +4,6 @@ import com.sun.javaws.Main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +91,9 @@ public class MetaData {
             {
                 try
                 {
+
                     bllManager.setRelationIds(track);
+                  
                 }
                 catch (SQLException ex)
                 {
