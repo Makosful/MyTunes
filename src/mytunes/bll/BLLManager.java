@@ -68,4 +68,26 @@ public class BLLManager
     {
         plDAO.removePlaylist(playlist);
     }
+
+    /**
+     * Gets the index of an item in a List
+     *
+     * @param item The object to look for
+     * @param list The List to look in
+     *
+     * @return Returns the index of the item if it has been found. If the item
+     *         does not exist in the List, thsi will return -1
+     */
+    public int getIndexOf(Music item, List<Music> list)
+    {
+        for (int i = 0; i < list.size(); i++)
+        {
+            if (list.get(i).equals(item))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }
