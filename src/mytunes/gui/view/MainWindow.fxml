@@ -83,6 +83,15 @@
                                 <Insets left="5.0" />
                             </padding>
                         </Label>
+            
+                    <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Option 1" />
+                            <MenuItem mnemonicParsing="false" text="Option 2" />
+                            <MenuItem mnemonicParsing="false" text="Option 3" />
+                            <MenuItem mnemonicParsing="false" text="Option 4" />
+                        </items>
+                    </MenuButton>
 
                     </children>
                     <FlowPane.margin>
@@ -223,14 +232,5 @@
             </children>
         </Pane>
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" />
-
-        <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" layoutX="1639.0" layoutY="766.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
-            <items>
-                <MenuItem mnemonicParsing="false" text="Option 1" />
-                <MenuItem mnemonicParsing="false" text="Option 2" />
-                <MenuItem mnemonicParsing="false" text="Option 3" />
-                <MenuItem mnemonicParsing="false" text="Option 4" />
-            </items>
-        </MenuButton>
     </children>
 </AnchorPane>
