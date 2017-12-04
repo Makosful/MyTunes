@@ -1039,10 +1039,16 @@ public class MainWindowController implements Initializable
     @FXML
     private void prevSong(ActionEvent event)
     {
+        wm.stopMediaPlayer();
+        wm.skipToPrevSong();
+        prepareAndPlay();
     }
 
     @FXML
     private void nextSong(ActionEvent event)
     {
+        wm.stopMediaPlayer();
+        wm.skipToNextSong();
+        prepareAndPlay();
     }
 }

@@ -766,7 +766,7 @@ public class MainWindowModel
      */
     public void skipToNextSong()
     {
-        if (currentSong < queue.size())
+        if (currentSong < queue.size() - 1)
         {
             currentSongNext();
         }
