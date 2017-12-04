@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXToggleButton?>
@@ -14,6 +15,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
@@ -122,7 +124,7 @@
             </menus>
         </MenuBar>
 
-        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0">
+        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="100.0">
             <columns>
                 <TableColumn fx:id="clmNr" prefWidth="75.0" text="Nr." />
                 <TableColumn fx:id="clmTitle" prefWidth="75.0" text="Title" />
@@ -232,5 +234,19 @@
             </children>
         </Pane>
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" />
+      <TextField fx:id="txtTableSearch" layoutX="450.0" layoutY="40.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0" />
+      <HBox alignment="CENTER_RIGHT" layoutX="440.0" layoutY="60.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="70.0">
+         <children>
+            <JFXCheckBox fx:id="searchTagTitle" onAction="#searchTable" selected="true" text="Title" textFill="WHITE" />
+            <JFXCheckBox fx:id="searchTagArtist" onAction="#searchTable" selected="true" text="Artist" textFill="WHITE" />
+            <JFXCheckBox fx:id="searchTagAlbum" layoutX="73.0" layoutY="15.0" onAction="#searchTable" selected="true" text="Album" textFill="WHITE" />
+            <JFXCheckBox fx:id="searchTagDesc" layoutX="137.0" layoutY="15.0" onAction="#searchTable" selected="true" text="Description" textFill="WHITE" />
+            <JFXCheckBox fx:id="searchTagYear" layoutX="207.0" layoutY="15.0" onAction="#searchTable" selected="true" text="Year" textFill="WHITE" />
+            <JFXCheckBox fx:id="searchTagGenre" layoutX="303.0" layoutY="15.0" onAction="#searchTable" selected="true" text="Genre" textFill="WHITE" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </HBox>
     </children>
 </AnchorPane>

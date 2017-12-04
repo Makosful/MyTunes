@@ -782,4 +782,16 @@ public class MainWindowModel
             currentSongPrev();
         }
     }
+
+    /**
+     * Search the storage for songs
+     *
+     * @param text    The text to search for
+     * @param filters The filters to apply for the earch
+     */
+    public void songSearch(String text, ArrayList<String> filters)
+    {
+        // Once the seach feature has been built, call it here
+        System.out.println(filters);
+    }
 }
