@@ -11,6 +11,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -415,6 +417,8 @@ public class MainWindowController implements Initializable
         cm.getItems().add(loadSong);
         loadSong.setOnAction(action ->
         {
+            
+            
             try
             {
                 LoadMediaFiles(action);
@@ -443,6 +447,8 @@ public class MainWindowController implements Initializable
             {
                 Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+
         });
 
         // Creates a new item for the menu and puts it in

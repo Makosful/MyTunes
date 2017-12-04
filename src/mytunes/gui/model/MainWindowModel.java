@@ -330,25 +330,6 @@ public class MainWindowModel
 
     //</editor-fold>
 
-    /**
-     * Goes through song files, and gets their name. Returns a list with their
-     * name.
-     *
-     * @param chosenFiles
-     *
-     * @return
-     *
-     * @throws SQLException
-     */
-    public List<String> getPath(List<File> chosenFiles) throws SQLException
-    {
-        List<String> songPath = new ArrayList();
-        for (int j = 0; j < chosenFiles.size(); j++)
-        {
-            songPath.add(chosenFiles.get(j).getName());
-        }
-        return songPath;
-    }
 
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
@@ -370,13 +351,6 @@ public class MainWindowModel
         }
     }
     
-    
-    public void setMetaData(List<File> chosenFiles) throws IOException, CannotReadException, FileNotFoundException, ReadOnlyFileException, TagException, InvalidAudioFrameException
-    { 
-               
-               meta.MetaData(chosenFiles);
-
-    }
 
 
     /**
@@ -503,16 +477,7 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
-    public void setPathAndName(List<File> chosenFiles) throws IOException
-    {
 
-        writeMusicFolderPath(chosenFiles.get(0).getAbsolutePath());
-        for (int i = 0; i < chosenFiles.size(); i++)
-
-        {
-            System.out.println(chosenFiles.get(i).getName());
-        }
-    }
 
     public void setMetaData(List<File> chosenFiles) throws IOException,
                                                            CannotReadException,
@@ -604,14 +569,7 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Commands">
-    public void writeMusicFolderPath(String path) throws IOException
-    {
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("path.txt")))
-        {
-            writer.write(path);
-        }
-    }
 
     public void stopMediaPlayer()
     {
