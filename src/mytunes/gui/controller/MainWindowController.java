@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +23,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -392,7 +395,7 @@ public class MainWindowController implements Initializable
         setupQueueMouseListener();
 
         // Sets up change listener for the queue list
-        wm.setupQueueListener();
+        setupQueueListener();
     }
 
     /**
@@ -949,5 +952,76 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
+    }
+
+    public void setupQueueListener()
+    {
+        wm.getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        playNextSong();
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    wm.getQueueListMedia().add(mp);
+
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int i = 0; i < wm.getQueueListMedia().size(); i++)
+                {
+                    // Gets the full path for the current media
+                    String storedMedia = wm.getQueueListMedia().get(i).getMedia().getSource();
+
+                    // Goes through
+                    for (int j = 0; j < c.getRemoved().size(); j++)
+                    {
+                        File file = new File(c.getRemoved().get(j).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            wm.getQueueListMedia().remove(i);
+                            i--;
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    private void playNextSong()
+    {
+        int queueSize = wm.getQueueList().size() - 1;
+
+        // If the currently playing song is at an index smaller than the queue
+        // size, then it has a next
+        if (wm.getCurrentSong() < queueSize)
+        {
+            wm.currentSongNext();
+            wm.setSong(wm.getQueueListMedia().get(wm.getCurrentSong()).getMedia());
+            prepareAndPlay();
+        }
+        // Else do nothing
+        // This will get it to stop playing entirely
     }
 }

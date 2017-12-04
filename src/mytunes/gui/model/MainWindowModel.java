@@ -193,10 +193,10 @@ public class MainWindowModel
                 // Go through the queue media list
                 for (int i = 0; i < queueMedia.size(); i++)
                 {
-                    // For every entry in the queue media compare it to the
-                    // every entry in the removed list
+                    // Gets the full path for the current media
                     String storedMedia = queueMedia.get(i).getMedia().getSource();
 
+                    // Goes through
                     for (int j = 0; j < c.getRemoved().size(); j++)
                     {
                         File file = new File(c.getRemoved().get(j).getLocation());
@@ -724,5 +724,20 @@ public class MainWindowModel
         currentSong++;
         setSong(this.queueMedia.get(currentSong).getMedia());
         startMediaPlayer();
+    }
+
+    public void currentSongNext()
+    {
+        currentSong++;
+    }
+
+    public int getCurrentSong()
+    {
+        return currentSong;
+    }
+
+    public ObservableList<MediaPlayer> getQueueListMedia()
+    {
+        return this.queueMedia;
     }
 }
