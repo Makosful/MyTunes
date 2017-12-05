@@ -69,8 +69,6 @@ public class MainWindowModel
     private int currentSong = 0;
     //</editor-fold>
 
-    
-    
     /**
      * Constructor
      */
@@ -424,15 +422,28 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
-    public void setMetaData(List<File> chosenFiles) throws IOException,
-                                                           CannotReadException,
-                                                           FileNotFoundException,
-                                                           ReadOnlyFileException,
-                                                           TagException,
-                                                           InvalidAudioFrameException
+    /**
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws IOException
+     * @throws CannotReadException
+     * @throws FileNotFoundException
+     * @throws ReadOnlyFileException
+     * @throws TagException
+     * @throws InvalidAudioFrameException
+     */
+    public List<Music> setMetaData(List<File> chosenFiles) throws IOException,
+                                                                  CannotReadException,
+                                                                  FileNotFoundException,
+                                                                  ReadOnlyFileException,
+                                                                  TagException,
+                                                                  InvalidAudioFrameException
     {
 
-        meta.MetaData(chosenFiles);
+        return meta.MetaData(chosenFiles);
 
     }
 
@@ -748,16 +759,17 @@ public class MainWindowModel
         search.prepareSearch(filters, text);
         System.out.println("Eurika!");
     }
+    
     // Opens a new FXML Window (editSong)
     public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
     {
         File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
         FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
-        
+
         Parent root = fxLoader.load();
         EditSongController controller = fxLoader.getController();
         fxLoader.setController(controller);
-        
+
         Scene scene = new Scene(root);
         Stage stage = new Stage();
         stage.setTitle("Edit song");
@@ -766,7 +778,8 @@ public class MainWindowModel
         controller.getSongIdFromMainController(songIdFromTable);
         stage.show();
     }
-        // Goes through the controller, takes the id of the song.
+    // Goes through the controller, takes the id of the song.
+
     public int getSongId(int id)
     {
         songIdFromTable = id;

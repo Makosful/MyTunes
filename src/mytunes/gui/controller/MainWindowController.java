@@ -9,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -45,7 +43,7 @@ public class MainWindowController implements Initializable
 
     // Model
     private MainWindowModel wm;
-    
+
     private Music musicInfo;
 
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
@@ -277,7 +275,7 @@ public class MainWindowController implements Initializable
 
                 lblTitle.setText(selectedItem.getTitle());
 
-                lblAlbum.setText(selectedItem.getTitle());
+                lblAlbum.setText(selectedItem.getAlbum());
 
                 lblYear.setText(String.valueOf(selectedItem.getYear()));
 
@@ -435,29 +433,9 @@ public class MainWindowController implements Initializable
             {
                 LoadMediaFiles(action);
             }
-            catch (IOException ex)
+            catch (IOException | CannotReadException | ReadOnlyFileException | TagException | InvalidAudioFrameException | SQLException ex)
             {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (CannotReadException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (ReadOnlyFileException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (TagException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (InvalidAudioFrameException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (SQLException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
 
         });
@@ -469,23 +447,24 @@ public class MainWindowController implements Initializable
         {
             clearQueue(action);
         });
-        
+
         MenuItem editSong = new MenuItem("Edit Song");
         cm.getItems().add(editSong);
         editSong.setOnAction((event) ->
         {
             try
-            {              
+            {
                 musicInfo = tblSongList.getSelectionModel().getSelectedItem();
                 getSongId();
-                
-               String title = musicInfo.getTitle();
-               String artist = musicInfo.getArtist();
-               int time = musicInfo.getDuration();
-               String genre = musicInfo.getGenre();
-               String pathName = musicInfo.getSongPathName();
-               //Opens new Edit Song Window, with the songs info.
-               wm.openEditSongWindow(title, artist, time, pathName, genre);
+                String title = musicInfo.getTitle();
+                String artist = musicInfo.getArtist();
+                int time = musicInfo.getDuration();
+                String genre = musicInfo.getGenre();
+                String pathName = musicInfo.getSongPathName();
+                System.out.println(pathName);
+                System.out.println(time);
+
+                wm.openEditSongWindow(title, artist, time, pathName, genre);
             }
             catch (IOException ex)
             {
@@ -694,9 +673,23 @@ public class MainWindowController implements Initializable
                 // Go though each new item and make a mediaplayer for them
                 c.getAddedSubList().forEach((music) ->
                 {
+                    System.out.println();
+                    System.out.println("Location");
                     System.out.println(music.getLocation());
+                    System.out.println();
+                    System.out.println("Path Name");
                     System.out.println(music.getSongPathName());
-                    File file = new File(music.getLocation());
+                    System.out.println();
+                    System.out.println("Full path");
+                    System.out.println(
+                            music.getLocation()
+                            + "/"
+                            + music.getSongPathName()
+                    );
+                    System.out.println("END");
+                    System.out.println();
+
+                    File file = new File(music.getLocation() + "/" + music.getSongPathName());
                     Media media = new Media(file.toURI().toString());
                     MediaPlayer mp = new MediaPlayer(media);
 
@@ -1209,27 +1202,28 @@ public class MainWindowController implements Initializable
 
             try
             {
-                wm.setMetaData(chosenFiles);
+                List<Music> addedMusic = wm.setMetaData(chosenFiles);
                 wm.loadSongList();
                 tblSongList.setItems(wm.getSongList());
+                wm.getQueueList().addAll(addedMusic);
+                prepareSetup();
             }
             catch (InvalidAudioFrameException ex)
             {
                 System.out.println(ex.getMessage());
             }
 
-            for (int index = 0; index < chosenFiles.size(); index++)
-            {
-                wm.getQueueList().add(new Music(
-                        0,
-                        chosenFiles.get(index).getName(),
-                        chosenFiles.get(index).getName(),
-                        chosenFiles.get(index).getName(),
-                        9999,
-                        chosenFiles.get(index).getAbsolutePath()
-                ));
-            }
-
+//            for (int index = 0; index < chosenFiles.size(); index++)
+//            {
+//                wm.getQueueList().add(new Music(
+//                        0,
+//                        chosenFiles.get(index).getName(),
+//                        chosenFiles.get(index).getName(),
+//                        chosenFiles.get(index).getName(),
+//                        9999,
+//                        chosenFiles.get(index).getAbsolutePath()
+//                ));
+//            }
         }
         else
         {
@@ -1282,7 +1276,7 @@ public class MainWindowController implements Initializable
     private void progressDrag(MouseEvent event)
     {
     }
-    
+
     // Taking specific songs id, and sending it to the mainwindowmodel.
     private int getSongId()
     {
