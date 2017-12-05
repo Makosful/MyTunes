@@ -478,16 +478,14 @@ public class MainWindowController implements Initializable
             {              
                 musicInfo = tblSongList.getSelectionModel().getSelectedItem();
                 getSongId();
+                
                String title = musicInfo.getTitle();
                String artist = musicInfo.getArtist();
                int time = musicInfo.getDuration();
                String genre = musicInfo.getGenre();
                String pathName = musicInfo.getSongPathName();
-                System.out.println(pathName);
-                System.out.println(time);
-               
-                wm.openEditSongWindow(title, artist, time, pathName, genre);
-                
+               //Opens new Edit Song Window, with the songs info.
+               wm.openEditSongWindow(title, artist, time, pathName, genre);
             }
             catch (IOException ex)
             {
