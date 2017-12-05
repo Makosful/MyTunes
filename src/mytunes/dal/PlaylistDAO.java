@@ -30,9 +30,7 @@ public class PlaylistDAO
 
     /**
      * gets all playlists
-     *
-     * @return
-     *
+     * @return all playlists in a ArrayList
      * @throws SQLException
      */
     public List<Playlist> getPlaylists() throws SQLException
@@ -111,6 +109,7 @@ public class PlaylistDAO
 
     }
 
+
     public ObservableList<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
@@ -134,7 +133,7 @@ public class PlaylistDAO
             {
 
                 Music song = sDAO.createSongFromDB(rs);
-
+                //System.out.println(song.getArtist());
                 allSongs.add(song);
             }
 
