@@ -50,14 +50,24 @@ public class PlaylistDAO
      * Adds a new playlist to the database
      * @param playlistTitle
      */
-    public void addPlaylist(String playlistTitle) throws SQLServerException, SQLException
+    public int addPlaylist(String playlistTitle) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
+            int id;
+            
             String sqlInsert = "INSERT INTO Playlists SET (playlist) VALUES (?)";
-            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
+            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, playlistTitle);
             preparedStatementInsert.executeUpdate();
+            
+            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
+
+            rsi.next();
+
+            id = rsi.getInt(1);
+
+            return id;
         }
 
     }
