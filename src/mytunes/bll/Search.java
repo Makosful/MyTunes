@@ -59,13 +59,15 @@ public class Search
                
                searchTables.add("Genre.genre");
                
-           }else if(criteria.equalsIgnoreCase("year"))
+           }
+           /*
+           else if(criteria.equalsIgnoreCase("year"))
            {
                
-               searchTables.add("Albums.releasedate");
+               searchTables.add("Songs.releasedate");
                
            }
-           
+           */
             
         }
      

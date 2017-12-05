@@ -23,6 +23,7 @@ import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
 import mytunes.bll.MetaData;
+import mytunes.bll.Search;
 import mytunes.gui.controller.CreatePlaylistWindowController;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
@@ -46,6 +47,7 @@ public class MainWindowModel
     // Class references
     private BLLManager bllManager;
     private MetaData meta;
+    private Search search;
 
     // Static variables
     private static final double START_FREQ = 250;
@@ -73,6 +75,7 @@ public class MainWindowModel
         {
             this.meta = new MetaData();
             this.bllManager = new BLLManager();
+            this.search = new Search();
             this.allSongs = FXCollections.observableArrayList();
             this.queue = FXCollections.observableArrayList();
             this.queueMedia = FXCollections.observableArrayList();
@@ -798,9 +801,10 @@ public class MainWindowModel
      * @param text    The text to search for
      * @param filters The filters to apply for the earch
      */
-    public void songSearch(String text, ArrayList<String> filters)
+    public void songSearch(String text, ArrayList<String> filters) throws SQLException
     {
-        // Once the seach feature has been built, call it here
+
+        search.prepareSearch(filters, text);
         System.out.println(filters);
     }
 }

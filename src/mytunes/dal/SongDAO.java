@@ -508,7 +508,7 @@ public class SongDAO
         {
             
        
-            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
