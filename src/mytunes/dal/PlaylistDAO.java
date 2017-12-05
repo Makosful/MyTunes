@@ -48,16 +48,15 @@ public class PlaylistDAO
 
     /**
      * Adds a new playlist to the database
-     *
-     * @param playlist
+     * @param playlistTitle
      */
-    public void addPlaylist(Playlist playlist) throws SQLServerException, SQLException
+    public void addPlaylist(String playlistTitle) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
             String sqlInsert = "INSERT INTO Playlists SET (playlist) VALUES (?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
-            preparedStatementInsert.setString(1, playlist.getTitle());
+            preparedStatementInsert.setString(1, playlistTitle);
             preparedStatementInsert.executeUpdate();
         }
 
@@ -65,8 +64,7 @@ public class PlaylistDAO
 
     /**
      * Removes a playlist from the database
-     *
-     * @param playlist
+     * @param id
      */
     public void removePlaylist(int id) throws SQLServerException, SQLException
     {
