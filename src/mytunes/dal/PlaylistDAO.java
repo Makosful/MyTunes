@@ -169,7 +169,7 @@ public class PlaylistDAO
         Playlist pl = new Playlist();
 
         pl.setId(rs.getInt("id"));
-        pl.setTitle("playlist");
+        pl.setTitle(rs.getString("playlist"));
 
         return pl;
     }
