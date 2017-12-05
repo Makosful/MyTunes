@@ -21,7 +21,7 @@ public class EditSongModel
     {
         this.bllManager = new BLLManager();
     }
-    
+     // Changes the song's info.
     public void editSongDatabase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
     String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
     {
