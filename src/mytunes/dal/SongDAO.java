@@ -459,8 +459,6 @@ public class SongDAO
             {
                 Music song = createSongFromDB(rs);
 
-                System.out.println(song.getArtist());
-
                 return song;
 
             }
