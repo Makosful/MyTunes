@@ -50,11 +50,23 @@ public class BLLManager
         List<Playlist> playlists = plDAO.getPlaylists();
         for (int i = 0; i < playlists.size(); i++)
         {
-            System.out.println(i);
             playlists.get(i).setPlaylist(
                     plDAO.getPlaylistSongs(
                             playlists.get(i).getId()
                     ));
+//            System.out.println();
+//            System.out.println("Playlist Id");
+//            System.out.println(playlists.get(i).getId());
+//            System.out.println("Playlist Name");
+//            System.out.println(playlists.get(i).getTitle());
+//            for (Music music : playlists.get(i).getPlaylist())
+//            {
+//                System.out.println();
+//                System.out.println("Music Id");
+//                System.out.println(music.getId());
+//                System.out.println("Music Title");
+//                System.out.println(music.getTitle());
+//            }
         }
         return playlists;
     }
@@ -63,6 +75,8 @@ public class BLLManager
      * Removes a playlist from the database
      *
      * @param playlist
+     *
+     * @throws java.sql.SQLException
      */
     public void removePlaylist(Playlist playlist) throws SQLException
     {
