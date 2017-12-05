@@ -75,6 +75,7 @@ public class BLLManager
     {
         songDAO.editSong(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
     }
+    
      /**
      * Determines which id should be used in the song table, if the artist/album/genre 
      * already exists get the id from those, else get the newly inserted id's
@@ -91,42 +92,7 @@ public class BLLManager
         int pathId;
         int locationId;
         
-        //Determine if the artist already is in the db, and get the resulting id
-        int getArtistId = songDAO.getExistingArtist(song.getArtist());
-        if(getArtistId != 0){
-            
-            artistId = getArtistId;
-        }
-        else
-        {
-            artistId = songDAO.setArtist(song.getArtist());
-        }
         
-        //Determine if the album already is in the db, and get the resulting id
-        int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
-        if(getAlbumId != 0){ 
-            
-            albumId = getAlbumId;
-        }
-        else
-        {
-            albumId = songDAO.setAlbum(song.getAlbum());
-        }
-        
-        //Determine if the genre already is in the db, and get the resulting id
-        int getGenreId = songDAO.getExistingGenre(song.getGenre());
-        if(getGenreId != 0){
-            
-            genreId = getGenreId; 
-            
-        }
-        else
-        {
-            
-            genreId = songDAO.setGenre(song.getGenre());
-            
-        }
-
         //Determine if the location already is in the db, and get the resulting id
         int getLocationId = songDAO.getExistingLocation(song.getLocation());
         if(getLocationId != 0)
@@ -139,9 +105,51 @@ public class BLLManager
         }
         
         
+        
+        // Determine if the location already is in the db, and get the resulting id
+        // If the location(path) and pathname(something.mp3) already exsists in the
+        // db stop the proccess of uploading to the db
         int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
         if(getPathId == 0){
-            
+        
+            //Determine if the artist already is in the db, and get the resulting id
+            int getArtistId = songDAO.getExistingArtist(song.getArtist());
+            if(getArtistId != 0){
+
+                artistId = getArtistId;
+            }
+            else
+            {
+                artistId = songDAO.setArtist(song.getArtist());
+            }
+
+            //Determine if the album already is in the db, and get the resulting id
+            int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
+            if(getAlbumId != 0){ 
+
+                albumId = getAlbumId;
+            }
+            else
+            {
+                albumId = songDAO.setAlbum(song.getAlbum());
+            }
+
+            //Determine if the genre already is in the db, and get the resulting id
+            int getGenreId = songDAO.getExistingGenre(song.getGenre());
+            if(getGenreId != 0){
+
+                genreId = getGenreId; 
+
+            }
+            else
+            {
+
+                genreId = songDAO.setGenre(song.getGenre());
+
+            }
+
+
+
 
             pathId = songDAO.setPath(song.getSongPathName(), locationId);
 
