@@ -1202,10 +1202,11 @@ public class MainWindowController implements Initializable
 
             try
             {
-                wm.setMetaData(chosenFiles);
+                List<Music> addedMusic = wm.setMetaData(chosenFiles);
                 wm.loadSongList();
                 tblSongList.setItems(wm.getSongList());
-                wm.getQueueList().addAll(wm.getSongList());
+                wm.getQueueList().addAll(addedMusic);
+                prepareSetup();
             }
             catch (InvalidAudioFrameException ex)
             {
