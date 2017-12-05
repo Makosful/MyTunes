@@ -58,7 +58,6 @@ public class SongDAO
      * Gets the ids and inserts the song parameters/ creates the song in the songs table
      * @param song
      * @param relationIds
-     * @return 
      * @throws SQLServerException
      * @throws SQLException
      */
