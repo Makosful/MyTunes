@@ -115,7 +115,7 @@ public class PlaylistDAO
         {
             List<Music> allSongs = new ArrayList<>();
 
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Songs.releasedate, Genre.genre, Path.pathname "
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
