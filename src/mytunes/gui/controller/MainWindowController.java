@@ -289,7 +289,7 @@ public class MainWindowController implements Initializable
 
                 lblTitle.setText(selectedItem.getTitle());
 
-                lblAlbum.setText(selectedItem.getTitle());
+                lblAlbum.setText(selectedItem.getAlbum());
 
                 lblYear.setText(String.valueOf(selectedItem.getYear()));
 

@@ -105,7 +105,7 @@ public class EditSongController implements Initializable
         oldFile = file;
     }
     /**
-     * Returns the new title, artist, t
+     * Returns the new title, artist, etc.
      * @return 
      */
     public String getTitle()
@@ -159,7 +159,7 @@ public class EditSongController implements Initializable
         esModel.editSongDatabase(getOldTitle(), getTitle(),getOldArtist(), getArtist(),getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
         System.out.println("test");
     }
-
+    // Cancels the changes / No changes made to song.
     @FXML
     private void cancelChanges(ActionEvent event)
     {
