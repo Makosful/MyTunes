@@ -24,6 +24,11 @@ public class Playlist
         this.favorite = false;
     }
 
+    public Playlist()
+    {
+       
+    }
+
     @Override
     public String toString()
     {
