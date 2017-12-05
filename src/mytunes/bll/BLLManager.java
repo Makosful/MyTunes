@@ -59,7 +59,7 @@ public class BLLManager
     {
         plDAO.removePlaylist(playlist.getId());
     }
-
+     // Changes the song's info.
     public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
                                  String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
     {

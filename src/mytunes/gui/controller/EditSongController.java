@@ -51,9 +51,9 @@ public class EditSongController implements Initializable
     @FXML
     private JFXTextField txtFieldArtist;
 
-    
+    // Model of the controller.
     EditSongModel esModel;
-    
+    // List that contains all the genres.
     List<String> genreList;
     
     public EditSongController() throws IOException
@@ -69,10 +69,10 @@ public class EditSongController implements Initializable
         genreList = new ArrayList();
         setComboBoxData();
     }
-    
+    // Addings genres to the list, and making it observable.
+    // Initializing the combobox with the obsv. list.
     private void setComboBoxData()
     {
-        genreList.clear();
         genreList.add("hiphop");
         genreList.add("david");
         genreList.add("malthe THE G");
@@ -86,7 +86,7 @@ public class EditSongController implements Initializable
     {
         comboBoxCategory.getSelectionModel().select(genre);
     }
-
+    // Method to set data in textfields and combobox.
     public void setData(String title, String artist, int time, String file, String genre)
     {
         String timeString = Integer.toString(time);
