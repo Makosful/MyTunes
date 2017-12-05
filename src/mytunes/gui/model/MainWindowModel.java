@@ -205,7 +205,7 @@ public class MainWindowModel
     /**
      * Loads the playlist from storage
      */
-    public void loadPlaylists()
+    public void loadPlaylists() throws SQLException
     {
         playlists.addAll(bllManager.getPlaylists());
     }
