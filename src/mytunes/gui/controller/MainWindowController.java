@@ -45,6 +45,8 @@ public class MainWindowController implements Initializable
 
     // Model
     private MainWindowModel wm;
+    
+    private Music musicInfo;
 
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
@@ -466,6 +468,35 @@ public class MainWindowController implements Initializable
         clearQueueContext.setOnAction(action ->
         {
             clearQueue(action);
+        });
+        
+        MenuItem editSong = new MenuItem("Edit Song");
+        cm.getItems().add(editSong);
+        editSong.setOnAction((event) ->
+        {
+            try
+            {              
+                musicInfo = tblSongList.getSelectionModel().getSelectedItem();
+                getSongId();
+               String title = musicInfo.getTitle();
+               String artist = musicInfo.getArtist();
+               int time = musicInfo.getDuration();
+               String genre = musicInfo.getGenre();
+               String pathName = musicInfo.getSongPathName();
+                System.out.println(pathName);
+                System.out.println(time);
+               
+                wm.openEditSongWindow(title, artist, time, pathName, genre);
+                
+            }
+            catch (IOException ex)
+            {
+                System.out.println("Cannot open window.");
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Cannot edit song");
+            }
         });
     }
     //</editor-fold>
@@ -897,7 +928,6 @@ public class MainWindowController implements Initializable
         {
             //Needs to set the BEFORE media is played (apparently?)
             TimeChangeListener();
-
             wm.startMediaPlayer();
             wm.setPlaying(true);
             btnPlayPause.setText("Pause");
@@ -1253,6 +1283,12 @@ public class MainWindowController implements Initializable
     @FXML
     private void progressDrag(MouseEvent event)
     {
+    }
+    
+    // Taking specific songs id, and sending it to the mainwindowmodel.
+    private int getSongId()
+    {
+        return wm.getSongId(musicInfo.getId());
     }
 
     @FXML

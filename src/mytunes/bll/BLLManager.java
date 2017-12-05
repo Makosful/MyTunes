@@ -69,11 +69,12 @@ public class BLLManager
     {
         plDAO.removePlaylist(playlist.getId());
     }
-
     
-    
-    
-    
+    public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
+    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+    {
+        songDAO.editSong(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+    }
      /**
      * Determines which id should be used in the song table, if the artist/album/genre 
      * already exists get the id from those, else get the newly inserted id's
@@ -156,10 +157,6 @@ public class BLLManager
         }
        
     }
-    
-    
-    
-
 
     /**
      * Gets the index of an item in a List
@@ -182,5 +179,4 @@ public class BLLManager
 
         return -1;
     }
-
 }

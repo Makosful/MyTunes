@@ -539,6 +539,89 @@ public class SongDAO
         }
     }
     
-
+    public void editSong(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
+    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLServerException, SQLException
+    {
+        try(Connection con = db.getConnection())
+        {
+            // Title
+            editTitle(newTitle, oldTitle, con);
+            // Artist
+            editArtist(oldArtist, newArtist, con, songId);
+            
+            // Path
+            editPath(newFile, oldFile, con);
+            
+            // Genre
+            editGenre(oldGenre, newGenre, con, songId);
+        }
+    }
     
+    public void editTitle(String newTitle, String oldTitle, Connection con) throws SQLException
+    {
+        // Title
+            String sqlTitle = "UPDATE Songs SET title = ? WHERE title like ?";
+            
+            
+            PreparedStatement preparedStatementTitle =  con.prepareStatement(sqlTitle);
+            preparedStatementTitle.setString(1, newTitle);
+            preparedStatementTitle.setString(2, oldTitle);
+            
+            preparedStatementTitle.execute();
+    }
+    
+    public void editArtist(String oldArtist, String newArtist, Connection con, int songId) throws SQLException
+    {
+                    
+            // Artist
+            int artistId = getExistingArtist(oldArtist);
+            String sqlArtist = "";
+            
+            if(artistId == 0)
+            {
+                artistId = setArtist(newArtist);
+                sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
+            }
+            else
+            {
+                 sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
+            }
+            
+            PreparedStatement preparedStatementArtist = con.prepareStatement(sqlArtist);
+
+            preparedStatementArtist.setInt(1, artistId);          
+            preparedStatementArtist.setInt(2, songId);          
+            preparedStatementArtist.execute();
+    }
+    
+    public void editPath(String newFile, String oldFile, Connection con) throws SQLException
+    {
+                // Path
+            
+            String sqlFile = "UPDATE Path SET pathname = ? WHERE pathname like ?";
+            PreparedStatement preparedStatementFile = con.prepareStatement(sqlFile);
+            preparedStatementFile.setString(1, newFile);
+            preparedStatementFile.setString(2, oldFile);
+            preparedStatementFile.execute();
+    }
+    
+    public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
+    {
+            int genreId = getExistingGenre(oldGenre);
+            String sqlGenre = "";
+            if(genreId == 0)
+            {
+                genreId = setGenre(newGenre);
+                sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
+            }
+            else
+            {
+                
+                sqlGenre = "UPDATE Songs SET genreid = ? WHERE Songs.id = ?";
+            }
+            PreparedStatement preparedStatementGenre = con.prepareStatement(sqlGenre);
+            preparedStatementGenre.setInt(1, genreId);
+            preparedStatementGenre.setInt(2,songId);
+            preparedStatementGenre.execute();
+    }
 }
