@@ -72,7 +72,7 @@ public class PlaylistDAO
         {
             int id;
 
-            String sqlInsert = "INSERT INTO Playlists SET (playlist) VALUES (?)";
+            String sqlInsert = "INSERT INTO Playlists (playlist) VALUES (?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, playlistTitle);
             preparedStatementInsert.executeUpdate();
