@@ -283,6 +283,7 @@ public class MainWindowModel
             // it's been closed
             CreatePlaylistWindowController plCont = fxLoader.getController();
             plCont.setPlaylist(playlist);
+            System.out.println("");
             plCont.setSaveButton("Save");
 
             // Sets the icon for the new window
@@ -813,14 +814,16 @@ public class MainWindowModel
     }
 
     /**
-     * Opens new FXML Window, editsong. 
+     * Opens new FXML Window, editsong.
+     *
      * @param title
      * @param artist
      * @param time
      * @param file
      * @param genre
+     *
      * @throws IOException
-     * @throws SQLException 
+     * @throws SQLException
      */
     public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
     {
