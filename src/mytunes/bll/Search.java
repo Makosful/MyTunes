@@ -38,37 +38,46 @@ public class Search
     {   
         
         List<String> searchTables = new ArrayList();
+        
+       
         for(String criteria : criterias){
             
-           if(criteria.equalsIgnoreCase("artist"))
-           {
-               searchTables.add("Artist.artist");
-               
-           }else if(criteria.equalsIgnoreCase("title"))
-           {
-               
-               searchTables.add("Songs.title");
-               
-           }else if(criteria.equalsIgnoreCase("albums"))
-           {
-               
-               searchTables.add("Albums.albums");
-               
-           }else if(criteria.equalsIgnoreCase("Genre"))
-           {
-               
-               searchTables.add("Genre.genre");
-               
-           }
-           /*
-           else if(criteria.equalsIgnoreCase("year"))
-           {
-               
-               searchTables.add("Songs.releasedate");
-               
-           }
-           */
-            
+            if(isNumeric(searchText))
+            {
+
+               if(criteria.equalsIgnoreCase("year"))
+               {
+
+                   searchTables.add("Songs.releasedate");
+
+               }
+
+
+            }
+            else
+            { 
+                if(criteria.equalsIgnoreCase("artist"))
+                {
+                    searchTables.add("Artist.artist");
+
+                }else if(criteria.equalsIgnoreCase("title"))
+                {
+
+                    searchTables.add("Songs.title");
+
+                }else if(criteria.equalsIgnoreCase("album"))
+                {
+
+                    searchTables.add("Albums.album");
+
+                }else if(criteria.equalsIgnoreCase("Genre"))
+                {
+
+                    searchTables.add("Genre.genre");
+
+                }
+        
+            }
         }
      
         
@@ -82,7 +91,7 @@ public class Search
                 sqlSearch += " OR ";
             }
 
-            sqlSearch += searchTables.get(index)+" = ?";
+            sqlSearch += searchTables.get(index)+" LIKE ?";
 
             firstQm = false;
 
@@ -92,5 +101,23 @@ public class Search
         return songs;
     }
     
+    
+     /**
+     * Checks if a given string is numeric 
+     * @param str
+     * @return 
+     */
+    public boolean isNumeric(String str)  
+    {  
+      try  
+      {  
+        double d = Double.parseDouble(str);  
+      }  
+      catch(NumberFormatException nfe)  
+      {  
+        return false;  
+      }  
+      return true;  
+    }
     
 }

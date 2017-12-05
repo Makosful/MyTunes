@@ -43,7 +43,7 @@ public class SongDAO
             {
                 Music song = createSongFromDB(rs);
 
-                System.out.println(song.getAlbum());
+    
                 allSongs.add(song);
             }
 
@@ -411,6 +411,7 @@ public class SongDAO
         song.setDuration(rs.getInt("duration"));
 
         
+        
         return song;
     }
     
@@ -508,7 +509,7 @@ public class SongDAO
         {
             
        
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname "
                        + "FROM Songs "
                        + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                        + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -519,19 +520,19 @@ public class SongDAO
                 PreparedStatement preparedStatement = con.prepareStatement(sql);
                 for(int index = 1; index <= length; index++) 
                 {
-                   preparedStatement.setString(index, searchText);
+                   preparedStatement.setString(index, "%"+searchText+"%");
                 }
                 ResultSet rs = preparedStatement.executeQuery();
 
 
                 List<Music> songs = new ArrayList();
-               
+             
                 while(rs.next())
                 {
 
                     Music song = createSongFromDB(rs);
                     songs.add(song);
-                    System.out.println(song.getArtist());
+          
                 }
 
                 return songs;
