@@ -249,9 +249,6 @@ public class MainWindowModel
                 Playlist pl = new Playlist(plCont.getTitle());
                 pl.setPlaylist(plCont.getPlaylist());
                 this.playlists.add(pl);
-
-                // Saves the playlist to storage
-                bllManager.addPlaylist(pl); // Not implimented yet
             }
         }
         catch (IOException ex)
@@ -759,7 +756,7 @@ public class MainWindowModel
         search.prepareSearch(filters, text);
         System.out.println("Eurika!");
     }
-    
+
     // Opens a new FXML Window (editSong)
     public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
     {
@@ -784,6 +781,11 @@ public class MainWindowModel
     {
         songIdFromTable = id;
         return id;
+    }
+
+    public void savePlaylist(String title, ObservableList<Music> playlist) throws SQLException
+    {
+        bllManager.savePlaylist(title, playlist);
     }
 
 }
