@@ -43,7 +43,7 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label text="Category:" GridPane.rowIndex="2">
+                <Label text="Genre" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -67,21 +67,24 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <JFXTextField fx:id="comboBoxTitle" prefWidth="177.0" GridPane.columnIndex="1" />
-                <JFXTextField fx:id="comboBoxArtist" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <JFXTextField fx:id="txtFieldTitle" prefWidth="177.0" GridPane.columnIndex="1" />
+                <JFXTextField fx:id="txtFieldArtist" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <JFXTextField fx:id="txtTime" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <JFXTextField fx:id="txtFile" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <JFXComboBox fx:id="comboBoxCategory" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <JFXComboBox fx:id="comboBoxCategory" editable="true" prefHeight="29.0" prefWidth="69.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin></JFXComboBox>
                 <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-                <JFXComboBox fx:id="comboBoxCategory2" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <JFXComboBox fx:id="comboBoxCategory2" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets left="100.0" />
                     </GridPane.margin>
                 </JFXComboBox>
             </children>
         </GridPane>
-        <JFXButton fx:id="btnSave" layoutX="299.0" layoutY="255.0" text="Save" />
-        <JFXButton fx:id="btnCancel" layoutX="233.0" layoutY="255.0" text="Cancel" />
+        <JFXButton fx:id="btnSave" layoutX="299.0" layoutY="255.0" onAction="#saveChanges" text="Save" />
+        <JFXButton fx:id="btnCancel" layoutX="233.0" layoutY="255.0" onAction="#cancelChanges" text="Cancel" />
         <MenuBar layoutY="3.0" prefHeight="38.0" prefWidth="399.0" />
         <Label text="Edit Song">
             <font>

@@ -24,6 +24,7 @@ import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
 import mytunes.bll.MetaData;
 import mytunes.gui.controller.CreatePlaylistWindowController;
+import mytunes.gui.controller.EditSongController;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
@@ -64,10 +65,13 @@ public class MainWindowModel
     private int i = 0;
     private File newFile;
     private List<File> pathNames;
+    private int songIdFromTable;
 
     private MetaData meta;
     //</editor-fold>
 
+    
+    
     /**
      * Constructor
      */
@@ -690,4 +694,29 @@ public class MainWindowModel
             }
         });
     }
+    
+    public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
+    {
+        File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
+        FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
+        
+        Parent root = fxLoader.load();
+        EditSongController controller = fxLoader.getController();
+        fxLoader.setController(controller);
+        
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.setTitle("Edit song");
+        stage.setScene(scene);
+        controller.setData(title, artist, time, file, genre);
+        controller.getSongIdFromMainController(songIdFromTable);
+        stage.show();
+    }
+        // Goes through the controller, takes the id of the song.
+    public int getSongId(int id)
+    {
+        songIdFromTable = id;
+        return id;
+    }
+
 }
