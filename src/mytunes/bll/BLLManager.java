@@ -2,6 +2,7 @@ package mytunes.bll;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
@@ -28,9 +29,9 @@ public class BLLManager
         this.mm = new MockMusic();
     }
 
-    public List<Music> getSongList() throws IOException
+    public List<Music> getSongList() throws IOException, SQLException
     {
-        return mm.getAllSongsLocal();
+        return songDAO.getAllSongs();
     }
 
     public void createSongPath(String setPath) throws SQLException
@@ -54,7 +55,7 @@ public class BLLManager
      *
      * @param playlist
      */
-    public void addPlaylist(Playlist playlist)
+    public void addPlaylist(Playlist playlist) throws SQLException
     {
         plDAO.addPlaylist(playlist);
     }
@@ -64,14 +65,118 @@ public class BLLManager
      *
      * @param playlist
      */
-    public void removePlaylist(Playlist playlist)
+    public void removePlaylist(Playlist playlist) throws SQLException
     {
-        plDAO.removePlaylist(playlist);
+        plDAO.removePlaylist(playlist.getId());
     }
     
     public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
     String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
     {
         songDAO.editSong(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+    }
+     /**
+     * Determines which id should be used in the song table, if the artist/album/genre 
+     * already exists get the id from those, else get the newly inserted id's
+     * @param song 
+     * @throws SQLException 
+     */
+    public void setRelationIds(Music song) throws SQLException
+    {
+        List<Integer> ids = new ArrayList();
+        
+        int artistId;
+        int albumId;
+        int genreId;
+        int pathId;
+        int locationId;
+        
+        //Determine if the artist already is in the db, and get the resulting id
+        int getArtistId = songDAO.getExistingArtist(song.getArtist());
+        if(getArtistId != 0){
+            
+            artistId = getArtistId;
+        }
+        else
+        {
+            artistId = songDAO.setArtist(song.getArtist());
+        }
+        
+        //Determine if the album already is in the db, and get the resulting id
+        int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
+        if(getAlbumId != 0){ 
+            
+            albumId = getAlbumId;
+        }
+        else
+        {
+            albumId = songDAO.setAlbum(song.getAlbum());
+        }
+        
+        //Determine if the genre already is in the db, and get the resulting id
+        int getGenreId = songDAO.getExistingGenre(song.getGenre());
+        if(getGenreId != 0){
+            
+            genreId = getGenreId; 
+            
+        }
+        else
+        {
+            
+            genreId = songDAO.setGenre(song.getGenre());
+            
+        }
+
+        //Determine if the location already is in the db, and get the resulting id
+        int getLocationId = songDAO.getExistingLocation(song.getLocation());
+        if(getLocationId != 0)
+        {
+            locationId = getLocationId;
+        }
+        else
+        {
+            locationId = songDAO.setLocation(song.getLocation());
+        }
+        
+        
+        int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
+        if(getPathId == 0){
+            
+
+            pathId = songDAO.setPath(song.getSongPathName(), locationId);
+
+
+            ids.add(artistId);
+            ids.add(albumId);
+            ids.add(genreId);
+            ids.add(pathId);
+
+
+            songDAO.setSong(song, ids);
+        
+        }
+       
+    }
+
+    /**
+     * Gets the index of an item in a List
+     *
+     * @param item The object to look for
+     * @param list The List to look in
+     *
+     * @return Returns the index of the item if it has been found. If the item
+     *         does not exist in the List, thsi will return -1
+     */
+    public int getIndexOf(Music item, List<Music> list)
+    {
+        for (int i = 0; i < list.size(); i++)
+        {
+            if (list.get(i).equals(item))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
