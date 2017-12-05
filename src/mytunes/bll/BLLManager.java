@@ -47,7 +47,16 @@ public class BLLManager
 
     public List<Playlist> getPlaylists() throws SQLException
     {
-        return plDAO.getPlaylists();
+        List<Playlist> playlists = plDAO.getPlaylists();
+        for (int i = 0; i < playlists.size(); i++)
+        {
+            System.out.println(i);
+            playlists.get(i).setPlaylist(
+                    plDAO.getPlaylistSongs(
+                            playlists.get(i).getId()
+                    ));
+        }
+        return playlists;
     }
 
     /**
@@ -59,7 +68,8 @@ public class BLLManager
     {
         plDAO.removePlaylist(playlist.getId());
     }
-     // Changes the song's info.
+    // Changes the song's info.
+
     public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
                                  String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
     {

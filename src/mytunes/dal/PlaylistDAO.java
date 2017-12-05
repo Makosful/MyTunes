@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 
@@ -109,11 +111,11 @@ public class PlaylistDAO
 
     }
 
-    public List<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
+    public ObservableList<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
-            List<Music> allSongs = new ArrayList<>();
+            ObservableList<Music> allSongs = FXCollections.observableArrayList();
 
             String sql = "SELECT Songs.title, Artist.artist, Albums.album, Albums.releasedate, Genre.genre, Path.pathname "
                          + "FROM Songs "
