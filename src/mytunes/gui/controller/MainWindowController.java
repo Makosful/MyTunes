@@ -475,8 +475,6 @@ public class MainWindowController implements Initializable
                 int time = musicInfo.getDuration();
                 String genre = musicInfo.getGenre();
                 String pathName = musicInfo.getSongPathName();
-                System.out.println(pathName);
-                System.out.println(time);
 
                 wm.openEditSongWindow(title, artist, time, pathName, genre);
             }
@@ -687,22 +685,6 @@ public class MainWindowController implements Initializable
                 // Go though each new item and make a mediaplayer for them
                 c.getAddedSubList().forEach((music) ->
                 {
-                    System.out.println();
-                    System.out.println("Location");
-                    System.out.println(music.getLocation());
-                    System.out.println();
-                    System.out.println("Path Name");
-                    System.out.println(music.getSongPathName());
-                    System.out.println();
-                    System.out.println("Full path");
-                    System.out.println(
-                            music.getLocation()
-                            + "/"
-                            + music.getSongPathName()
-                    );
-                    System.out.println("END");
-                    System.out.println();
-
                     File file = new File(music.getLocation() + "/" + music.getSongPathName());
                     Media media = new Media(file.toURI().toString());
                     MediaPlayer mp = new MediaPlayer(media);

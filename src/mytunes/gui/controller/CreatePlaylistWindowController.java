@@ -94,12 +94,12 @@ public class CreatePlaylistWindowController implements Initializable
 
         // Makes Bob Ross do what Bob Roos does best
         setupSearchFunctionality(txtSongSearch, // The text field to use
-                songlist, // A list of filtered songs
-                songlistBackup);  // A list of unfiltered songs
+                                 songlist, // A list of filtered songs
+                                 songlistBackup);  // A list of unfiltered songs
 
         setupSearchFunctionality(txtPlaylistSearch, // The text field to use
-                playlist, // The list of filtered songs
-                playlistBackup);    //A list of unfiltered songs
+                                 playlist, // The list of filtered songs
+                                 playlistBackup);    //A list of unfiltered songs
 
         setupPlaylistListener(listPlaylist);
     }
@@ -198,8 +198,16 @@ public class CreatePlaylistWindowController implements Initializable
         }
         else
         {
-            save = true;
-            cancel(event);
+            try
+            {
+                save = true;
+                cancel(event);
+                wm.savePlaylist(this.title, this.playlistBackup);
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
         }
     }
 
