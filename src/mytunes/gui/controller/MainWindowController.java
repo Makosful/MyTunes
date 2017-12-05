@@ -502,8 +502,15 @@ public class MainWindowController implements Initializable
         // Puts the playlists into the view
         playlistPanel.setItems(wm.getPlaylists());
 
-        // Loads the stores playlists
-        wm.loadPlaylists();
+        try
+        {
+            // Loads the stores playlists
+            wm.loadPlaylists();
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
 
         // Sets up am mouse listener for the playlist
         setupPlaylistMouseListener();
