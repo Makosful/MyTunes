@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -167,63 +166,6 @@ public class MainWindowModel
         this.queue.addAll(selectedItems);
     }
 
-    public void setupQueueListener()
-    {
-        this.queue.addListener((Change<? extends Music> c) ->
-        {
-            // Must be called to initiate the change listener
-            c.next();
-
-            // If there has been added something to the queue
-            if (!c.getAddedSubList().isEmpty())
-            {
-                // Go though each new item and make a mediaplayer for them
-                c.getAddedSubList().forEach((music) ->
-                {
-                    File file = new File(music.getLocation());
-                    Media media = new Media(file.toURI().toString());
-                    MediaPlayer mp = new MediaPlayer(media);
-
-                    mp.setOnEndOfMedia(() ->
-                    {
-                        playNextSong();
-                    });
-
-                    // Add this new media player to a parallel list to the queue
-                    this.queueMedia.add(mp);
-                    System.out.println("Added: " + music.getTitle());
-
-                });
-            }
-
-            // If some thing has been removed from the list
-            if (!c.getRemoved().isEmpty())
-            {
-                // Go through the queue media list
-                for (int i = 0; i < queueMedia.size(); i++)
-                {
-                    // Gets the full path for the current media
-                    String storedMedia = queueMedia.get(i).getMedia().getSource();
-
-                    // Goes through
-                    for (int j = 0; j < c.getRemoved().size(); j++)
-                    {
-                        File file = new File(c.getRemoved().get(j).getLocation());
-                        String removedMedia = file.toURI().toString();
-
-                        if (storedMedia.equals(removedMedia))
-                        {
-                            queueMedia.remove(i);
-                            i--;
-                            System.out.println("Removed: " + removedMedia);
-                        }
-                    }
-
-                }
-            }
-        });
-    }
-
     /**
      * Gets the next song in the queue
      *
@@ -338,8 +280,6 @@ public class MainWindowModel
     }
 
     //</editor-fold>
-
-
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
 
@@ -359,8 +299,6 @@ public class MainWindowModel
             writer.write(path);
         }
     }
-    
-
 
     /**
      * Searches through the given list for a match
@@ -486,8 +424,6 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Setters">
-
-
     public void setMetaData(List<File> chosenFiles) throws IOException,
                                                            CannotReadException,
                                                            FileNotFoundException,
@@ -578,8 +514,6 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Commands">
-
-
     public void stopMediaPlayer()
     {
 //        this.mediaPlayer.stop();
@@ -806,12 +740,13 @@ public class MainWindowModel
      *
      * @param text    The text to search for
      * @param filters The filters to apply for the earch
+     *
+     * @throws java.sql.SQLException
      */
     public void songSearch(String text, ArrayList<String> filters) throws SQLException
     {
-
         search.prepareSearch(filters, text);
-        System.out.println(filters);
+        System.out.println("Eurika!");
     }
     
     public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
