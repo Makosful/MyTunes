@@ -2,12 +2,10 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -24,10 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
@@ -151,8 +146,8 @@ public class MainWindowController implements Initializable
     private Label lblGenre;
     @FXML
     private Label lblDuration;
-
-
+    @FXML
+    private HBox searchBar;
 
     /**
      * Constructor, for all intends and purposes
@@ -193,7 +188,7 @@ public class MainWindowController implements Initializable
         {
             System.out.println(ex.getMessage());
         }
-        
+
         setupQueueList();
         setupPlaybackSpeedSettings();
         setupPlaylistPanel();
@@ -204,6 +199,9 @@ public class MainWindowController implements Initializable
         // Sets the progress sliders width to be dynamic relative to the width
         progressSlider.prefWidthProperty().bind(
                 playbackPanel.widthProperty().subtract(730));
+
+        txtTableSearch.prefWidthProperty().bind(
+                searchBar.widthProperty().subtract(40));
     }
 
     //<editor-fold defaultstate="collapsed" desc="Table View Fold">
@@ -268,28 +266,27 @@ public class MainWindowController implements Initializable
                 // Plays the queue
                 prepareAndPlay();
             }
-            
-            if(event.getClickCount() == 1)
+
+            if (event.getClickCount() == 1)
             {
                 Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
-                
+
                 lblArtist.setText(selectedItem.getArtist());
-                
+
                 lblTitle.setText(selectedItem.getTitle());
-                
+
                 lblAlbum.setText(selectedItem.getTitle());
-                
+
                 lblYear.setText(String.valueOf(selectedItem.getYear()));
-                
+
                 lblDescription.setText(selectedItem.getDescription());
-                
+
                 lblGenre.setText(selectedItem.getGenre());
-                
+
                 lblDuration.setText(String.valueOf(selectedItem.getDuration()));
-                
+
             }
-                
-                
+
             // Right click - Context Menu
             if (event.getButton() == MouseButton.SECONDARY)
             {
@@ -375,7 +372,14 @@ public class MainWindowController implements Initializable
     @FXML
     private void searchTable(ActionEvent event) throws SQLException
     {
-        wm.songSearch(txtTableSearch.getText(), getFilters());
+        try
+        {
+            wm.songSearch(txtTableSearch.getText(), getFilters());
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -424,8 +428,7 @@ public class MainWindowController implements Initializable
         cm.getItems().add(loadSong);
         loadSong.setOnAction(action ->
         {
-            
-            
+
             try
             {
                 LoadMediaFiles(action);
@@ -454,7 +457,6 @@ public class MainWindowController implements Initializable
             {
                 Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
 
         });
 
@@ -663,6 +665,8 @@ public class MainWindowController implements Initializable
                 // Go though each new item and make a mediaplayer for them
                 c.getAddedSubList().forEach((music) ->
                 {
+                    System.out.println(music.getLocation());
+                    System.out.println(music.getSongPathName());
                     File file = new File(music.getLocation());
                     Media media = new Media(file.toURI().toString());
                     MediaPlayer mp = new MediaPlayer(media);
@@ -1172,23 +1176,20 @@ public class MainWindowController implements Initializable
 
         List<File> chosenFiles = fc.showOpenMultipleDialog(null);
 
-  
-        
         if (chosenFiles != null)
         {
-          
-            
+
             try
             {
-                    wm.setMetaData(chosenFiles);
-                    wm.loadSongList();
-                    tblSongList.setItems(wm.getSongList());
+                wm.setMetaData(chosenFiles);
+                wm.loadSongList();
+                tblSongList.setItems(wm.getSongList());
             }
             catch (InvalidAudioFrameException ex)
             {
-                System.out.println(ex.getMessage()); 
+                System.out.println(ex.getMessage());
             }
-            
+
             for (int index = 0; index < chosenFiles.size(); index++)
             {
                 wm.getQueueList().add(new Music(
@@ -1200,8 +1201,7 @@ public class MainWindowController implements Initializable
                         chosenFiles.get(index).getAbsolutePath()
                 ));
             }
-            
-            
+
         }
         else
         {
@@ -1255,7 +1255,6 @@ public class MainWindowController implements Initializable
     {
     }
 
-
     @FXML
     private void prevSong(ActionEvent event)
     {
@@ -1270,6 +1269,12 @@ public class MainWindowController implements Initializable
         wm.stopMediaPlayer();
         wm.skipToNextSong();
         prepareAndPlay();
+    }
+
+    @FXML
+    private void searchClear(ActionEvent event)
+    {
+        txtTableSearch.clear();
     }
 
 }
