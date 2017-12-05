@@ -197,8 +197,8 @@ public class BLLManager
         }
     }
 
-    public void updatePlaylist(Playlist playlist)
+    public void updatePlaylist(Playlist playlist) throws SQLException
     {
-        plDAO.updatePlaylist(playlist);
+        plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
     }
 }

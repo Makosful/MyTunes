@@ -161,11 +161,40 @@ public class PlaylistDAO
 
     }
 
-    public void updatePlaylist(Playlist playlist)
+    public void updatePlaylist(int id, String playlist) throws SQLException
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try (Connection con = db.getConnection())
+        {
+
+            String sql = "UPDATE playlists SET playlist = ? WHERE id = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, playlist);
+            preparedStatement.setInt(2, id);
+
+            preparedStatement.executeUpdate();
+
+            
+        }
     }
 
+    public void deletePlaylist(int id) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+
+            String sql = "DELETE FROM Playlists "
+                        +"INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
+                        +"WHERE id = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeQuery();
+
+            
+        }
+    }
+    
     private Playlist createPlaylistFromDB(ResultSet rs) throws SQLException
     {
         Playlist pl = new Playlist();
