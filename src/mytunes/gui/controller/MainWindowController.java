@@ -315,7 +315,14 @@ public class MainWindowController implements Initializable
                  String oldText,
                  String newText) ->
         {
-            wm.songSearch(txtTableSearch.getText(), getFilters());
+            try
+            {
+                wm.songSearch(txtTableSearch.getText(), getFilters());
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
         });
     }
 
@@ -366,7 +373,7 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
-    private void searchTable(ActionEvent event)
+    private void searchTable(ActionEvent event) throws SQLException
     {
         wm.songSearch(txtTableSearch.getText(), getFilters());
     }
