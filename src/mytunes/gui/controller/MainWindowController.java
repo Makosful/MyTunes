@@ -586,7 +586,20 @@ public class MainWindowController implements Initializable
         cm.getItems().add(editPlaylist);
         editPlaylist.setOnAction((event) ->
         {
+            // Do not remove. This output is VERY important
             System.out.println("Thoust be changing thee order of musical arts.");
+
+            // Gets the selected playlist
+            Playlist pl = playlistPanel.getSelectionModel().getSelectedItem();
+
+            try
+            {
+                wm.createPlaylistWindow(pl);
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
         });
     }
     //</editor-fold>

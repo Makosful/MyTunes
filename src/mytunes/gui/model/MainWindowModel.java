@@ -212,6 +212,8 @@ public class MainWindowModel
 
     /**
      * Displays the window for creating new playlists
+     *
+     * @throws java.sql.SQLException
      */
     public void createPlaylistWindow() throws SQLException
     {
@@ -249,6 +251,59 @@ public class MainWindowModel
                 Playlist pl = new Playlist(plCont.getTitle());
                 pl.setPlaylist(plCont.getPlaylist());
                 this.playlists.add(pl);
+            }
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Displays the window for creating new playlists
+     *
+     * @param playlist
+     *
+     * @throws java.sql.SQLException
+     */
+    public void createPlaylistWindow(Playlist playlist) throws SQLException
+    {
+        try
+        {
+            // Gets a hold of the FXML and controller
+            File fxml = new File("src/mytunes/gui/view/CreatePlaylistWindow.fxml");
+            FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
+
+            // Loads the window
+            Parent root = fxLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            // Gets the controller for the window, so we can retrieve data after
+            // it's been closed
+            CreatePlaylistWindowController plCont = fxLoader.getController();
+            plCont.setPlaylist(playlist);
+            plCont.setSaveButton("Save");
+
+            // Sets the icon for the new window
+            File ico = new File("./res/icon/TrollTunes56x56.png");
+            Image icon = new Image(ico.toURI().toString());
+            stage.getIcons().add(icon);
+
+            // Sets the title for the new window
+            stage.setTitle("Create Playlist");
+
+            stage.setScene(scene);
+            stage.showAndWait();
+            // Waits for the user to give the playlist a name
+
+            // Adds the new playlist to the list of lists, dawg
+            if (plCont.shouldSave())
+            {
+                playlist.setTitle(plCont.getTitle());
+                playlist.getPlaylist().clear();
+                playlist.getPlaylist().addAll(plCont.getPlaylist());
+                bllManager.updatePlaylist(playlist);
             }
         }
         catch (IOException ex)
