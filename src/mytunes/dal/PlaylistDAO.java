@@ -63,6 +63,8 @@ public class PlaylistDAO
      * @param playlistTitle
      *
      * @return id of inserted playlist
+     *
+     * @throws com.microsoft.sqlserver.jdbc.SQLServerException
      */
     public int addPlaylist(String playlistTitle) throws SQLServerException, SQLException
     {
@@ -90,6 +92,9 @@ public class PlaylistDAO
      * Removes a playlist from the database
      *
      * @param id
+     *
+     * @throws com.microsoft.sqlserver.jdbc.SQLServerException
+     * @throws java.sql.SQLException
      */
     public void removePlaylist(int id) throws SQLServerException, SQLException
     {
