@@ -148,6 +148,20 @@ public class MainWindowController implements Initializable
     private Label lblDuration;
     @FXML
     private HBox searchBar;
+    @FXML
+    private Label lblArtistCurrent;
+    @FXML
+    private Label lblTitleCurrent;
+    @FXML
+    private Label lblAlbumCurrent;
+    @FXML
+    private Label lblYearCurrent;
+    @FXML
+    private Label lblDescriptionCurrent;
+    @FXML
+    private Label lblGenreCurrent;
+    @FXML
+    private Label lblDurationCurrent;
 
     /**
      * Constructor, for all intends and purposes
@@ -1212,18 +1226,6 @@ public class MainWindowController implements Initializable
             {
                 System.out.println(ex.getMessage());
             }
-
-//            for (int index = 0; index < chosenFiles.size(); index++)
-//            {
-//                wm.getQueueList().add(new Music(
-//                        0,
-//                        chosenFiles.get(index).getName(),
-//                        chosenFiles.get(index).getName(),
-//                        chosenFiles.get(index).getName(),
-//                        9999,
-//                        chosenFiles.get(index).getAbsolutePath()
-//                ));
-//            }
         }
         else
         {
@@ -1277,7 +1279,9 @@ public class MainWindowController implements Initializable
     {
     }
 
-    // Taking specific songs id, and sending it to the mainwindowmodel.
+    /**
+     * Taking specific songs id, and sending it to the mainwindowmodel.
+     */
     private int getSongId()
     {
         return wm.getSongId(musicInfo.getId());
