@@ -43,8 +43,6 @@ public class EditSongController implements Initializable
     @FXML
     private JFXComboBox<String> comboBoxCategory;
     @FXML
-    private JFXComboBox<String> comboBoxCategory2;
-    @FXML
     private JFXButton btnSave;
     @FXML
     private JFXButton btnCancel;
@@ -82,22 +80,29 @@ public class EditSongController implements Initializable
 
         ObservableList comboBoxList = FXCollections.observableList(genreList);
         comboBoxCategory.setItems(comboBoxList);
-        comboBoxCategory2.setItems(comboBoxList);
+    }
+    // Method to get genre from song.
+    private void getSongsCurrentGenre(String genre)
+    {
+        comboBoxCategory.getSelectionModel().select(genre);
     }
 
     public void setData(String title, String artist, int time, String file, String genre)
     {
         String timeString = Integer.toString(time);
-        
+        // Puts the text of the song into the textfields.
         txtFieldTitle.setText(title);
         txtFieldArtist.setText(artist);
         txtTime.setText(timeString);
         txtFile.setText(file);
-        comboBoxCategory.getSelectionModel().select(genre);
         
+        getSongsCurrentGenre(genre);
+        // Getting the data from the current song
+        // Before the values might change, based on users choices.
+        oldGenre = genre;
         oldTitle = txtFieldTitle.getText();
         oldArtist = txtFieldArtist.getText();
-        oldFile = "Officers_Call.mp3";
+        oldFile = file;
     }
     /**
      * Returns the new title, artist, t
@@ -122,7 +127,7 @@ public class EditSongController implements Initializable
     {
       return comboBoxCategory.getSelectionModel().getSelectedItem();
     }
-    
+    // Gets the old / current strings, before user might change them.
     public String getOldFile()
     {
         return oldFile;
@@ -140,14 +145,14 @@ public class EditSongController implements Initializable
     
     public String getOldGenre()
     {
-        return comboBoxCategory2.getSelectionModel().getSelectedItem();
+        return oldGenre;   
     }
-    
+    // Returns the song id from tableview.
     public int getSongId()
     {
         return songIdFromTable;  
     }
-    
+    // Edits the song, after user input, genre, etc.
     @FXML
     private void saveChanges(ActionEvent event) throws SQLException
     {
@@ -165,5 +170,12 @@ public class EditSongController implements Initializable
     {
         songIdFromTable = id;
         return id;
+    }
+    /**
+     * So that the time textfield cannot be editted.
+     */
+    public void noEditableTime()
+    {
+        txtTime.setEditable(false);
     }
 }

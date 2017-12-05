@@ -9,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -435,29 +433,9 @@ public class MainWindowController implements Initializable
             {
                 LoadMediaFiles(action);
             }
-            catch (IOException ex)
+            catch (IOException | CannotReadException | ReadOnlyFileException | TagException | InvalidAudioFrameException | SQLException ex)
             {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (CannotReadException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (ReadOnlyFileException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (TagException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (InvalidAudioFrameException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch (SQLException ex)
-            {
-                Logger.getLogger(MainWindowController.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
             }
 
         });
@@ -487,7 +465,6 @@ public class MainWindowController implements Initializable
                 System.out.println(time);
 
                 wm.openEditSongWindow(title, artist, time, pathName, genre);
-
             }
             catch (IOException ex)
             {
