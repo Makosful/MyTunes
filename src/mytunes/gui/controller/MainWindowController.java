@@ -370,7 +370,7 @@ public class MainWindowController implements Initializable
      * @param event
      */
     @FXML
-    private void searchTable(ActionEvent event)
+    private void searchTable(ActionEvent event) throws SQLException
     {
         try
         {
