@@ -59,7 +59,7 @@ public class MetaData {
          * @throws org.jaudiotagger.tag.TagException
          * @throws org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
          */
-        public void MetaData(List<File> chosenFiles) throws FileNotFoundException, 
+        public List<Music> MetaData(List<File> chosenFiles) throws FileNotFoundException, 
                                                             IOException,
                                                             CannotReadException,
                                                             TagException,
@@ -103,7 +103,7 @@ public class MetaData {
             });
            
             
-
+            return tracks;
         }
     
 
