@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 
@@ -28,26 +26,43 @@ public class PlaylistDAO
 
     }
 
-    public ObservableList<Playlist> getPlaylists()
+    /**
+     * gets all playlists
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public List<Playlist> getPlaylists() throws SQLException
     {
-        ObservableList<Playlist> list = FXCollections.observableArrayList();
-
-        Playlist fav = new Playlist("My favorites");
-        list.add(fav);
-
-        for (int i = 0; i < 10; i++)
+        try (Connection con = db.getConnection())
         {
-            Playlist pl = new Playlist("test" + i);
-            list.add(pl);
-        }
 
-        return list;
+            List<Playlist> playlists = new ArrayList<>();
+
+            String sql = "SELECT Playlists.id, Playlists.playlist FROM Playlists";
+
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+
+            while (rs.next())
+            {
+                Playlist pl = createPlaylistFromDB(rs);
+
+                playlists.add(pl);
+            }
+
+            return playlists;
+
+        }
     }
 
     /**
      * Adds a new playlist to the database
      *
      * @param playlistTitle
+     *
+     * @return id of inserted playlist
      */
     public int addPlaylist(String playlistTitle) throws SQLServerException, SQLException
     {
@@ -144,4 +159,13 @@ public class PlaylistDAO
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    private Playlist createPlaylistFromDB(ResultSet rs) throws SQLException
+    {
+        Playlist pl = new Playlist();
+
+        pl.setId(rs.getInt("id"));
+        pl.setTitle("playlist");
+
+        return pl;
+    }
 }

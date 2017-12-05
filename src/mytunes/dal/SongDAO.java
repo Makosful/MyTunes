@@ -578,16 +578,11 @@ public class SongDAO
 
         // Artist
         int artistId = getExistingArtist(oldArtist);
-        String sqlArtist = "";
+        String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
 
         if (artistId == 0)
         {
             artistId = setArtist(newArtist);
-            sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
-        }
-        else
-        {
-            sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
         }
 
         PreparedStatement preparedStatementArtist = con.prepareStatement(sqlArtist);
@@ -602,6 +597,7 @@ public class SongDAO
         // Path
 
         String sqlFile = "UPDATE Path SET pathname = ? WHERE pathname like ?";
+        
         PreparedStatement preparedStatementFile = con.prepareStatement(sqlFile);
         preparedStatementFile.setString(1, newFile);
         preparedStatementFile.setString(2, oldFile);
@@ -611,17 +607,12 @@ public class SongDAO
     public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
     {
         int genreId = getExistingGenre(oldGenre);
-        String sqlGenre = "";
+        String sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
         if (genreId == 0)
         {
             genreId = setGenre(newGenre);
-            sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
         }
-        else
-        {
-
-            sqlGenre = "UPDATE Songs SET genreid = ? WHERE Songs.id = ?";
-        }
+        
         PreparedStatement preparedStatementGenre = con.prepareStatement(sqlGenre);
         preparedStatementGenre.setInt(1, genreId);
         preparedStatementGenre.setInt(2, songId);

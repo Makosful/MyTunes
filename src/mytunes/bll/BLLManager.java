@@ -45,7 +45,7 @@ public class BLLManager
         return null;
     }
 
-    public ObservableList<Playlist> getPlaylists()
+    public List<Playlist> getPlaylists() throws SQLException
     {
         return plDAO.getPlaylists();
     }
