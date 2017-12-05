@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" minHeight="480.0" minWidth="640.0" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
+<AnchorPane id="AnchorPane" minHeight="480.0" minWidth="640.0" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
     <children>
         <Label alignment="CENTER" layoutX="286.0" layoutY="31.0" text="Create a new Playlist" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <font>
@@ -93,7 +93,7 @@
         </AnchorPane>
         <HBox alignment="CENTER" layoutX="155.0" layoutY="679.0" spacing="270.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
             <children>
-                <JFXButton onAction="#createPlaylist" text="Create" />
+                <JFXButton fx:id="btnSave" onAction="#createPlaylist" text="Create" />
                 <JFXButton onAction="#cancel" text="Cancel" />
             </children>
         </HBox>

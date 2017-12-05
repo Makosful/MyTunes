@@ -186,4 +186,9 @@ public class BLLManager
             plDAO.insertPlaylistSong(playId, playlist.get(i).getId());
         }
     }
+
+    public void updatePlaylist(Playlist playlist)
+    {
+        plDAO.updatePlaylist(playlist);
+    }
 }

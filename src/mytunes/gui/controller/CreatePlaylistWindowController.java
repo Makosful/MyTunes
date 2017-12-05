@@ -1,11 +1,10 @@
 package mytunes.gui.controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener.Change;
@@ -18,6 +17,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mytunes.be.Music;
+import mytunes.be.Playlist;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -52,6 +52,8 @@ public class CreatePlaylistWindowController implements Initializable
 
     // Objects
     MainWindowModel wm = new MainWindowModel();
+    @FXML
+    private JFXButton btnSave;
 
     /**
      * Initializes the controller class.
@@ -78,7 +80,7 @@ public class CreatePlaylistWindowController implements Initializable
         }
         catch (SQLException ex)
         {
-            Logger.getLogger(CreatePlaylistWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
         songlist.addAll(wm.getSongList());
         playlistBackup.addAll(playlist);
@@ -294,6 +296,18 @@ public class CreatePlaylistWindowController implements Initializable
     public boolean shouldSave()
     {
         return save;
+    }
+
+    public void setPlaylist(Playlist playlist)
+    {
+        this.txtPlaylistName.setText(playlist.getTitle());
+        this.playlist.addAll(playlist.getPlaylist());
+        this.playlistBackup.addAll(playlist.getPlaylist());
+    }
+
+    public void setSaveButton(String text)
+    {
+        btnSave.setText(text);
     }
     //</editor-fold>
 }
