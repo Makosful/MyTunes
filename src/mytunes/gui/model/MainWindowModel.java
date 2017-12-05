@@ -204,6 +204,8 @@ public class MainWindowModel
 
     /**
      * Loads the playlist from storage
+     *
+     * @throws java.sql.SQLException
      */
     public void loadPlaylists() throws SQLException
     {

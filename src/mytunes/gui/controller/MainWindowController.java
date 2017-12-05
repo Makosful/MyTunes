@@ -787,10 +787,6 @@ public class MainWindowController implements Initializable
                                         "150% speed",
                                         "175% speed",
                                         "200% speed");
-        if (volumeSlider.isDisabled())
-        {
-            volumeSlider.setDisable(false);
-        }
     }
 
     /**
