@@ -748,7 +748,7 @@ public class MainWindowModel
         search.prepareSearch(filters, text);
         System.out.println("Eurika!");
     }
-    
+    // Opens a new FXML Window (editSong)
     public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
     {
         File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
