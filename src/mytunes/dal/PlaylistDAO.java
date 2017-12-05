@@ -176,6 +176,23 @@ public class PlaylistDAO
         }
     }
 
+    public void deletePlaylist(int id) throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+
+            String sql = "DELETE FROM Playlists "
+                        +"INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
+                        +"WHERE id = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeQuery();
+
+            
+        }
+    }
+    
     private Playlist createPlaylistFromDB(ResultSet rs) throws SQLException
     {
         Playlist pl = new Playlist();
