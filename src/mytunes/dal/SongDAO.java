@@ -43,8 +43,6 @@ public class SongDAO
             while (rs.next())
             {
                 Music song = createSongFromDB(rs);
-                
-                System.out.println(song.getLocation());
     
                 allSongs.add(song);
             }
