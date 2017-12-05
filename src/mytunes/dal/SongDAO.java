@@ -405,12 +405,10 @@ public class SongDAO
         song.setAlbum(rs.getString("album"));
         song.setGenre(rs.getString("genre"));
         song.setYear(rs.getInt("releasedate"));
-        song.SetLocation(rs.getString("location"));
-        song.setSongPathName(rs.getString("pathname"));
+        song.SetLocation(rs.getString("location").trim());
+        song.setSongPathName(rs.getString("pathname").trim());
         song.SetDescription(rs.getString("description"));
         song.setDuration(rs.getInt("duration"));
-
-        
         
         return song;
     }
