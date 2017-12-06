@@ -64,6 +64,10 @@
     -fx-background-radius: 1;
 }
 
+.table-row-cell:empty:odd, .table-row-cell:empty:even {
+    -fx-background-color: transparent;
+}
+
 .list-view .list-cell {
     -fx-text-fill: white;
 }
@@ -114,9 +118,9 @@
 
 .button {
     -fx-background-color: #090a0c, linear-gradient(#a1a3a3 0%, #636667 100%), 
-                                   linear-gradient(#526570, #464a4e), 
-                                   radial-gradient(center 50% 50%, 
-                                   radius 100%, #666666, #a1a3a3);
+        linear-gradient(#526570, #464a4e), 
+        radial-gradient(center 50% 50%, 
+        radius 100%, #666666, #a1a3a3);
     -fx-background-radius: 5, 4, 4, 5;
     -fx-background-insets: 0, 1, 1, 0;
     -fx-text-fill: white;

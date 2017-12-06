@@ -196,8 +196,8 @@ public class MainWindowController implements Initializable
         progressSlider.setDisable(true);
         lblTimer.setDisable(true);
         //Forces the table to adapt its height to the list (no empty rows) - TODO understand why
-        tblSongList.setFixedCellSize(20);
-        tblSongList.prefHeightProperty().bind(Bindings.size(tblSongList.getItems()).multiply(tblSongList.getFixedCellSize()).add(30));
+        tblSongList.setFixedCellSize(30);
+        //tblSongList.prefHeightProperty().bind(Bindings.size(tblSongList.getItems()).multiply(tblSongList.getFixedCellSize()).add(30));
 
         try
         {
@@ -250,9 +250,12 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        //Sets up the auto adjusting width of the table to adapt to the content of the cell
-        tblSongList.setColumnResizePolicy((param) -> true);
-        Platform.runLater(() -> resizeCellWidth(tblSongList));
+        /**
+         * Sets up the auto adjusting width of the table to adapt to the content of the cell
+         * Currently disabled, enable to automatically set the width of the columns to fit our tables width
+         */
+        //tblSongList.setColumnResizePolicy((param) -> true);
+        //Platform.runLater(() -> resizeCellWidth(tblSongList));
         
         // Sets up the mouse listener for the tableview
         setupTableMouseListner();
