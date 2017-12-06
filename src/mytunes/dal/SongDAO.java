@@ -72,7 +72,7 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert);
             preparedStatementInsert.setString(1, song.getTitle());
             preparedStatementInsert.setInt(2, artistId);
@@ -82,6 +82,7 @@ public class SongDAO
             preparedStatementInsert.setString(6, song.getDescription());
             preparedStatementInsert.setInt(7, song.getDuration());
             preparedStatementInsert.setInt(8, song.getYear());
+            preparedStatementInsert.setInt(9, 4);
             preparedStatementInsert.executeUpdate();
 
         }
