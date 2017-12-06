@@ -410,9 +410,17 @@ public class SongDAO
 
     }
 
+    /**
+     * Creates a new song based on data from the database
+     *
+     * @param rs
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
     public Music createSongFromDB(ResultSet rs) throws SQLException
     {
-
         Music song = new Music();
 
         song.setId(rs.getInt("id"));
@@ -543,6 +551,7 @@ public class SongDAO
             return songs;
         }
     }
+
     // Changes the song's info.
     public void editSong(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
                          String oldFile, String newFile, String oldGenre, String newGenre) throws SQLServerException, SQLException
@@ -561,6 +570,7 @@ public class SongDAO
             editGenre(oldGenre, newGenre, con, songId);
         }
     }
+
     // Methods to change title etc.
     public void editTitle(String newTitle, String oldTitle, Connection con) throws SQLException
     {
@@ -592,19 +602,19 @@ public class SongDAO
         preparedStatementArtist.setInt(2, songId);
         preparedStatementArtist.execute();
     }
-    
+
     public void editPath(String newFile, String oldFile, Connection con) throws SQLException
     {
         // Path
 
         String sqlFile = "UPDATE Path SET pathname = ? WHERE pathname like ?";
-        
+
         PreparedStatement preparedStatementFile = con.prepareStatement(sqlFile);
         preparedStatementFile.setString(1, newFile);
         preparedStatementFile.setString(2, oldFile);
         preparedStatementFile.execute();
     }
-    
+
     public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
     {
         int genreId = getExistingGenre(oldGenre);
@@ -613,7 +623,7 @@ public class SongDAO
         {
             genreId = setGenre(newGenre);
         }
-        
+
         PreparedStatement preparedStatementGenre = con.prepareStatement(sqlGenre);
         preparedStatementGenre.setInt(1, genreId);
         preparedStatementGenre.setInt(2, songId);

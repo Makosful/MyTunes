@@ -30,7 +30,9 @@ public class PlaylistDAO
 
     /**
      * gets all playlists
+     *
      * @return all playlists in a ArrayList
+     *
      * @throws SQLException
      */
     public List<Playlist> getPlaylists() throws SQLException
@@ -109,7 +111,6 @@ public class PlaylistDAO
 
     }
 
-
     public ObservableList<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
@@ -131,9 +132,7 @@ public class PlaylistDAO
 
             while (rs.next())
             {
-
                 Music song = sDAO.createSongFromDB(rs);
-                //System.out.println(song.getArtist());
                 allSongs.add(song);
             }
 
@@ -173,7 +172,6 @@ public class PlaylistDAO
 
             preparedStatement.executeUpdate();
 
-            
         }
     }
 
@@ -183,17 +181,16 @@ public class PlaylistDAO
         {
 
             String sql = "DELETE FROM Playlists "
-                        +"INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
-                        +"WHERE id = ?";
+                         + "INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
+                         + "WHERE id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             preparedStatement.executeQuery();
 
-            
         }
     }
-    
+
     private Playlist createPlaylistFromDB(ResultSet rs) throws SQLException
     {
         Playlist pl = new Playlist();
