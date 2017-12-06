@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mytunes.bll;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import mytunes.be.Music;
 import mytunes.dal.SongDAO;
 
@@ -20,104 +13,123 @@ import mytunes.dal.SongDAO;
  */
 public class Search
 {
-    private SongDAO sDAO;
+
+    // Objects
+    private final SongDAO sDAO;
+
+    /**
+     * Constructor
+     *
+     * @throws IOException
+     */
     public Search() throws IOException
     {
         this.sDAO = new SongDAO();
-    
+
     }
-    
+
     /**
-     * 
-     * @param criterias
-     * @param searchText
-     * @return
-     * @throws SQLException 
+     * Prepares a search for the database
+     *
+     * @param criterias  The filters to apply for the search
+     * @param searchText The text to search for
+     *
+     * @return Returns a list containing the filtered results
+     *
+     * @throws SQLException
      */
-    public List<Music> prepareSearch(List<String> criterias, String searchText) throws SQLException
-    {   
-        
+    public List<Music> prepareSearch(List<String> criterias, String searchText)
+            throws SQLException
+    {
+
+        // Creates a new ArrayList to store the results in
         List<String> searchTables = new ArrayList();
-        
-       
-        for(String criteria : criterias){
-            
-            if(isNumeric(searchText))
+
+        criterias.forEach((criteria) ->
+        {
+            // Check if the search is of numbers
+            if (isNumeric(searchText))
             {
+                // If the search is only numbers
 
-               if(criteria.equalsIgnoreCase("year"))
-               {
-
-                   searchTables.add("Songs.releasedate");
-
-               }
-
-
-            }
-            else
-            { 
-                if(criteria.equalsIgnoreCase("artist"))
+                // Then apply the year filter
+                if (criteria.equalsIgnoreCase("year"))
                 {
-                    searchTables.add("Artist.artist");
-
-                }else if(criteria.equalsIgnoreCase("title"))
-                {
-
-                    searchTables.add("Songs.title");
-
-                }else if(criteria.equalsIgnoreCase("album"))
-                {
-
-                    searchTables.add("Albums.album");
-
-                }else if(criteria.equalsIgnoreCase("Genre"))
-                {
-
-                    searchTables.add("Genre.genre");
-
+                    // Adds the years to the search queue
+                    searchTables.add("Songs.releasedate");
                 }
-        
             }
-        }
-     
-        
+            // If the search contains characters
+            else
+            {
+                // Then first check if the artist filter has been selected
+                if (criteria.equalsIgnoreCase("artist"))
+                {
+                    // If it is, apply the filter
+                    searchTables.add("Artist.artist");
+                }
+
+                // Then check if the title is selected
+                if (criteria.equalsIgnoreCase("title"))
+                {
+                    // If so, apply it
+                    searchTables.add("Songs.title");
+                }
+
+                // Then check if the album is checked
+                if (criteria.equalsIgnoreCase("album"))
+                {
+                    // If so, apply it
+                    searchTables.add("Albums.album");
+                }
+
+                // Then check if the genre has been checked
+                if (criteria.equalsIgnoreCase("Genre"))
+                {
+                    // If so, apply it
+                    searchTables.add("Genre.genre");
+                }
+            }
+        });
+
         String sqlSearch = "";
         boolean firstQm = true;
-        for(int index = 0; index < searchTables.size(); index++)
+        for (int index = 0; index < searchTables.size(); index++)
         {
-     
-            if(firstQm == false)
+
+            if (firstQm == false)
             {
                 sqlSearch += " OR ";
             }
 
-            sqlSearch += searchTables.get(index)+" LIKE ?";
+            sqlSearch += searchTables.get(index) + " LIKE ?";
 
             firstQm = false;
 
         }
-        
+
         List<Music> songs = sDAO.getSongsFromSearch(searchTables.size(), sqlSearch, searchText);
         return songs;
     }
-    
-    
-     /**
-     * Checks if a given string is numeric 
+
+    /**
+     * Checks if a given string is numeric
+     *
      * @param str
-     * @return 
+     *
+     * @return
      */
-    public boolean isNumeric(String str)  
-    {  
-      try  
-      {  
-        double d = Double.parseDouble(str);  
-      }  
-      catch(NumberFormatException nfe)  
-      {  
-        return false;  
-      }  
-      return true;  
+    public boolean isNumeric(String str)
+    {
+        try
+        {
+            double d = Double.parseDouble(str);
+        }
+        catch (NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
     }
-    
+
 }

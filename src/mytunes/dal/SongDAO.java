@@ -431,7 +431,6 @@ public class SongDAO
         song.setGenre(rs.getString("genre"));
         song.setYear(rs.getInt("releasedate"));
         song.SetLocation(rs.getString("location").trim());
-//        song.SetLocation("res/songs");
         song.setSongPathName(rs.getString("pathname").trim());
         song.SetDescription(rs.getString("description"));
         song.setDuration(rs.getInt("duration"));
@@ -519,18 +518,35 @@ public class SongDAO
      * @throws SQLServerException
      * @throws SQLException
      */
-    public List<Music> getSongsFromSearch(int length, String sqlSearch, String searchText) throws SQLServerException, SQLException
+    public List<Music> getSongsFromSearch(int length,
+                                          String sqlSearch,
+                                          String searchText)
+            throws SQLServerException, SQLException
     {
 
         try (Connection con = db.getConnection())
         {
 
-            String sql = "SELECT Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname "
+            String sql = "SELECT "
+                         + "Songs.id, "
+                         + "Songs.title, "
+                         + "Songs.releasedate, "
+                         + "Songs.description, "
+                         + "Songs.duration, "
+                         + "Artist.artist, "
+                         + "Albums.album, "
+                         + "Genre.genre, "
+                         + "Location.location, "
+                         + "Path.pathname "
+                         //
                          + "FROM Songs "
+                         //
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                         + "INNER join Location on Songs.locationid = Location.id "
                          + "INNER JOIN Path ON Songs.pathid = path.id "
+                         //
                          + "WHERE " + sqlSearch;
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -544,10 +560,8 @@ public class SongDAO
 
             while (rs.next())
             {
-
                 Music song = createSongFromDB(rs);
                 songs.add(song);
-
             }
 
             return songs;

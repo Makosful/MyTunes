@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicLong;
-import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -251,12 +249,13 @@ public class MainWindowController implements Initializable
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         /**
-         * Sets up the auto adjusting width of the table to adapt to the content of the cell
-         * Currently disabled, enable to automatically set the width of the columns to fit our tables width
+         * Sets up the auto adjusting width of the table to adapt to the content
+         * of the cell
+         * Currently disabled, enable to automatically set the width of the
+         * columns to fit our tables width
          */
         //tblSongList.setColumnResizePolicy((param) -> true);
         //Platform.runLater(() -> resizeCellWidth(tblSongList));
-        
         // Sets up the mouse listener for the tableview
         setupTableMouseListner();
 
@@ -1334,13 +1333,13 @@ public class MainWindowController implements Initializable
     private void resizeCellWidth(TableView<Music> tblSongList)
     {
         double cellWidth;
-        
+
         AtomicLong width = new AtomicLong();
         tblSongList.getColumns().forEach(col ->
         {
             width.addAndGet((long) col.getWidth());
         });
-        
+
         cellWidth = tblSongList.getWidth();
 
         if (cellWidth > width.get())
