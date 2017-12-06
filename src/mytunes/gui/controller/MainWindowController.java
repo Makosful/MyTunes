@@ -9,7 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicLong;
+import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -192,6 +195,9 @@ public class MainWindowController implements Initializable
         playbackSpeed.setDisable(true);
         progressSlider.setDisable(true);
         lblTimer.setDisable(true);
+        //Forces the table to adapt its height to the list (no empty rows) - TODO understand why
+        tblSongList.setFixedCellSize(20);
+        tblSongList.prefHeightProperty().bind(Bindings.size(tblSongList.getItems()).multiply(tblSongList.getFixedCellSize()).add(30));
 
         try
         {
@@ -244,6 +250,10 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        //Sets up the auto adjusting width of the table to adapt to the content of the cell
+        tblSongList.setColumnResizePolicy((param) -> true);
+        Platform.runLater(() -> resizeCellWidth(tblSongList));
+        
         // Sets up the mouse listener for the tableview
         setupTableMouseListner();
 
@@ -265,56 +275,67 @@ public class MainWindowController implements Initializable
         setupTableContextMenu(cm);
 
         // Adds the actual listener to the table
-        tblSongList.setOnMouseClicked((MouseEvent event) ->
         {
-            // Double click - Single action
-            if (event.getClickCount() == 2)
+            tblSongList.setOnMouseClicked((MouseEvent event) ->
             {
-                // Extracts the item that's been clicked on
-                Music selectedItem = tblSongList.getSelectionModel()
-                        .getSelectedItem();
+                if (!tblSongList.getSelectionModel().getSelectedItems().isEmpty())
+                {
+                    System.out.println("Not Empty");
+                    // Double click - Single action
+                    if (event.getClickCount() == 2)
+                    {
+                        // Extracts the item that's been clicked on
+                        Music selectedItem = tblSongList.getSelectionModel()
+                                .getSelectedItem();
 
-                // Adds the selected item to the queue
-                wm.setQueuePlay(selectedItem);
+                        // Adds the selected item to the queue
+                        wm.setQueuePlay(selectedItem);
 
-                // Plays the queue
-                prepareAndPlay();
-            }
+                        // Plays the queue
+                        prepareAndPlay();
+                    }
 
-            if (event.getClickCount() == 1)
-            {
-                Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+                    if (event.getClickCount() == 1)
+                    {
+                        Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
 
-                lblArtist.setText(selectedItem.getArtist());
+                        lblArtist.setText(selectedItem.getArtist());
 
-                lblTitle.setText(selectedItem.getTitle());
+                        lblTitle.setText(selectedItem.getTitle());
 
-                lblAlbum.setText(selectedItem.getAlbum());
+                        lblAlbum.setText(selectedItem.getAlbum());
 
-                lblYear.setText(String.valueOf(selectedItem.getYear()));
+                        lblYear.setText(String.valueOf(selectedItem.getYear()));
 
-                lblDescription.setText(selectedItem.getDescription());
+                        lblDescription.setText(selectedItem.getDescription());
 
-                lblGenre.setText(selectedItem.getGenre());
+                        lblGenre.setText(selectedItem.getGenre());
 
-                lblDuration.setText(String.valueOf(selectedItem.getDuration()));
+                        lblDuration.setText(String.valueOf(selectedItem.getDuration()));
 
-            }
+                    }
 
-            // Right click - Context Menu
-            if (event.getButton() == MouseButton.SECONDARY)
-            {
-                // Opens the context menu with the top left corner being at the
-                // mouse's position
-                cm.show(tblSongList, event.getScreenX(), event.getScreenY());
-            }
-        });
+                    // Right click - Context Menu
+                    if (event.getButton() == MouseButton.SECONDARY)
+                    {
+                        // Opens the context menu with the top left corner being at the
+                        // mouse's position
+                        cm.show(tblSongList, event.getScreenX(), event.getScreenY());
+                    }
+                }
+                else
+                {
+                    System.out.println("Empty");
+                }
+            });
+        }
     }
 
     /**
      * Creates a listener for the table to search
      *
-     * This method sets up a litener for the search field above the song table,
+     * This method sets up a litener for the search field above the song
+     * table,
      * which listen for changes to the input. Whenever a change has occured,
      * it'll search the database for results matching the current search
      * criteria (Entered tex and the filters)
@@ -1305,6 +1326,27 @@ public class MainWindowController implements Initializable
     private void searchClear(ActionEvent event)
     {
         txtTableSearch.clear();
+    }
+
+    private void resizeCellWidth(TableView<Music> tblSongList)
+    {
+        double cellWidth;
+        
+        AtomicLong width = new AtomicLong();
+        tblSongList.getColumns().forEach(col ->
+        {
+            width.addAndGet((long) col.getWidth());
+        });
+        
+        cellWidth = tblSongList.getWidth();
+
+        if (cellWidth > width.get())
+        {
+            tblSongList.getColumns().forEach((TableColumn<Music, ?> col) ->
+            {
+                col.setPrefWidth(col.getWidth() + ((cellWidth - width.get()) / tblSongList.getColumns().size()));
+            });
+        }
     }
 
 }
