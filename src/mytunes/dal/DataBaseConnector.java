@@ -9,13 +9,16 @@ import java.sql.Connection;
  *
  * @author Hussain
  */
-public class DataBaseConnector 
+public class DataBaseConnector
 {
-        private SQLServerDataSource dataSource;
-        /**
-         * Setting the relevant info to the database connection.
-         * @throws IOException 
-         */
+
+    private final SQLServerDataSource dataSource;
+
+    /**
+     * Setting the relevant info to the database connection.
+     *
+     * @throws IOException
+     */
     public DataBaseConnector() throws IOException
     {
         dataSource = new SQLServerDataSource();
@@ -26,10 +29,13 @@ public class DataBaseConnector
         dataSource.setUser("CS2017A_8_java");
         dataSource.setPassword("javajava");
     }
+
     /**
      * Getting the connection from the database.
+     *
      * @return
-     * @throws SQLServerException 
+     *
+     * @throws SQLServerException
      */
     public Connection getConnection() throws SQLServerException
     {

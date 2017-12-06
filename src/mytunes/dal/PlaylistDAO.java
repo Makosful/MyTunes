@@ -117,11 +117,22 @@ public class PlaylistDAO
         {
             ObservableList<Music> allSongs = FXCollections.observableArrayList();
 
-            String sql = "SELECT Songs.title, Artist.artist, Albums.album, Songs.releasedate, Genre.genre, Path.pathname "
+            String sql = "SELECT "
+                         + "Songs.id, "
+                         + "Songs.title, "
+                         + "Artist.artist, "
+                         + "Albums.album, "
+                         + "Genre.genre, "
+                         + "Songs.releasedate, "
+                         + "Location.location, "
+                         + "Path.pathname, "
+                         + "Songs.description, "
+                         + "Songs.duration "
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                         + "INNER JOIN Location on Songs.locationid = location.id "
                          + "INNER JOIN Path ON Songs.pathid = path.id "
                          + "INNER JOIN playlist_with_songs ON Songs.id = playlist_with_songs.songid "
                          + "WHERE playlist_with_songs.playlistid = ?";
