@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
@@ -830,11 +831,12 @@ public class MainWindowModel
      * @param time
      * @param file
      * @param genre
+     * @param anchorPane
      *
      * @throws IOException
      * @throws SQLException
      */
-    public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
+    public void openEditSongWindow(String title, String artist, int time, String file, String genre, AnchorPane anchorPane) throws IOException, SQLException
     {
         File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
         FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
@@ -850,6 +852,7 @@ public class MainWindowModel
         controller.setData(title, artist, time, file, genre);
         controller.getSongIdFromMainController(songIdFromTable);
         stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(anchorPane.getScene().getWindow());
         stage.show();
         controller.closeWindow();
     }

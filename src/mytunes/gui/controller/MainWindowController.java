@@ -163,6 +163,8 @@ public class MainWindowController implements Initializable
     private Label lblGenreCurrent;
     @FXML
     private Label lblDurationCurrent;
+    @FXML
+    private AnchorPane anchorPane;
 
     /**
      * Constructor, for all intends and purposes
@@ -499,7 +501,7 @@ public class MainWindowController implements Initializable
                 String genre = musicInfo.getGenre();
                 String pathName = musicInfo.getSongPathName();
 
-                wm.openEditSongWindow(title, artist, time, pathName, genre);
+                wm.openEditSongWindow(title, artist, time, pathName, genre, anchorPane);
             }
             catch (IOException ex)
             {

@@ -123,9 +123,9 @@ public class EditSongController implements Initializable
         // Getting the data from the current song
         // Before the values might change, based on users choices.
         oldGenre = genre;
-        oldTitle = txtFieldTitle.getText();
-        oldArtist = txtFieldArtist.getText();
-        oldFile = txtFile.getText();
+        oldTitle = title;
+        oldArtist = artist;
+        oldFile = file;
     }
     /**
      * Returns the new title, artist, etc.
@@ -266,20 +266,20 @@ public class EditSongController implements Initializable
         ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
         ButtonType btnNo = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
         
-        Alert alert = new Alert(AlertType.CONFIRMATION, "test", btnYes, btnNo);
+        Alert alert = new Alert(AlertType.CONFIRMATION, "Are you sure you want save?", btnYes, btnNo );
         
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStyleClass().add("myunes/css/stylesheet.css");
         
         alert.setTitle("Confirmation Dialog");
-        alert.setContentText("Are you sure you want save?");
         
         Optional <ButtonType> action = alert.showAndWait();
         
         if (action.get() == btnYes)
         {
             esModel.editSongDatabase(getOldTitle(), getTitle(), getOldArtist(), getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
-            lblError.setText("Song was changed");
+            Stage stage = (Stage) anchorPane.getScene().getWindow();
+            stage.close();
         }
         if (action.get() == btnNo)
         {
