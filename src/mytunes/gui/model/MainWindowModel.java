@@ -583,7 +583,10 @@ public class MainWindowModel
     public void stopMediaPlayer()
     {
 //        this.mediaPlayer.stop();
-        this.queueMedia.get(currentSong).stop();
+        if (playing)
+        {
+            this.queueMedia.get(currentSong).stop();
+        }
     }
 
     public void updateDuration()
@@ -811,8 +814,9 @@ public class MainWindowModel
      */
     public void songSearch(String text, ArrayList<String> filters) throws SQLException
     {
-        search.prepareSearch(filters, text);
-        System.out.println("Eurika!");
+        List<Music> results = search.prepareSearch(filters, text);
+        this.allSongs.clear();
+        this.allSongs.addAll(results);
     }
 
     /**
