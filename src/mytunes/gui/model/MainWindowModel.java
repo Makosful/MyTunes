@@ -189,6 +189,75 @@ public class MainWindowModel
             updateDuration();
         });
     }
+
+    private void playNextSong()
+    {
+        int queueSize = this.queue.size() - 1;
+        System.out.println(queueSize);
+
+        // If queue does not have next stop playing
+        // If queue has next play next
+        currentSong++;
+        setSong(this.queueMedia.get(currentSong).getMedia());
+        startMediaPlayer();
+    }
+
+    public void currentSongNext()
+    {
+        currentSong++;
+    }
+
+    private void currentSongPrev()
+    {
+        currentSong--;
+    }
+
+    public int getCurrentSong()
+    {
+        return currentSong;
+    }
+
+    public ObservableList<MediaPlayer> getQueueListMedia()
+    {
+        return this.queueMedia;
+    }
+
+    /**
+     * Changes the currently playing song to the given music
+     *
+     * Note: This will only change which song to play. You must manually set the
+     * song to be played
+     *
+     * @param music The music to play
+     */
+    public void skipToSong(Music music)
+    {
+        int index = bllManager.getIndexOf(music, this.queue);
+
+        currentSong = index;
+    }
+
+    /**
+     * Skips ahead to the next song if applicable
+     */
+    public void skipToNextSong()
+    {
+        if (currentSong < queue.size() - 1)
+        {
+            currentSongNext();
+        }
+    }
+
+    /**
+     * Skips back to the previous song if applicable
+     */
+    public void skipToPrevSong()
+    {
+        if (currentSong > 0)
+        {
+            currentSongPrev();
+        }
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Playlist Methods">
@@ -332,7 +401,6 @@ public class MainWindowModel
         }
     }
 
-    //</editor-fold>
     public void setPathAndName(List<File> chosenFiles) throws IOException
     {
 
@@ -407,6 +475,11 @@ public class MainWindowModel
             }
         });
         return searchResult;
+    }
+
+    public void savePlaylist(String title, ObservableList<Music> playlist) throws SQLException
+    {
+        bllManager.savePlaylist(title, playlist);
     }
     //</editor-fold>
 
@@ -733,76 +806,6 @@ public class MainWindowModel
             //gridEqualizer.add(eb, 0, 0);
         }
     }
-    //</editor-fold>
-
-    private void playNextSong()
-    {
-        int queueSize = this.queue.size() - 1;
-        System.out.println(queueSize);
-
-        // If queue does not have next stop playing
-        // If queue has next play next
-        currentSong++;
-        setSong(this.queueMedia.get(currentSong).getMedia());
-        startMediaPlayer();
-    }
-
-    public void currentSongNext()
-    {
-        currentSong++;
-    }
-
-    private void currentSongPrev()
-    {
-        currentSong--;
-    }
-
-    public int getCurrentSong()
-    {
-        return currentSong;
-    }
-
-    public ObservableList<MediaPlayer> getQueueListMedia()
-    {
-        return this.queueMedia;
-    }
-
-    /**
-     * Changes the currently playing song to the given music
-     *
-     * Note: This will only change which song to play. You must manually set the
-     * song to be played
-     *
-     * @param music The music to play
-     */
-    public void skipToSong(Music music)
-    {
-        int index = bllManager.getIndexOf(music, this.queue);
-
-        currentSong = index;
-    }
-
-    /**
-     * Skips ahead to the next song if applicable
-     */
-    public void skipToNextSong()
-    {
-        if (currentSong < queue.size() - 1)
-        {
-            currentSongNext();
-        }
-    }
-
-    /**
-     * Skips back to the previous song if applicable
-     */
-    public void skipToPrevSong()
-    {
-        if (currentSong > 0)
-        {
-            currentSongPrev();
-        }
-    }
 
     /**
      * Search the storage for songs
@@ -848,17 +851,19 @@ public class MainWindowModel
         controller.getSongIdFromMainController(songIdFromTable);
         stage.show();
     }
-    // Goes through the controller, takes the id of the song.
 
+    /**
+     * Goes through the controller, takes the id of the song.
+     *
+     * @param id
+     *
+     * @return
+     */
     public int getSongId(int id)
     {
         songIdFromTable = id;
         return id;
     }
-
-    public void savePlaylist(String title, ObservableList<Music> playlist) throws SQLException
-    {
-        bllManager.savePlaylist(title, playlist);
-    }
+    //</editor-fold>
 
 }
