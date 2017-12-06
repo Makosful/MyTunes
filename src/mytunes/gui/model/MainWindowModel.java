@@ -847,6 +847,7 @@ public class MainWindowModel
         controller.setData(title, artist, time, file, genre);
         controller.getSongIdFromMainController(songIdFromTable);
         stage.show();
+        controller.closeWindow();
     }
     // Goes through the controller, takes the id of the song.
 
