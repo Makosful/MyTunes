@@ -16,6 +16,7 @@ import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import mytunes.be.Music;
@@ -846,6 +847,7 @@ public class MainWindowModel
         stage.setScene(scene);
         controller.setData(title, artist, time, file, genre);
         controller.getSongIdFromMainController(songIdFromTable);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.show();
         controller.closeWindow();
     }

@@ -102,6 +102,7 @@ public class EditSongController implements Initializable
 
         ObservableList comboBoxList = FXCollections.observableList(genreList);
         comboBoxCategory.setItems(comboBoxList);
+        
     }
     // Method to get genre from song.
     private void getSongsCurrentGenre(String genre)
@@ -178,14 +179,16 @@ public class EditSongController implements Initializable
     @FXML
     private void saveChanges(ActionEvent event) throws SQLException
     {
-        if (genres == null)
+        if (!TxtFieldsFilled())
         {
-            lblError.setText("One or more textfields are empty");
+            return;
         }
-        else
+        if (TxtFieldsFilled() && !genreNotEmpty())
         {
-            confirmationDialog();
+            return;
         }
+        confirmationDialog();
+
         genres = null;
     }
     // Cancels the changes / No changes made to song.
@@ -263,10 +266,10 @@ public class EditSongController implements Initializable
         ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
         ButtonType btnNo = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
         
-        Alert alert = new Alert(AlertType.CONFIRMATION, "", btnYes, btnNo);
+        Alert alert = new Alert(AlertType.CONFIRMATION, "test", btnYes, btnNo);
         
         DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStyleClass().add("mytunes/css/stylesheet.css");
+        dialogPane.getStyleClass().add("myunes/css/stylesheet.css");
         
         alert.setTitle("Confirmation Dialog");
         alert.setContentText("Are you sure you want save?");
@@ -275,13 +278,53 @@ public class EditSongController implements Initializable
         
         if (action.get() == btnYes)
         {
-            System.out.println("testyes");
             esModel.editSongDatabase(getOldTitle(), getTitle(), getOldArtist(), getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
+            lblError.setText("Song was changed");
         }
         if (action.get() == btnNo)
         {
             alert.close();
         }
+    }
+    /**
+     * Checks whether the textfields are empty or not. 
+     * Only the ones that can be modified obv.
+     * @return 
+     */
+    private boolean TxtFieldsFilled()
+    {
+        boolean notEmpty = true;
+
+        List<TextField> txtFields = new ArrayList();
+        
+        txtFields.add(txtFieldArtist);
+        txtFields.add(txtFieldTitle);
+        txtFields.add(txtFile);
+        
+        for (TextField textFields : txtFields)
+            {
+                if (textFields.getText().isEmpty())
+                {
+                    lblError.setText("Fill the missing TextField(s)");
+                     notEmpty = false;
+                    return notEmpty;
+                }
+            }
+        return notEmpty;
+    }
+    /**
+     * Checks whether genres string is empty or not.
+     * @return 
+     */
+    private boolean genreNotEmpty()
+    {
+        boolean genreNotEmpty = true;
+        if (genres == null)
+        {
+            lblError.setText("Add atleast one genre");
+            genreNotEmpty = false;
+        }
+        return genreNotEmpty;
     }
 
 }   

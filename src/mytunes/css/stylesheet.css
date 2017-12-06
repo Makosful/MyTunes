@@ -159,3 +159,12 @@
 .jfx-list-view .context-menu .menu-item .label {
     -fx-text-fill: black;
 }
+
+/*
+CSS For EditSongFXML
+*/
+
+#txtFieldTitle, #txtFieldArtist, #txtFieldTitle, #txtFile, #txtTime
+{
+    -fx-text-fill: white;
+}
