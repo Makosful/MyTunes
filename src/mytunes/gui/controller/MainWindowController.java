@@ -250,9 +250,12 @@ public class MainWindowController implements Initializable
         // Allows for multiple entries to be selected at once
         tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
-        //Sets up the auto adjusting width of the table to adapt to the content of the cell
+        /**
+         * Sets up the auto adjusting width of the table to adapt to the content of the cell
+         * Currently disabled, enable to automatically set the width of the columns to fit our tables width
+         */
         //tblSongList.setColumnResizePolicy((param) -> true);
-        Platform.runLater(() -> resizeCellWidth(tblSongList));
+        //Platform.runLater(() -> resizeCellWidth(tblSongList));
         
         // Sets up the mouse listener for the tableview
         setupTableMouseListner();
