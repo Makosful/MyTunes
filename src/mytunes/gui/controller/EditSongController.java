@@ -8,17 +8,26 @@ package mytunes.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import mytunes.gui.model.EditSongModel;
 
 /**
@@ -29,12 +38,19 @@ import mytunes.gui.model.EditSongModel;
 public class EditSongController implements Initializable
 {
     
+    //<editor-fold defaultstate="collapsed" desc="oldStrings">
     String oldTitle;
     String oldFile;
     String oldArtist;
     String oldGenre;
+//</editor-fold>
     
+    private String genres;
+    
+    // SongID from MWController.
     private int songIdFromTable;
+    // Stage of this controller's window.
+    Stage stage;
 
     @FXML
     private JFXTextField txtTime;
@@ -55,6 +71,12 @@ public class EditSongController implements Initializable
     EditSongModel esModel;
     // List that contains all the genres.
     List<String> genreList;
+    @FXML
+    private Label lblError;
+    @FXML
+    private Label lblError2;
+    @FXML
+    private AnchorPane anchorPane;
     
     public EditSongController() throws IOException
     {
@@ -80,6 +102,7 @@ public class EditSongController implements Initializable
 
         ObservableList comboBoxList = FXCollections.observableList(genreList);
         comboBoxCategory.setItems(comboBoxList);
+        
     }
     // Method to get genre from song.
     private void getSongsCurrentGenre(String genre)
@@ -102,7 +125,7 @@ public class EditSongController implements Initializable
         oldGenre = genre;
         oldTitle = txtFieldTitle.getText();
         oldArtist = txtFieldArtist.getText();
-        oldFile = file;
+        oldFile = txtFile.getText();
     }
     /**
      * Returns the new title, artist, etc.
@@ -125,7 +148,7 @@ public class EditSongController implements Initializable
     
     public String getGenre()
     {
-      return comboBoxCategory.getSelectionModel().getSelectedItem();
+      return genres;
     }
     // Gets the old / current strings, before user might change them.
     public String getOldFile()
@@ -156,14 +179,24 @@ public class EditSongController implements Initializable
     @FXML
     private void saveChanges(ActionEvent event) throws SQLException
     {
-        esModel.editSongDatabase(getOldTitle(), getTitle(),getOldArtist(), getArtist(),getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
-        System.out.println("test");
+        if (!TxtFieldsFilled())
+        {
+            return;
+        }
+        if (TxtFieldsFilled() && !genreNotEmpty())
+        {
+            return;
+        }
+        confirmationDialog();
+
+        genres = null;
     }
     // Cancels the changes / No changes made to song.
     @FXML
     private void cancelChanges(ActionEvent event)
     {
-        System.out.println("TEST");
+        stage = (Stage) anchorPane.getScene().getWindow();
+        stage.close();
     }
     // Goes through mainWindowModel, and then controller, takes the ID of the song from the table.
     public int getSongIdFromMainController(int id)
@@ -178,4 +211,120 @@ public class EditSongController implements Initializable
     {
         txtTime.setEditable(false);
     }
-}
+    /**
+     * Saves changes to song, based on users changes.
+     * @param event 
+     */
+    @FXML
+    private void saveGenre(ActionEvent event)
+    {
+        if(genres == null)
+        {
+            genres = comboBoxCategory.getSelectionModel().getSelectedItem();
+        }
+        else
+        {
+        genres+="/"+comboBoxCategory.getSelectionModel().getSelectedItem();
+        System.out.println(genres);
+        }
+    }
+    /**
+     * IF user has added genres, and decides to not save changes
+     * Then the genres string are put to null.
+     */
+    public void closeWindow()
+    {
+        
+        stage = (Stage) anchorPane.getScene().getWindow();
+                
+        stage.setOnHiding(new EventHandler<WindowEvent>()
+        {
+
+            @Override
+            public void handle(WindowEvent event)
+            {
+                Platform.runLater(new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        genres = null;
+                        stage.close();
+                    }
+                });
+            }
+        });
+    }
+    
+    /**
+     * A confirmation dialog, on whether you want to save songs changes or not.
+     */
+    private void confirmationDialog() throws SQLException
+    {
+        
+        ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnNo = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        
+        Alert alert = new Alert(AlertType.CONFIRMATION, "test", btnYes, btnNo);
+        
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStyleClass().add("myunes/css/stylesheet.css");
+        
+        alert.setTitle("Confirmation Dialog");
+        alert.setContentText("Are you sure you want save?");
+        
+        Optional <ButtonType> action = alert.showAndWait();
+        
+        if (action.get() == btnYes)
+        {
+            esModel.editSongDatabase(getOldTitle(), getTitle(), getOldArtist(), getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
+            lblError.setText("Song was changed");
+        }
+        if (action.get() == btnNo)
+        {
+            alert.close();
+        }
+    }
+    /**
+     * Checks whether the textfields are empty or not. 
+     * Only the ones that can be modified obv.
+     * @return 
+     */
+    private boolean TxtFieldsFilled()
+    {
+        boolean notEmpty = true;
+
+        List<TextField> txtFields = new ArrayList();
+        
+        txtFields.add(txtFieldArtist);
+        txtFields.add(txtFieldTitle);
+        txtFields.add(txtFile);
+        
+        for (TextField textFields : txtFields)
+            {
+                if (textFields.getText().isEmpty())
+                {
+                    lblError.setText("Fill the missing TextField(s)");
+                     notEmpty = false;
+                    return notEmpty;
+                }
+            }
+        return notEmpty;
+    }
+    /**
+     * Checks whether genres string is empty or not.
+     * @return 
+     */
+    private boolean genreNotEmpty()
+    {
+        boolean genreNotEmpty = true;
+        if (genres == null)
+        {
+            lblError.setText("Add atleast one genre");
+            genreNotEmpty = false;
+        }
+        return genreNotEmpty;
+    }
+
+}   
