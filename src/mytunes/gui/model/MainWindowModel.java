@@ -874,17 +874,23 @@ public class MainWindowModel
     }
     //</editor-fold>
 
-    public int[] getSecondsToMin(int seconds)
+    public int[] getSecondsToMinAndHour(int seconds)
     {
         int minutes = seconds / 60;
         
         seconds -= minutes*60;
         
+        int hours = minutes / 60;
+        
+        minutes -= hours*60;
+        
         int[] minSec = new int[2];
         
-        minSec[0] = minutes;
+        minSec[0] = seconds;
         
-        minSec[1] = seconds;
+        minSec[1] = minutes;
+        
+        minSec[2] = hours;
         
         return minSec;
        
