@@ -99,7 +99,7 @@ public class MetaData
     }
 
     /**
-     *
+     * retrieve the meta data from the specific song
      * @param fileString
      *
      * @throws FileNotFoundException
@@ -133,7 +133,7 @@ public class MetaData
     }
 
     /**
-     *
+     * check if some meta data is missing and replace the emypy ones with placeholders
      * @param chosenFile
      */
     private void validateMetaData(File chosenFile)
@@ -196,8 +196,8 @@ public class MetaData
     }
 
     /**
-     *
-     * @return
+     * Create the music object
+     * @return the music object/song
      */
     private Music createMusicObject()
     {
