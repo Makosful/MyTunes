@@ -99,16 +99,18 @@ public class Search
             }
         });
 
+        //create part of sql query from the specific criteria/tables to search in
         String sqlSearch = "";
         boolean firstQm = true;
         for (int index = 0; index < searchTables.size(); index++)
         {
-
+            //if its the first table to search in after "where" do not include "OR"
             if (firstQm == false)
             {
                 sqlSearch += " OR ";
             }
-
+            
+            //the table for instance "Songs.title LIKE ?"
             sqlSearch += searchTables.get(index) + " LIKE ?";
 
             firstQm = false;
