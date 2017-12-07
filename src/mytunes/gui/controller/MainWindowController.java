@@ -130,9 +130,6 @@ public class MainWindowController implements Initializable
     private JFXCheckBox searchTagYear;
     @FXML
     private JFXCheckBox searchTagGenre;
-    //</editor-fold>
-
-    private int i;
     @FXML
     private Label lblArtist;
     @FXML
@@ -165,6 +162,7 @@ public class MainWindowController implements Initializable
     private Label lblDurationCurrent;
     @FXML
     private AnchorPane anchorPane;
+    //</editor-fold>
 
     /**
      * Constructor, for all intends and purposes
@@ -301,21 +299,18 @@ public class MainWindowController implements Initializable
 
                     if (event.getClickCount() == 1)
                     {
-                        Music selectedItem = tblSongList.getSelectionModel().getSelectedItem();
+                        Music selectedItem = tblSongList
+                                .getSelectionModel().getSelectedItem();
 
                         lblArtist.setText(selectedItem.getArtist());
-
                         lblTitle.setText(selectedItem.getTitle());
-
                         lblAlbum.setText(selectedItem.getAlbum());
-
-                        lblYear.setText(String.valueOf(selectedItem.getYear()));
-
                         lblDescription.setText(selectedItem.getDescription());
-
                         lblGenre.setText(selectedItem.getGenre());
-
-                        lblDuration.setText(String.valueOf(selectedItem.getDuration()));
+                        lblYear.setText(String.valueOf(
+                                selectedItem.getYear()));
+                        lblDuration.setText(String.valueOf(
+                                selectedItem.getDuration()));
 
                     }
 
@@ -332,92 +327,6 @@ public class MainWindowController implements Initializable
                     System.out.println("Empty");
                 }
             });
-        }
-    }
-
-    /**
-     * Creates a listener for the table to search
-     *
-     * This method sets up a litener for the search field above the song
-     * table,
-     * which listen for changes to the input. Whenever a change has occured,
-     * it'll search the database for results matching the current search
-     * criteria (Entered tex and the filters)
-     */
-    private void setupTableSearchListener()
-    {
-        txtTableSearch.textProperty().addListener(
-                (ObservableValue<? extends String> observable,
-                 String oldText,
-                 String newText) ->
-        {
-            try
-            {
-                wm.songSearch(txtTableSearch.getText(), getFilters());
-            }
-            catch (SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
-        });
-    }
-
-    /**
-     * Gets the filters
-     *
-     * This method will check the current status of the filters and return an
-     * Arraylist of Strings containing the given filters
-     *
-     * @return Returns an ArrayList containing the filters
-     */
-    private ArrayList<String> getFilters()
-    {
-        ArrayList<String> filter = new ArrayList<>();
-        if (searchTagTitle.selectedProperty().get())
-        {
-            filter.add("title");
-        }
-        if (searchTagArtist.selectedProperty().get())
-        {
-            filter.add("artist");
-        }
-        if (searchTagAlbum.selectedProperty().get())
-        {
-            filter.add("album");
-        }
-        if (searchTagGenre.selectedProperty().get())
-        {
-            filter.add("genre");
-        }
-        if (searchTagDesc.selectedProperty().get())
-        {
-            filter.add("description");
-        }
-        if (searchTagYear.selectedProperty().get())
-        {
-            filter.add("year");
-        }
-        return filter;
-    }
-
-    /**
-     * Search the song table
-     *
-     * This method will search the song table whenever a checkbox has been acted
-     * on
-     *
-     * @param event
-     */
-    @FXML
-    private void searchTable(ActionEvent event) throws SQLException
-    {
-        try
-        {
-            wm.songSearch(txtTableSearch.getText(), getFilters());
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
         }
     }
 
@@ -512,6 +421,92 @@ public class MainWindowController implements Initializable
                 System.out.println("Cannot edit song");
             }
         });
+    }
+
+    /**
+     * Creates a listener for the table to search
+     *
+     * This method sets up a litener for the search field above the song
+     * table,
+     * which listen for changes to the input. Whenever a change has occured,
+     * it'll search the database for results matching the current search
+     * criteria (Entered tex and the filters)
+     */
+    private void setupTableSearchListener()
+    {
+        txtTableSearch.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newText) ->
+        {
+            try
+            {
+                wm.songSearch(txtTableSearch.getText(), getFilters());
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Search the song table
+     *
+     * This method will search the song table whenever a checkbox has been acted
+     * on
+     *
+     * @param event
+     */
+    @FXML
+    private void searchTable(ActionEvent event) throws SQLException
+    {
+        try
+        {
+            wm.songSearch(txtTableSearch.getText(), getFilters());
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    private ArrayList<String> getFilters()
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
     }
     //</editor-fold>
 

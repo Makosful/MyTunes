@@ -152,7 +152,9 @@ public class MainWindowModel
 
     public void setQueuePlay(Music track)
     {
+        this.stopMediaPlayer();
         this.queue.clear();
+        this.queueMedia.clear();
         this.queue.add(track);
     }
 
