@@ -44,10 +44,11 @@ public class MetaData
     }
 
     /**
-     *
+     * For each music file get the metadata, validate it, create the music objects 
+     * then return the music objects/songs/tracks and send them to the db
      * @param chosenFiles
      *
-     * @return
+     * @return list of songs
      *
      * @throws FileNotFoundException
      * @throws IOException
