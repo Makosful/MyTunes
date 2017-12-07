@@ -1,18 +1,28 @@
 package mytunes.gui.model;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXToggleButton;
 import java.io.*;
-import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.Observable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
@@ -70,6 +80,22 @@ public class MainWindowModel
     private int songIdFromTable;
 
     private int currentSong = 0;
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="FXML Placeholder">
+    private Slider progressSlider = new Slider();
+    private Slider volumeSlider = new Slider();
+    private Label lblmPlayerStatus = new Label();
+    private Label lblTimer = new Label();
+    private ComboBox<String> playbackSpeed = new ComboBox<>();
+    private JFXButton btnPlayPause = new JFXButton();
+    private JFXToggleButton btnLoop = new JFXToggleButton();
+    private JFXCheckBox searchTagTitle = new JFXCheckBox();
+    private JFXCheckBox searchTagArtist = new JFXCheckBox();
+    private JFXCheckBox searchTagAlbum = new JFXCheckBox();
+    private JFXCheckBox searchTagDesc = new JFXCheckBox();
+    private JFXCheckBox searchTagYear = new JFXCheckBox();
+    private JFXCheckBox searchTagGenre = new JFXCheckBox();
     //</editor-fold>
 
     /**
@@ -197,14 +223,16 @@ public class MainWindowModel
 
     private void playNextSong()
     {
-        int queueSize = this.queue.size() - 1;
-        System.out.println(queueSize);
+        int queueSize = getQueueList().size() - 1;
 
-        // If queue does not have next stop playing
-        // If queue has next play next
-        currentSong++;
-        setSong(this.queueMedia.get(currentSong).getMedia());
-        startMediaPlayer();
+        // If the currently playing song is at an index smaller than the queue
+        // size, then it has a next
+        if (getCurrentSong() < queueSize)
+        {
+            currentSongNext();
+            setSong(getQueueListMedia().get(getCurrentSong()).getMedia());
+            prepareAndPlay();
+        }
     }
 
     public void currentSongNext()
@@ -663,6 +691,39 @@ public class MainWindowModel
         if (playing)
         {
             this.queueMedia.get(currentSong).stop();
+
+            // Updates the status
+            updateStatus();
+
+            // Stores the status as a local variable
+            Status status = getMediaStatus();
+
+            // Check if the status is actuall exist
+            if (null != status)
+            {
+                switch (status)
+                {
+                    case PLAYING:
+                        System.out.println("Status is: " + status);
+                        setPlaying(false);
+                        btnPlayPause.setText("Play");
+                        progressSlider.setValue(0.0);
+                        break;
+                    case STOPPED:
+                        System.out.println("Status is: " + status);
+                        break;
+                    case PAUSED:
+                        updateDuration();
+                        progressSlider.setValue(0.0);
+                        progressSlider.setMax(getMediaPlayer()
+                                .getTotalDuration()
+                                .toSeconds());
+                        getMediaPlayerStatus();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 
@@ -839,7 +900,7 @@ public class MainWindowModel
      * @throws IOException
      * @throws SQLException
      */
-    public void openEditSongWindow(String title, String artist, int time, String file, String genre, AnchorPane anchorPane) throws IOException, SQLException
+    public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
     {
         File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
         FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
@@ -855,7 +916,7 @@ public class MainWindowModel
         controller.setData(title, artist, time, file, genre);
         controller.getSongIdFromMainController(songIdFromTable);
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(anchorPane.getScene().getWindow());
+        stage.initOwner(btnPlayPause.getScene().getWindow());
         stage.show();
         controller.closeWindow();
     }
@@ -877,23 +938,440 @@ public class MainWindowModel
     public int[] getSecondsToMinAndHour(int seconds)
     {
         int minutes = seconds / 60;
-        
-        seconds -= minutes*60;
-        
+
+        seconds -= minutes * 60;
+
         int hours = minutes / 60;
-        
-        minutes -= hours*60;
-        
+
+        minutes -= hours * 60;
+
         int[] minSec = new int[3];
-        
+
         minSec[0] = seconds;
-        
+
         minSec[1] = minutes;
-        
+
         minSec[2] = hours;
-        
+
         return minSec;
-       
+
     }
 
+    public ContextMenu tableContextMenu(TableView<Music> tbl)
+    {
+        ContextMenu cm = new ContextMenu();
+
+        // Gets the selected items
+        ObservableList<Music> items = tbl
+                .getSelectionModel().getSelectedItems();
+
+        // Creates a new item for the menu and puts it in
+        MenuItem play = new MenuItem("Play");
+        cm.getItems().add(play);
+        play.setOnAction(action ->
+        {
+            if (!items.isEmpty())
+            {
+                if (isPlaying())
+                {
+                    this.stopMediaPlayer();
+                }
+                setQueuePlay(items);
+                prepareAndPlay();
+            }
+        });
+
+        // Creates a new item for the menu and puts it in
+        MenuItem addQueue = new MenuItem("Add to queue");
+        cm.getItems().add(addQueue);
+        addQueue.setOnAction(action ->
+        {
+
+            if (!items.isEmpty())
+            {
+                setQueueAdd(items);
+                prepareSetup();
+            }
+        });
+
+        MenuItem editSong = new MenuItem("Edit Song");
+        cm.getItems().add(editSong);
+        editSong.setOnAction((event) ->
+        {
+            try
+            {
+                Music musicInfo = tbl.getSelectionModel().getSelectedItem();
+                getSongId(musicInfo.getId());
+                String title = musicInfo.getTitle();
+                String artist = musicInfo.getArtist();
+                int time = musicInfo.getDuration();
+                String genre = musicInfo.getGenre();
+                String pathName = musicInfo.getSongPathName();
+
+                openEditSongWindow(title, artist, time, pathName, genre);
+            }
+            catch (IOException ex)
+            {
+                System.out.println("Cannot open window.");
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Cannot edit song");
+            }
+        });
+
+        return cm;
+    }
+
+    public ContextMenu playlistContextMenu(JFXListView<Playlist> plp)
+    {
+        ContextMenu cm = new ContextMenu();
+
+        // Creates the option to replace the queue with the playlist
+        MenuItem playPlaylist = new MenuItem("Play List");
+        cm.getItems().add(playPlaylist);
+        playPlaylist.setOnAction((Action) ->
+        {
+            setQueuePlay(plp
+                    .getSelectionModel()
+                    .getSelectedItem()
+                    .getPlaylist());
+        });
+
+        // Creates the option to add the playlist to the queue
+        MenuItem addPlaylist = new MenuItem("Add to Queue");
+        cm.getItems().add(addPlaylist);
+        addPlaylist.setOnAction((action) ->
+        {
+            setQueueAdd(plp
+                    .getSelectionModel()
+                    .getSelectedItem()
+                    .getPlaylist());
+        });
+
+        // Creates the option to edit playlists
+        MenuItem editPlaylist = new MenuItem("Edit Playlist");
+        cm.getItems().add(editPlaylist);
+        editPlaylist.setOnAction((event) ->
+        {
+            // Do not remove. This output is VERY important
+            System.out.println("Thoust be changing thee order of musical arts.");
+
+            // Gets the selected playlist
+            Playlist pl = plp.getSelectionModel().getSelectedItem();
+
+            try
+            {
+                createPlaylistWindow(pl);
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+        });
+
+        return cm;
+    }
+
+    public ContextMenu queueContextMenu(JFXListView<Music> listQueue)
+    {
+        ContextMenu cm = new ContextMenu();
+
+        // Creates an option to remove the selected item from the list
+        MenuItem remove = new MenuItem("Remove");
+        cm.getItems().add(remove);
+        remove.setOnAction((event) ->
+        {
+            ObservableList<Music> selectedItems = listQueue
+                    .getSelectionModel().getSelectedItems();
+
+            getQueueList().removeAll(selectedItems);
+        });
+
+        // Creates an option for clearing the entire list
+        MenuItem clear = new MenuItem("Clear");
+        cm.getItems().add(clear);
+        clear.setOnAction((event) ->
+        {
+            stopMediaPlayer();
+            clearQueueList();
+        });
+
+        return cm;
+    }
+
+    /**
+     * Creates a change listener for the queue
+     *
+     * This method creates a change listener for the queue.
+     * Whenever a Music has been added the the list, it'll create a MediaPlayer
+     * with that Music and add it to a mirror list, which contain all the
+     * MediaPlayers used by this application
+     * Whenever a Music has been removed from the queue, this will look for the
+     * MediaPayer with the same Media and remove it from the list as well,
+     * preventing it from being played
+     */
+    public void setupQueueListener()
+    {
+        getQueueList().addListener((ListChangeListener.Change<? extends Music> c) ->
+        {
+            // Must be called to initiate the change listener
+            c.next();
+
+            // If there has been added something to the queue
+            if (!c.getAddedSubList().isEmpty())
+            {
+                // Go though each new item and make a mediaplayer for them
+                c.getAddedSubList().forEach((music) ->
+                {
+                    File file = new File(music.getLocation() + "/" + music.getSongPathName());
+                    Media media = new Media(file.toURI().toString());
+                    MediaPlayer mp = new MediaPlayer(media);
+
+                    mp.setOnEndOfMedia(() ->
+                    {
+                        playNextSong();
+                    });
+
+                    // Add this new media player to a parallel list to the queue
+                    getQueueListMedia().add(mp);
+
+                });
+            }
+
+            // If some thing has been removed from the list
+            if (!c.getRemoved().isEmpty())
+            {
+                // Go through the queue media list
+                for (int i = 0; i < getQueueListMedia().size(); i++)
+                {
+                    // Gets the full path for the current media
+                    String storedMedia = getQueueListMedia().get(i).getMedia().getSource();
+
+                    // Goes through
+                    for (int j = 0; j < c.getRemoved().size(); j++)
+                    {
+                        File file = new File(c.getRemoved().get(j).getLocation());
+                        String removedMedia = file.toURI().toString();
+
+                        if (storedMedia.equals(removedMedia))
+                        {
+                            getQueueListMedia().remove(i);
+                            i--;
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    public void getMediaPlayerStatus()
+    {
+        getMediaPlayer().statusProperty().addListener((observable,
+                                                       oldValue,
+                                                       newValue)
+                -> lblmPlayerStatus.setText("MediaPlayer Status: "
+                                            + newValue.toString().toLowerCase()));
+    }
+
+    /**
+     * A collection of things we execute when we prepare the setups
+     */
+    public void prepareSetup()
+    {
+        setupMediaPlayer();
+        enableSettings();
+        timeChangeListener();
+    }
+
+    /**
+     * A preperation of our setup, followed by the play function
+     */
+    public void prepareAndPlay()
+    {
+        if (isPlaying())
+        {
+            stopMediaPlayer();
+        }
+        prepareSetup();
+        getMediaPlayerStatus();
+        startMediaPlayer();
+        setPlaying(true);
+        btnPlayPause.setText("Pause");
+    }
+
+    private void setupMediaPlayer()
+    {
+        //choosingFiles(); //Needs a fix as mentioned in the method
+
+        // As soon as the media player is ready to play a song we allow for
+        // manipulating the media file (playback speed, volume etc.)
+        getMediaPlayer().setOnReady(() ->
+        {
+            updateDuration();
+            progressSlider.setValue(0.0);
+            progressSlider.setMax(getduration().toSeconds());
+            getMediaPlayerStatus();
+        });
+    }
+
+    public void enableSettings()
+    {
+        volumeSlider.setDisable(false);
+        btnLoop.setDisable(false);
+        playbackSpeed.setDisable(false);
+        progressSlider.setDisable(false);
+        lblTimer.setDisable(false);
+        progressSlider.setStyle("-fx-control-inner-background: #0E9654;");
+    }
+
+    public void timeChangeListener()
+    {
+        getMediaPlayer().currentTimeProperty().addListener((Observable ov) ->
+        {
+            updateSliderAndTimer();
+        });
+    }
+
+    private void updateSliderAndTimer()
+    {
+        Duration currentTime = getCurrentTime();
+        Duration mpduration = getduration();
+
+        lblTimer.setText(MainWindowModel.formatTime(currentTime, mpduration));
+
+        // Adds a listener to the value, allowing it to automatically adjust to
+        // where it is - displaying the progress to the user.
+        getMediaPlayer().currentTimeProperty().addListener(
+                (ObservableValue<? extends Duration> observable,
+                 Duration duration,
+                 Duration current) ->
+        {
+            progressSlider.setValue(current.toSeconds());
+        });
+
+        // Adds a listener to the value, allowing it to determine where to play
+        // from when the user drags.
+        progressSlider.valueProperty().addListener((Observable ov) ->
+        {
+            // If the value of the slider is currently 'changing' referring to
+            // the listeners task it'll set the value to percentage from the
+            // song, where max length = song duration.
+            if (progressSlider.isValueChanging())
+            {
+                seek(Duration.seconds(progressSlider.getValue()));
+            }
+        });
+        //Above we determine if the user is dragging the progress slider, and here we determine what to do if the user clicks the progress bar
+        progressSlider.setOnMouseClicked((MouseEvent mouseEvent) ->
+        {
+            seek(Duration.seconds(progressSlider.getValue()));
+        });
+    }
+
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    public ArrayList<String> getFilters()
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="Property Getters">
+    public StringProperty getPlayButtonTextProperty()
+    {
+        return btnPlayPause.textProperty();
+    }
+
+    public DoubleProperty getProgressSliderValueProperty()
+    {
+        return progressSlider.valueProperty();
+    }
+
+    public StringProperty getMediaplayerLabelTextProperty()
+    {
+        return lblmPlayerStatus.textProperty();
+    }
+
+    public BooleanProperty getVolumeDisableProperty()
+    {
+        return volumeSlider.disableProperty();
+    }
+
+    public BooleanProperty getLoopDisableProperty()
+    {
+        return btnLoop.disableProperty();
+    }
+
+    public BooleanProperty getPlaybackSpeedDisabledProperty()
+    {
+        return playbackSpeed.disableProperty();
+    }
+
+    public BooleanProperty getTimerDisableProperty()
+    {
+        return lblTimer.disableProperty();
+    }
+
+    public BooleanProperty getSearchTagTitleSelectProperty()
+    {
+        return searchTagTitle.selectedProperty();
+    }
+
+    public BooleanProperty getSearchTagArtistSelectProperty()
+    {
+        return searchTagArtist.selectedProperty();
+    }
+
+    public BooleanProperty getSearchTagAlbumSelectProperty()
+    {
+        return searchTagAlbum.selectedProperty();
+    }
+
+    public BooleanProperty getSearchTagGenreSelectProperty()
+    {
+        return searchTagGenre.selectedProperty();
+    }
+
+    public BooleanProperty getSearchTagDescSelectProperty()
+    {
+        return searchTagDesc.selectedProperty();
+    }
+
+    public BooleanProperty getSearchTagYearSelectProperty()
+    {
+        return searchTagYear.selectedProperty();
+    }
+    //</editor-fold>
 }
