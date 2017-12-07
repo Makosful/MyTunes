@@ -42,7 +42,7 @@ public class Search
             throws SQLException
     {
 
-        // Creates a new ArrayList to store the results in
+        // Creates a new ArrayList to store the tables to search in
         List<String> searchTables = new ArrayList();
 
         criterias.forEach((criteria) ->
@@ -88,6 +88,13 @@ public class Search
                 {
                     // If so, apply it
                     searchTables.add("Genre.genre");
+                }
+                
+                // Then check if the Description has been checked
+                if (criteria.equalsIgnoreCase("Description"))
+                {
+                    // If so, apply it
+                    searchTables.add("Songs.description");
                 }
             }
         });

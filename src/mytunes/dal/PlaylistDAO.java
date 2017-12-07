@@ -132,8 +132,9 @@ public class PlaylistDAO
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER JOIN Location on Songs.locationid = location.id "
                          + "INNER JOIN Path ON Songs.pathid = path.id "
+                         //+ "INNER JOIN Location on Songs.locationid = location.id "
+                         + "INNER JOIN Location on Path.locationid = location.id "
                          + "INNER JOIN playlist_with_songs ON Songs.id = playlist_with_songs.songid "
                          + "WHERE playlist_with_songs.playlistid = ?";
 

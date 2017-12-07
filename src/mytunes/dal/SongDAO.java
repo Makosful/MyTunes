@@ -89,7 +89,7 @@ public class SongDAO
             preparedStatementInsert.setString(6, song.getDescription());
             preparedStatementInsert.setInt(7, song.getDuration());
             preparedStatementInsert.setInt(8, song.getYear());
-            preparedStatementInsert.setInt(9, 4);
+            //preparedStatementInsert.setInt(9, 4);
             preparedStatementInsert.executeUpdate();
 
         }
@@ -554,8 +554,9 @@ public class SongDAO
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER join Location on Songs.locationid = Location.id "
                          + "INNER JOIN Path ON Songs.pathid = path.id "
+                         //+ "INNER JOIN Location on Songs.locationid = location.id "
+                         + "INNER JOIN Location on Path.locationid = location.id "
                          //
                          + "WHERE " + sqlSearch;
 
