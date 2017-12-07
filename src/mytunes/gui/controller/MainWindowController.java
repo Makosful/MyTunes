@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicLong;
@@ -217,11 +216,11 @@ public class MainWindowController implements Initializable
                 searchBar.widthProperty().subtract(40));
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Setting Up Model">
+    //<editor-fold defaultstate="collapsed" desc="Bindings">
     private void bindFxml()
     {
         // Buttons
-//        btnPlayPause.textProperty().bind(wm.getPlayButtonTextProperty());
+        btnPlayPause.textProperty().bind(wm.getPlayButtonTextProperty());
         btnLoop.disableProperty().bind(wm.getLoopDisableProperty());
 
         // ComboBox
@@ -234,13 +233,14 @@ public class MainWindowController implements Initializable
         // Labels
         lblmPlayerStatus.textProperty().bind(wm.getMediaplayerLabelTextProperty());
         lblTimer.disableProperty().bind(wm.getTimerDisableProperty());
-        this.lblAlbumCurrent.textProperty().bind(wm.getCurrentAlbumProperty());
-        this.lblArtistCurrent.textProperty().bind(wm.getCurrentArtistProperty());
-        this.lblDescriptionCurrent.textProperty().bind(wm.getCurrentDescProperty());
-        this.lblDurationCurrent.textProperty().bind(wm.getCurrentDurationProperty());
-        this.lblGenreCurrent.textProperty().bind(wm.getCurrentGenreProperty());
-        this.lblTitleCurrent.textProperty().bind(wm.getCurrentTitleProperty());
-        this.lblYearCurrent.textProperty().bind(wm.getCurrentYearProperty());
+
+        // Checkboxes
+        searchTagTitle.selectedProperty().bind(wm.getSearchTagArtistSelectProperty());
+        searchTagArtist.selectedProperty().bind(wm.getSearchTagArtistSelectProperty());
+        searchTagAlbum.selectedProperty().bind(wm.getSearchTagAlbumSelectProperty());
+        searchTagGenre.selectedProperty().bind(wm.getSearchTagGenreSelectProperty());
+        searchTagDesc.selectedProperty().bind(wm.getSearchTagGenreSelectProperty());
+        searchTagYear.selectedProperty().bind(wm.getSearchTagYearSelectProperty());
     }
     //</editor-fold>
 
@@ -370,7 +370,7 @@ public class MainWindowController implements Initializable
         {
             try
             {
-                wm.songSearch(txtTableSearch.getText(), getFilters());
+                wm.songSearch(txtTableSearch.getText(), wm.getFilters());
             }
             catch (SQLException ex)
             {
@@ -392,7 +392,7 @@ public class MainWindowController implements Initializable
     {
         try
         {
-            wm.songSearch(txtTableSearch.getText(), getFilters());
+            wm.songSearch(txtTableSearch.getText(), wm.getFilters());
         }
         catch (SQLException ex)
         {
@@ -867,44 +867,6 @@ public class MainWindowController implements Initializable
                 col.setPrefWidth(col.getWidth() + ((cellWidth - width.get()) / tblSongList.getColumns().size()));
             });
         }
-    }
-
-    /**
-     * Gets the filters
-     *
-     * This method will check the current status of the filters and return an
-     * Arraylist of Strings containing the given filters
-     *
-     * @return Returns an ArrayList containing the filters
-     */
-    private ArrayList<String> getFilters()
-    {
-        ArrayList<String> filter = new ArrayList<>();
-        if (searchTagTitle.selectedProperty().get())
-        {
-            filter.add("title");
-        }
-        if (searchTagArtist.selectedProperty().get())
-        {
-            filter.add("artist");
-        }
-        if (searchTagAlbum.selectedProperty().get())
-        {
-            filter.add("album");
-        }
-        if (searchTagGenre.selectedProperty().get())
-        {
-            filter.add("genre");
-        }
-        if (searchTagDesc.selectedProperty().get())
-        {
-            filter.add("description");
-        }
-        if (searchTagYear.selectedProperty().get())
-        {
-            filter.add("year");
-        }
-        return filter;
     }
 
 }

@@ -1,8 +1,8 @@
 package mytunes.gui.model;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXToggleButton;
 import java.io.*;
 import java.sql.SQLException;
@@ -83,20 +83,19 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="FXML Placeholder">
-    private Slider progressSlider;
-    private Slider volumeSlider;
-    private Label lblmPlayerStatus;
-    private Label lblTimer;
-    private Label lblAlbumCurrent;
-    private Label lblArtistCurrent;
-    private Label lblDescriptionCurrent;
-    private Label lblDurationCurrent;
-    private Label lblGenreCurrent;
-    private Label lblTitleCurrent;
-    private Label lblYearCurrent;
-    private ComboBox<String> playbackSpeed;
-    private JFXButton btnPlayPause;
-    private JFXToggleButton btnLoop;
+    private Slider progressSlider = new Slider();
+    private Slider volumeSlider = new Slider();
+    private Label lblmPlayerStatus = new Label();
+    private Label lblTimer = new Label();
+    private ComboBox<String> playbackSpeed = new ComboBox<>();
+    private JFXButton btnPlayPause = new JFXButton();
+    private JFXToggleButton btnLoop = new JFXToggleButton();
+    private JFXCheckBox searchTagTitle = new JFXCheckBox();
+    private JFXCheckBox searchTagArtist = new JFXCheckBox();
+    private JFXCheckBox searchTagAlbum = new JFXCheckBox();
+    private JFXCheckBox searchTagDesc = new JFXCheckBox();
+    private JFXCheckBox searchTagYear = new JFXCheckBox();
+    private JFXCheckBox searchTagGenre = new JFXCheckBox();
     //</editor-fold>
 
     /**
@@ -113,26 +112,6 @@ public class MainWindowModel
             this.queue = FXCollections.observableArrayList();
             this.queueMedia = FXCollections.observableArrayList();
             this.playlists = FXCollections.observableArrayList();
-
-            this.btnPlayPause = new JFXButton("Play");
-            this.btnLoop = new JFXToggleButton();
-            this.btnLoop.setDisable(true);
-            this.playbackSpeed = new ComboBox<>();
-            this.playbackSpeed.setDisable(true);
-            this.progressSlider = new Slider();
-            this.progressSlider.setDisable(false);
-            this.volumeSlider = new JFXSlider();
-            this.volumeSlider.setDisable(true);
-            this.lblmPlayerStatus = new Label();
-            this.lblTimer = new Label("00:00");
-
-            this.lblAlbumCurrent = new Label();
-            this.lblArtistCurrent = new Label();
-            this.lblDescriptionCurrent = new Label();
-            this.lblDurationCurrent = new Label();
-            this.lblGenreCurrent = new Label();
-            this.lblTitleCurrent = new Label();
-            this.lblYearCurrent = new Label();
         }
         catch (IOException ex)
         {
@@ -796,18 +775,15 @@ public class MainWindowModel
         {
             case 0:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("Elevator (Control).mp3");
+                                  "./res/songs/placeholder/Elevator (Control).mp3");
                 break;
             case 1:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("Elevator (Caverns).mp3");
+                                  "./res/songs/placeholder/Elevator (Caverns).mp3");
                 break;
             default:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("elevatormusic.mp3");
+                                  "./res/songs/placeholder/elevatormusic.mp3");
                 break;
         }
 
@@ -1207,14 +1183,6 @@ public class MainWindowModel
         setupMediaPlayer();
         enableSettings();
         timeChangeListener();
-
-        lblAlbumCurrent.setText(getQueueList().get(currentSong).getAlbum());
-        lblArtistCurrent.setText(getQueueList().get(currentSong).getArtist());
-        lblDescriptionCurrent.setText(getQueueList().get(currentSong).getDescription());
-        lblDurationCurrent.setText(String.valueOf(getQueueList().get(currentSong).getDuration()));
-        lblGenreCurrent.setText(getQueueList().get(currentSong).getGenre());
-        lblTitleCurrent.setText(getQueueList().get(currentSong).getTitle());
-        lblYearCurrent.setText(String.valueOf(getQueueList().get(currentSong).getYear()));
     }
 
     /**
@@ -1269,7 +1237,7 @@ public class MainWindowModel
     private void updateSliderAndTimer()
     {
         Duration currentTime = getCurrentTime();
-        this.mpduration = getduration();
+        Duration mpduration = getduration();
 
         lblTimer.setText(MainWindowModel.formatTime(currentTime, mpduration));
 
@@ -1302,7 +1270,50 @@ public class MainWindowModel
         });
     }
 
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    public ArrayList<String> getFilters()
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Property Getters">
+    public StringProperty getPlayButtonTextProperty()
+    {
+        return btnPlayPause.textProperty();
+    }
+
     public DoubleProperty getProgressSliderValueProperty()
     {
         return progressSlider.valueProperty();
@@ -1333,39 +1344,34 @@ public class MainWindowModel
         return lblTimer.disableProperty();
     }
 
-    public StringProperty getCurrentAlbumProperty()
+    public BooleanProperty getSearchTagTitleSelectProperty()
     {
-        return lblAlbumCurrent.textProperty();
+        return searchTagTitle.selectedProperty();
     }
 
-    public StringProperty getCurrentArtistProperty()
+    public BooleanProperty getSearchTagArtistSelectProperty()
     {
-        return lblArtistCurrent.textProperty();
+        return searchTagArtist.selectedProperty();
     }
 
-    public StringProperty getCurrentDescProperty()
+    public BooleanProperty getSearchTagAlbumSelectProperty()
     {
-        return lblDescriptionCurrent.textProperty();
+        return searchTagAlbum.selectedProperty();
     }
 
-    public StringProperty getCurrentDurationProperty()
+    public BooleanProperty getSearchTagGenreSelectProperty()
     {
-        return lblDurationCurrent.textProperty();
+        return searchTagGenre.selectedProperty();
     }
 
-    public StringProperty getCurrentGenreProperty()
+    public BooleanProperty getSearchTagDescSelectProperty()
     {
-        return lblGenreCurrent.textProperty();
+        return searchTagDesc.selectedProperty();
     }
 
-    public StringProperty getCurrentTitleProperty()
+    public BooleanProperty getSearchTagYearSelectProperty()
     {
-        return lblTitleCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentYearProperty()
-    {
-        return lblYearCurrent.textProperty();
+        return searchTagYear.selectedProperty();
     }
     //</editor-fold>
 }
