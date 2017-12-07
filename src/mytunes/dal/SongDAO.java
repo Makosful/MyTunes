@@ -21,6 +21,13 @@ public class SongDAO
         db = new DataBaseConnector();
     }
 
+    /**
+     * Gets all the songs from the db then calls a method that creates song objects
+     * then it returns these songs
+     * @return list of songs
+     * @throws SQLServerException
+     * @throws SQLException 
+     */
     public List<Music> getAllSongs() throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
@@ -508,7 +515,10 @@ public class SongDAO
     }
 
     /**
-     *
+     * Gets the parameter length, which defines how many tables to search in
+     * and the parameter which specifies which tables to search in with the sql string
+     * then calls the method that creates the song objects and then returns all the 
+     * songs corresponds with the searchtext
      * @param length
      * @param sqlSearch
      * @param searchText
