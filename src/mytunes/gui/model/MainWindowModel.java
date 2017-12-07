@@ -1,6 +1,7 @@
 package mytunes.gui.model;
 
 import java.io.*;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -872,5 +873,21 @@ public class MainWindowModel
         return id;
     }
     //</editor-fold>
+
+    public int[] getSecondsToMin(int seconds)
+    {
+        int minutes = seconds / 60;
+        
+        seconds -= minutes*60;
+        
+        int[] minSec = new int[2];
+        
+        minSec[0] = minutes;
+        
+        minSec[1] = seconds;
+        
+        return minSec;
+       
+    }
 
 }

@@ -309,8 +309,8 @@ public class MainWindowController implements Initializable
                         lblGenre.setText(selectedItem.getGenre());
                         lblYear.setText(String.valueOf(
                                 selectedItem.getYear()));
-                        lblDuration.setText(String.valueOf(
-                                selectedItem.getDuration()));
+                        int[] minSec = wm.getSecondsToMin(selectedItem.getDuration());
+                        lblDuration.setText(String.valueOf(minSec[0]+":"+minSec[1]));
 
                     }
 
