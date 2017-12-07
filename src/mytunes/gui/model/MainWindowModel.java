@@ -884,7 +884,7 @@ public class MainWindowModel
         
         minutes -= hours*60;
         
-        int[] minSec = new int[2];
+        int[] minSec = new int[3];
         
         minSec[0] = seconds;
         
