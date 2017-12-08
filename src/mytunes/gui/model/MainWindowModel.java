@@ -1,7 +1,6 @@
 package mytunes.gui.model;
 
 import java.io.*;
-import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -857,7 +856,6 @@ public class MainWindowModel
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(anchorPane.getScene().getWindow());
         stage.show();
-        controller.closeWindow();
     }
 
     /**
