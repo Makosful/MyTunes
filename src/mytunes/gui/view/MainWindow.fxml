@@ -8,10 +8,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -87,15 +83,6 @@
                             </padding>
                         </Label>
 
-                        <MenuButton alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Option 1" />
-                                <MenuItem mnemonicParsing="false" text="Option 2" />
-                                <MenuItem mnemonicParsing="false" text="Option 3" />
-                                <MenuItem mnemonicParsing="false" text="Option 4" />
-                            </items>
-                        </MenuButton>
-
                     </children>
                     <FlowPane.margin>
                         <Insets />
@@ -103,34 +90,13 @@
                 </HBox>
             </children>
         </FlowPane>
-
-        <MenuBar prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#LoadMediaFiles" text="Load MP3(s)" />
-                        <MenuItem mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Settings">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Delete" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <HBox fx:id="searchBar" layoutX="450.0" layoutY="40.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="40.0">
+        <HBox fx:id="searchBar" layoutX="450.0" layoutY="40.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="20.0">
             <children>
                 <TextField fx:id="txtTableSearch" />
                 <JFXButton onAction="#searchClear" text="X" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_RIGHT" layoutX="440.0" layoutY="60.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="70.0">
+        <HBox alignment="CENTER_RIGHT" layoutX="440.0" layoutY="60.0" spacing="10.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="50.0">
             <children>
                 <JFXCheckBox fx:id="searchTagTitle" selected="true" text="Title" textFill="WHITE" />
                 <JFXCheckBox fx:id="searchTagArtist" selected="true" text="Artist" textFill="WHITE" />
@@ -144,7 +110,7 @@
             </padding>
         </HBox>
 
-        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="100.0">
+        <TableView fx:id="tblSongList" layoutX="1400.0" layoutY="25.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="450.0" AnchorPane.rightAnchor="450.0" AnchorPane.topAnchor="80.0">
             <columns>
                 <TableColumn fx:id="clmNr" prefWidth="75.0" text="Nr." />
                 <TableColumn fx:id="clmTitle" prefWidth="75.0" text="Title" />
@@ -154,7 +120,7 @@
             </columns>
         </TableView>
 
-        <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <AnchorPane layoutX="20.0" layoutY="40.0" AnchorPane.bottomAnchor="320.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
                 <VBox>
                     <children>
@@ -217,7 +183,7 @@
             </children>
         </AnchorPane>
 
-        <Pane layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <Pane layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
                     <children>
@@ -254,15 +220,15 @@
                 </AnchorPane>
             </children>
         </Pane>
-        <JFXListView layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+        <JFXListView layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="280.0" />
 
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" />
-        <Label alignment="CENTER" text="Currently Playing" AnchorPane.leftAnchor="1160.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0">
+        <Label alignment="CENTER" text="Currently Playing" AnchorPane.leftAnchor="1160.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="280.0">
             <font>
                 <Font size="24.0" />
             </font>
         </Label>
-        <GridPane gridLinesVisible="true" layoutX="1180.0" layoutY="610.0" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="1170.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="340.0">
+        <GridPane gridLinesVisible="true" layoutX="1180.0" layoutY="610.0" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="1170.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="320.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="195.0" minWidth="10.0" prefWidth="88.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="312.0" minWidth="10.0" prefWidth="312.0" />
