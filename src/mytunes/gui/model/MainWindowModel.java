@@ -157,6 +157,8 @@ public class MainWindowModel
     //<editor-fold defaultstate="collapsed" desc="Song List">
     /**
      * Loads all the songs into the program
+     *
+     * @throws java.sql.SQLException
      */
     public void loadSongList() throws SQLException
     {
@@ -933,7 +935,6 @@ public class MainWindowModel
      * @param time
      * @param file
      * @param genre
-     * @param anchorPane
      *
      * @throws IOException
      * @throws SQLException
@@ -1214,7 +1215,7 @@ public class MainWindowModel
     }
 
     /**
-     * A collection of things we execute when we prepare the setups
+     * Takes care of preparing the mediaplayer
      */
     public void prepareSetup()
     {
@@ -1232,7 +1233,7 @@ public class MainWindowModel
     }
 
     /**
-     * A preperation of our setup, followed by the play function
+     * Takes care of preparing the mediaplayer and starting it
      */
     public void prepareAndPlay()
     {
@@ -1262,6 +1263,9 @@ public class MainWindowModel
         });
     }
 
+    /**
+     * Enables the UI controls for the song
+     */
     public void enableSettings()
     {
         volumeSlider.setDisable(false);
@@ -1415,6 +1419,11 @@ public class MainWindowModel
     public StringProperty getDurationProperty()
     {
         return lblDuration.textProperty();
+    }
+
+    public StringProperty getPlayPauseButton()
+    {
+        return btnPlayPause.textProperty();
     }
     //</editor-fold>
 
@@ -1618,29 +1627,54 @@ public class MainWindowModel
         }
     }
 
+    /**
+     * Handles the Starting and Pausing of the current track
+     */
     public void fxmlMusicPlayPause()
     {
+        //btnPlayPause.setText("Test");
+        // If the queue is empty and nothing is playing
         if (getQueueList().isEmpty() && !isPlaying())
         {
+            // Enable contols
             enableSettings();
+
+            // Adds a track to the list
             addElevatorMusic();
-            prepareSetup();
-            startMediaPlayer();
+
+            // Prepare the track to be played and start it
+            prepareAndPlay();
         }
+
+        // If nothing is playing
         else if (!isPlaying())
         {
-            //Needs to set the BEFORE media is played (apparently?)
+            // Adds a listener to the current media's duration
             timeChangeListener();
+
+            // Starts the mediaplayer
             startMediaPlayer();
+
+            // Indicates the media is playing
             setPlaying(true);
+
+            // change the play button
             btnPlayPause.setText("Pause");
+
+            // Enables the settings if they aren't
             enableSettings();
         }
-        // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
+
+        // If theres' something in the queue and something is playing
         else
         {
+            // Pauses the media player
             pauseMediaPlayer();
+
+            // Indicates that nothing is playing
             setPlaying(false);
+
+            // changes the play button
             btnPlayPause.setText("Play");
         }
     }

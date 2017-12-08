@@ -1,9 +1,6 @@
 package mytunes.gui.controller;
 
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -105,6 +102,8 @@ public class MainWindowController implements Initializable
 
     // Model
     private MainWindowModel wm;
+    @FXML
+    private JFXButton btnPlayPause;
 
     /**
      * Constructor, for all intends and purposes
@@ -141,6 +140,7 @@ public class MainWindowController implements Initializable
 
         //<editor-fold defaultstate="collapsed" desc="Bindinggs">
         // Buttons
+        btnPlayPause.textProperty().bind(wm.getPlayPauseButton());
         btnLoop.disableProperty().bind(wm.getLoopDisableProperty());
 
         // ComboBox

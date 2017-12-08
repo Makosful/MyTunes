@@ -42,7 +42,7 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXButton buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
+                        <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
