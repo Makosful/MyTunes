@@ -874,6 +874,12 @@ public class MainWindowModel
     }
     //</editor-fold>
 
+    
+    /**
+     * Formats seconds to hh:mm:ss
+     * @param seconds
+     * @return 
+     */
     public int[] getSecondsToMinAndHour(int seconds)
     {
         int minutes = seconds / 60;
