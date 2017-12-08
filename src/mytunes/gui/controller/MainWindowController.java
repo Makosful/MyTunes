@@ -29,9 +29,6 @@ import mytunes.gui.model.MainWindowModel;
 public class MainWindowController implements Initializable
 {
 
-    // Model
-    private MainWindowModel wm;
-
     //<editor-fold defaultstate="collapsed" desc="FXML Variables">
     @FXML
     private Slider progressSlider;
@@ -108,6 +105,9 @@ public class MainWindowController implements Initializable
     @FXML
     private Label lblDurationCurrent;
     //</editor-fold>
+
+    // Model
+    private MainWindowModel wm;
 
     /**
      * Constructor, for all intends and purposes

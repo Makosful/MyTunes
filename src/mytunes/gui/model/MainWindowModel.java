@@ -1440,6 +1440,7 @@ public class MainWindowModel
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="FXML Method calls">
     public void fxmlNextSong()
     {
         stopMediaPlayer();
@@ -1644,4 +1645,5 @@ public class MainWindowModel
          */
         setPlayckSpeed(playbackIndex);
     }
+    //</editor-fold>
 }

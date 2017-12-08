@@ -26,28 +26,28 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="window" fx:id="anchorPane" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane id="window" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
                 <HBox maxHeight="40.0">
                     <children>
-                        <JFXButton fx:id="btnPrev" buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#prevSong" prefHeight="25.0" prefWidth="50.0" text="&lt;&lt;">
+                        <JFXButton buttonType="RAISED" layoutX="10.0" layoutY="10.0" onAction="#prevSong" prefHeight="25.0" prefWidth="50.0" text="&lt;&lt;">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXButton fx:id="btnStop" buttonType="RAISED" onAction="#songStop" prefHeight="25.0" prefWidth="50.0" text="Stop">
+                        <JFXButton buttonType="RAISED" onAction="#songStop" prefHeight="25.0" prefWidth="50.0" text="Stop">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXButton fx:id="btnPlayPause" buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
+                        <JFXButton buttonType="RAISED" onAction="#musicPlayPause" prefHeight="25.0" prefWidth="55.0" text="Play">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXButton fx:id="btnForward" buttonType="RAISED" layoutX="15.0" layoutY="15.0" onAction="#nextSong" prefHeight="25.0" prefWidth="50.0" text="&gt;&gt;">
+                        <JFXButton buttonType="RAISED" layoutX="15.0" layoutY="15.0" onAction="#nextSong" prefHeight="25.0" prefWidth="50.0" text="&gt;&gt;">
                             <HBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
@@ -87,7 +87,7 @@
                             </padding>
                         </Label>
 
-                        <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
+                        <MenuButton alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
                             <items>
                                 <MenuItem mnemonicParsing="false" text="Option 1" />
                                 <MenuItem mnemonicParsing="false" text="Option 2" />
@@ -104,20 +104,20 @@
             </children>
         </FlowPane>
 
-        <MenuBar fx:id="menuBar" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <MenuBar prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
-                <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="loadMP3" mnemonicParsing="false" onAction="#LoadMediaFiles" text="Load MP3(s)" />
-                        <MenuItem fx:id="clearQueueMenu" mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
+                        <MenuItem mnemonicParsing="false" onAction="#LoadMediaFiles" text="Load MP3(s)" />
+                        <MenuItem mnemonicParsing="false" onAction="#clearQueue" text="Clear Queue" />
                     </items>
                 </Menu>
-                <Menu fx:id="menuSettings" mnemonicParsing="false" text="Settings">
+                <Menu mnemonicParsing="false" text="Settings">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
-                <Menu fx:id="menuAbout" mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="Help">
                     <items>
                         <MenuItem mnemonicParsing="false" text="About" />
                     </items>
@@ -160,12 +160,12 @@
                     <children>
                         <HBox prefHeight="27.0" prefWidth="370.0" spacing="60.0">
                             <children>
-                                <JFXButton fx:id="btnCreatePlaylist" layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
+                                <JFXButton layoutX="10.0" layoutY="10.0" onAction="#createPlaylist" prefHeight="27.0" prefWidth="149.0" text="Create Playlist">
                                     <HBox.margin>
                                         <Insets left="5.0" right="5.0" />
                                     </HBox.margin>
                                 </JFXButton>
-                                <JFXButton fx:id="btnDeletePlaylist" onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
+                                <JFXButton onAction="#deletePlaylist" prefHeight="27.0" prefWidth="149.0" text="Delete Playlist">
                                     <HBox.margin>
                                         <Insets left="0" right="5.0" />
                                     </HBox.margin>
@@ -188,9 +188,9 @@
             </children>
         </AnchorPane>
 
-        <AnchorPane fx:id="paneEqualizer" layoutX="20.0" layoutY="589.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
+        <AnchorPane layoutX="20.0" layoutY="589.0" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="20.0">
             <children>
-                <GridPane fx:id="gridEqualizer" prefHeight="247.0" prefWidth="420.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <GridPane prefHeight="247.0" prefWidth="420.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -217,7 +217,7 @@
             </children>
         </AnchorPane>
 
-        <Pane fx:id="queuePanel" layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <Pane layoutX="660.0" layoutY="600.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
             <children>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="370.0">
                     <children>
@@ -225,12 +225,12 @@
                             <children>
                                 <HBox prefHeight="27.0" prefWidth="420.0" spacing="60.0">
                                     <children>
-                                        <JFXButton fx:id="btnLoadMP3Multi" layoutX="10.0" layoutY="10.0" onAction="#LoadMediaFiles" prefHeight="27.0" prefWidth="149.0" text="Load Media File(s)">
+                                        <JFXButton layoutX="10.0" layoutY="10.0" onAction="#LoadMediaFiles" prefHeight="27.0" prefWidth="149.0" text="Load Media File(s)">
                                             <HBox.margin>
                                                 <Insets left="5.0" right="5.0" />
                                             </HBox.margin>
                                         </JFXButton>
-                                        <JFXButton fx:id="btnClearMP3" onAction="#clearQueue" prefHeight="27.0" prefWidth="149.0" text="Clear MP3 Files">
+                                        <JFXButton onAction="#clearQueue" prefHeight="27.0" prefWidth="149.0" text="Clear MP3 Files">
                                             <HBox.margin>
                                                 <Insets left="0" right="5.0" />
                                             </HBox.margin>
@@ -254,7 +254,7 @@
                 </AnchorPane>
             </children>
         </Pane>
-        <JFXListView fx:id="listMetaData" layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
+        <JFXListView layoutX="1265.0" layoutY="426.0" prefWidth="420.0" style="-fx-background-color: transparent; -fx-border-color: black;" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0" />
 
         <Label fx:id="lblmPlayerStatus" layoutX="20.0" layoutY="840.0" text="MediaPlayer Status:" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="20.0" />
         <Label alignment="CENTER" text="Currently Playing" AnchorPane.leftAnchor="1160.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="300.0">
