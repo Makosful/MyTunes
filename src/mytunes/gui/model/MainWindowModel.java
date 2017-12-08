@@ -127,7 +127,7 @@ public class MainWindowModel
             this.playbackSpeed = new ComboBox<>();
             this.playbackSpeed.setDisable(true);
             this.progressSlider = new Slider();
-            this.progressSlider.setDisable(false);
+            this.progressSlider.setDisable(true);
             this.volumeSlider = new JFXSlider();
             this.volumeSlider.setDisable(true);
             this.lblmPlayerStatus = new Label();
@@ -1324,6 +1324,11 @@ public class MainWindowModel
     public DoubleProperty getProgressSliderValueProperty()
     {
         return progressSlider.valueProperty();
+    }
+
+    public BooleanProperty getProgressSliderDisableProperty()
+    {
+        return progressSlider.disableProperty();
     }
 
     public StringProperty getMediaplayerLabelTextProperty()
