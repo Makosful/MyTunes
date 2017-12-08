@@ -7,14 +7,11 @@ import com.jfoenix.controls.JFXToggleButton;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -131,6 +128,7 @@ public class MainWindowController implements Initializable
         //instantiates our Model class
         wm = new MainWindowModel();
 
+        //Sets the default state of the GUI elements
         wm.setPlaying(false);
         volumeSlider.setValue(100);
         volumeSlider.setDisable(true);
@@ -140,127 +138,9 @@ public class MainWindowController implements Initializable
         lblTimer.setDisable(true);
         //Forces the table to adapt its height to the list (no empty rows) - TODO understand why
         tblSongList.setFixedCellSize(30);
-        //tblSongList.prefHeightProperty().bind(Bindings.size(tblSongList.getItems()).multiply(tblSongList.getFixedCellSize()).add(30));
 
-        try
-        {
-            // Sets up and connects the various lists to the model
-            // Sets the table colums ids
-            clmNr.setCellValueFactory(new PropertyValueFactory("id"));
-            clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
-            clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
-            clmCover.setCellValueFactory(new PropertyValueFactory("album"));
-            clmYear.setCellValueFactory(new PropertyValueFactory("year"));
-
-            // Loads the list of saved songs from the storage
-            wm.loadSongList();
-
-            // Fills the table with all loaded lists
-            tblSongList.setItems(wm.getSongList());
-
-            // Defines the defautl sorted order
-            tblSongList.getSortOrder().add(clmCover);
-            tblSongList.getSortOrder().add(clmNr);
-
-            // Allows for multiple entries to be selected at once
-            tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-            /**
-             * Sets up the auto adjusting width of the table to adapt to the
-             * content
-             * of the cell
-             * Currently disabled, enable to automatically set the width of the
-             * columns to fit our tables width
-             */
-            //tblSongList.setColumnResizePolicy((param) -> true);
-            //Platform.runLater(() -> resizeCellWidth(tblSongList));
-            // Sets up the mouse listener for the tableview
-            // Creates a new context menu
-            ContextMenu cm = wm.tableContextMenu(tblSongList);
-
-            // Adds the actual listener to the table
-            {
-                tblSongList.setOnMouseClicked((MouseEvent event) ->
-                {
-                    if (!tblSongList.getSelectionModel().getSelectedItems().isEmpty())
-                    {
-                        System.out.println("Not Empty");
-                        // Double click - Single action
-                        if (event.getClickCount() == 2)
-                        {
-                            // Extracts the item that's been clicked on
-                            Music item = tblSongList.getSelectionModel()
-                                    .getSelectedItem();
-
-                            // Adds the selected item to the queue
-                            wm.setQueuePlay(item);
-
-                            // Plays the queue
-                            wm.prepareAndPlay();
-                        }
-
-                        if (event.getClickCount() == 1)
-                        {
-                            Music item = tblSongList
-                                    .getSelectionModel().getSelectedItem();
-
-                            lblArtist.setText(item.getArtist());
-                            lblTitle.setText(item.getTitle());
-                            lblAlbum.setText(item.getAlbum());
-                            lblDescription.setText(item.getDescription());
-                            lblGenre.setText(item.getGenre());
-                            lblYear.setText(String.valueOf(
-                                    item.getYear()));
-                            int[] minSec = wm.getSecondsToMinAndHour(item.getDuration());
-                            lblDuration.setText(String.valueOf(minSec[2]
-                                                               + ":"
-                                                               + minSec[1]
-                                                               + ":"
-                                                               + minSec[0]));
-                        }
-
-                        // Right click - Context Menu
-                        if (event.getButton() == MouseButton.SECONDARY)
-                        {
-                            // Opens the context menu with the top left corner being at the
-                            // mouse's position
-                            cm.show(tblSongList, event.getScreenX(), event.getScreenY());
-                        }
-                    }
-                    else
-                    {
-                        System.out.println("Empty");
-                    }
-                });
-            }
-
-            txtTableSearch.textProperty().addListener(
-                    (ObservableValue<? extends String> observable,
-                     String oldText,
-                     String newText) ->
-            {
-                try
-                {
-                    wm.songSearch(txtTableSearch.getText(), wm.getFilters(searchTagTitle,
-                                                                          searchTagAlbum,
-                                                                          searchTagArtist,
-                                                                          searchTagGenre,
-                                                                          searchTagDesc,
-                                                                          searchTagYear));
-                }
-                catch (SQLException ex)
-                {
-                    System.out.println(ex.getMessage());
-                }
-            });
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
-
+        //<editor-fold defaultstate="collapsed" desc="Bindinggs">
         // Buttons
-//        btnPlayPause.textProperty().bind(wm.getPlayButtonTextProperty());
         btnLoop.disableProperty().bind(wm.getLoopDisableProperty());
 
         // ComboBox
@@ -273,91 +153,87 @@ public class MainWindowController implements Initializable
         // Labels
         lblmPlayerStatus.textProperty().bind(wm.getMediaplayerLabelTextProperty());
         lblTimer.disableProperty().bind(wm.getTimerDisableProperty());
-        this.lblAlbumCurrent.textProperty().bind(wm.getCurrentAlbumProperty());
-        this.lblArtistCurrent.textProperty().bind(wm.getCurrentArtistProperty());
-        this.lblDescriptionCurrent.textProperty().bind(wm.getCurrentDescProperty());
-        this.lblDurationCurrent.textProperty().bind(wm.getCurrentDurationProperty());
-        this.lblGenreCurrent.textProperty().bind(wm.getCurrentGenreProperty());
-        this.lblTitleCurrent.textProperty().bind(wm.getCurrentTitleProperty());
-        this.lblYearCurrent.textProperty().bind(wm.getCurrentYearProperty());
+        lblAlbum.textProperty().bind(wm.getAlbumProperty());
+        lblAlbumCurrent.textProperty().bind(wm.getCurrentAlbumProperty());
+        lblArtist.textProperty().bind(wm.getArtistProperty());
+        lblArtistCurrent.textProperty().bind(wm.getCurrentArtistProperty());
+        lblDescription.textProperty().bind(wm.getDescProperty());
+        lblDescriptionCurrent.textProperty().bind(wm.getCurrentDescProperty());
+        lblDuration.textProperty().bind(wm.getDurationProperty());
+        lblDurationCurrent.textProperty().bind(wm.getCurrentDurationProperty());
+        lblGenre.textProperty().bind(wm.getGenreProperty());
+        lblGenreCurrent.textProperty().bind(wm.getCurrentGenreProperty());
+        lblTitle.textProperty().bind(wm.getTitleProperty());
+        lblTitleCurrent.textProperty().bind(wm.getCurrentTitleProperty());
+        lblYear.textProperty().bind(wm.getYearProperty());
+        lblYearCurrent.textProperty().bind(wm.getCurrentYearProperty());
+        //</editor-fold>
 
-        // Loads the queue list
-        listQueue.setItems(wm.getQueueList());
+        //<editor-fold defaultstate="collapsed" desc="Table Setup">
+        // Sets the Table colum IDs
+        clmNr.setCellValueFactory(new PropertyValueFactory("id"));
+        clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
+        clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
+        clmCover.setCellValueFactory(new PropertyValueFactory("album"));
+        clmYear.setCellValueFactory(new PropertyValueFactory("year"));
 
-        // Sets up a mouse listener for the queue
-        ContextMenu cm = wm.queueContextMenu(listQueue);
-
-        listQueue.setOnMouseClicked((MouseEvent event) ->
-        {
-            if (event.getButton() == MouseButton.SECONDARY)
-            {
-                cm.show(listQueue, event.getScreenX(), event.getScreenY());
-            }
-
-            if (event.getClickCount() == 2)
-            {
-                wm.stopMediaPlayer();
-                Music selectedItem = listQueue.getSelectionModel().getSelectedItem();
-                wm.skipToSong(selectedItem);
-                wm.prepareAndPlay();
-            }
-        });
-
-        // Sets up change listener for the queue list
-        wm.setupQueueListener();
-
-        //setting default value of the choicebox
-        playbackSpeed.setValue("Default speed");
-        //creating possible choices
-        playbackSpeed.getItems().addAll("50% speed",
-                                        "75% speed",
-                                        "Default speed",
-                                        "125% speed",
-                                        "150% speed",
-                                        "175% speed",
-                                        "200% speed");
-
-        // Allows for multiple selections to be made
-        playlistPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
-        // Puts the playlists into the view
-        playlistPanel.setItems(wm.getPlaylists());
-
+        // Attempts to laod the list of songs
         try
         {
-            // Loads the stores playlists
-            wm.loadPlaylists();
+            wm.loadSongList();
+            tblSongList.setItems(wm.getSongList());
         }
         catch (SQLException ex)
         {
             System.out.println(ex.getMessage());
         }
 
-        // Sets up am mouse listener for the playlist
-        // Creates a new context menu
-        ContextMenu plcm = wm.playlistContextMenu(playlistPanel);
+        // Defines the defautl sorted order
+        tblSongList.getSortOrder().add(clmCover);
+        tblSongList.getSortOrder().add(clmNr);
 
-        // Adds the actual listener to the playlist
-        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        // Allows for multiple entries to be selected at once
+        tblSongList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        wm.setTableMouseListener(tblSongList);
+
+        wm.setTableSearchListener(txtTableSearch, wm.getFilters(searchTagTitle,
+                                                                searchTagAlbum,
+                                                                searchTagArtist,
+                                                                searchTagGenre,
+                                                                searchTagDesc,
+                                                                searchTagYear));
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Queue Setup">
+        wm.setQueueMouseListener(listQueue);
+
+        // Sets up change listener for the queue list
+        wm.setupQueueListener();
+        //</editor-fold>
+
+        //<editor-fold defaultstate="collapsed" desc="Playlist Setup">
+        // Allows for multiple selections to be made
+        playlistPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        // Loads the playlist
+        try
         {
-            // Double click - Single action
-            if (event.getClickCount() == 2)
-            {
-                ObservableList<Music> playlist = playlistPanel
-                        .getSelectionModel()
-                        .getSelectedItem()
-                        .getPlaylist();
+            wm.loadPlaylists();
+            playlistPanel.setItems(wm.getPlaylists());
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
 
-                wm.setQueuePlay(playlist);
-                wm.prepareAndPlay();
-            }
+        wm.setPlaylistMouseListener(playlistPanel);
+        //</editor-fold>
 
-            // Right click - Context Menu
-            if (event.getButton() == MouseButton.SECONDARY)
-            {
-                plcm.show(playlistPanel, event.getScreenX(), event.getScreenY());
-            }
-        });
+        //setting default value of the choicebox
+        playbackSpeed.setValue("Default speed");
+        //creating possible choices
+        playbackSpeed.getItems().addAll(wm.getPlaybackSpeed());
 
         // Places the playback functionality at the very front of the application
         volumeSlider.getParent().getParent().toFront();

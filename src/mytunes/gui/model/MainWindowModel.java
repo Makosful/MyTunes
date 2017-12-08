@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.EqualizerBand;
@@ -85,6 +86,13 @@ public class MainWindowModel
     private Slider progressSlider;
     private Label lblmPlayerStatus;
     private Label lblTimer;
+    private Label lblArtist;
+    private Label lblTitle;
+    private Label lblAlbum;
+    private Label lblDescription;
+    private Label lblGenre;
+    private Label lblYear;
+    private Label lblDuration;
     private Label lblAlbumCurrent;
     private Label lblArtistCurrent;
     private Label lblDescriptionCurrent;
@@ -125,12 +133,19 @@ public class MainWindowModel
             this.lblmPlayerStatus = new Label();
             this.lblTimer = new Label("00:00");
 
+            this.lblAlbum = new Label();
             this.lblAlbumCurrent = new Label();
+            this.lblArtist = new Label();
             this.lblArtistCurrent = new Label();
+            this.lblDescription = new Label();
             this.lblDescriptionCurrent = new Label();
+            this.lblDuration = new Label();
             this.lblDurationCurrent = new Label();
+            this.lblGenre = new Label();
             this.lblGenreCurrent = new Label();
+            this.lblTitle = new Label();
             this.lblTitleCurrent = new Label();
+            this.lblYear = new Label();
             this.lblYearCurrent = new Label();
         }
         catch (IOException ex)
@@ -1366,6 +1381,41 @@ public class MainWindowModel
     {
         return lblYearCurrent.textProperty();
     }
+
+    public StringProperty getArtistProperty()
+    {
+        return lblArtist.textProperty();
+    }
+
+    public StringProperty getTitleProperty()
+    {
+        return lblTitle.textProperty();
+    }
+
+    public StringProperty getAlbumProperty()
+    {
+        return lblAlbum.textProperty();
+    }
+
+    public StringProperty getDescProperty()
+    {
+        return lblDuration.textProperty();
+    }
+
+    public StringProperty getGenreProperty()
+    {
+        return lblGenre.textProperty();
+    }
+
+    public StringProperty getYearProperty()
+    {
+        return lblYear.textProperty();
+    }
+
+    public StringProperty getDurationProperty()
+    {
+        return lblDuration.textProperty();
+    }
     //</editor-fold>
 
     /**
@@ -1646,4 +1696,148 @@ public class MainWindowModel
         setPlayckSpeed(playbackIndex);
     }
     //</editor-fold>
+
+    public void setTableMouseListener(TableView<Music> tblSongList)
+    {
+        ContextMenu cm = tableContextMenu(tblSongList);
+
+        tblSongList.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (!tblSongList.getSelectionModel().getSelectedItems().isEmpty())
+            {
+                System.out.println("Not Empty");
+                // Double click - Single action
+                if (event.getClickCount() == 2)
+                {
+                    // Extracts the item that's been clicked on
+                    Music item = tblSongList.getSelectionModel()
+                            .getSelectedItem();
+
+                    // Adds the selected item to the queue
+                    setQueuePlay(item);
+
+                    // Plays the queue
+                    prepareAndPlay();
+                }
+
+                if (event.getClickCount() == 1)
+                {
+                    Music item = tblSongList
+                            .getSelectionModel().getSelectedItem();
+
+                    lblArtist.setText(item.getArtist());
+                    lblTitle.setText(item.getTitle());
+                    lblAlbum.setText(item.getAlbum());
+                    lblDescription.setText(item.getDescription());
+                    lblGenre.setText(item.getGenre());
+                    lblYear.setText(String.valueOf(
+                            item.getYear()));
+                    int[] minSec = getSecondsToMinAndHour(item.getDuration());
+                    lblDuration.setText(String.valueOf(minSec[2]
+                                                       + ":"
+                                                       + minSec[1]
+                                                       + ":"
+                                                       + minSec[0]));
+                }
+
+                // Right click - Context Menu
+                if (event.getButton() == MouseButton.SECONDARY)
+                {
+                    // Opens the context menu with the top left corner being at the
+                    // mouse's position
+                    cm.show(tblSongList, event.getScreenX(), event.getScreenY());
+                }
+            }
+            else
+            {
+                System.out.println("Empty");
+            }
+        });
+    }
+
+    public void setTableSearchListener(TextField txtTableSearch, ArrayList<String> filters)
+    {
+        txtTableSearch.textProperty().addListener(
+                (ObservableValue<? extends String> observable,
+                 String oldText,
+                 String newText) ->
+        {
+            try
+            {
+                songSearch(txtTableSearch.getText(), filters);
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+        });
+    }
+
+    public void setQueueMouseListener(JFXListView<Music> listQueue)
+    {
+        // Loads the queue list
+        listQueue.setItems(getQueueList());
+
+        // Sets up a mouse listener for the queue
+        ContextMenu qcm = queueContextMenu(listQueue);
+
+        listQueue.setOnMouseClicked((MouseEvent event) ->
+        {
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                qcm.show(listQueue, event.getScreenX(), event.getScreenY());
+            }
+
+            if (event.getClickCount() == 2)
+            {
+                stopMediaPlayer();
+                Music selectedItem = listQueue.getSelectionModel().getSelectedItem();
+                skipToSong(selectedItem);
+                prepareAndPlay();
+            }
+        });
+    }
+
+    public void setPlaylistMouseListener(JFXListView<Playlist> playlistPanel)
+    {
+
+        // Sets up am mouse listener for the playlist
+        // Creates a new context menu
+        ContextMenu plcm = playlistContextMenu(playlistPanel);
+
+        // Adds the actual listener to the playlist
+        playlistPanel.setOnMouseClicked((MouseEvent event) ->
+        {
+            // Double click - Single action
+            if (event.getClickCount() == 2)
+            {
+                ObservableList<Music> playlist = playlistPanel
+                        .getSelectionModel()
+                        .getSelectedItem()
+                        .getPlaylist();
+
+                setQueuePlay(playlist);
+                prepareAndPlay();
+            }
+
+            // Right click - Context Menu
+            if (event.getButton() == MouseButton.SECONDARY)
+            {
+                plcm.show(playlistPanel, event.getScreenX(), event.getScreenY());
+            }
+        });
+    }
+
+    public ArrayList<String> getPlaybackSpeed()
+    {
+        ArrayList<String> settings = new ArrayList<>();
+        settings.add("50% speed");
+        settings.add("75% speed");
+        settings.add("Default speed");
+        settings.add("125% speed");
+        settings.add("125% speed");
+        settings.add("150% speed");
+        settings.add("200% speed");
+        return settings;
+    }
 }
