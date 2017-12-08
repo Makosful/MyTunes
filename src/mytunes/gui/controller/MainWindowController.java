@@ -383,18 +383,33 @@ public class MainWindowController implements Initializable
         wm.fxmlClearQueue();
     }
 
+    /**
+     * Switches to the previous song in the queue
+     *
+     * @param event
+     */
     @FXML
     private void prevSong(ActionEvent event)
     {
         wm.fxmlPrevSong();
     }
 
+    /**
+     * Switches to the next song in the queue
+     *
+     * @param event
+     */
     @FXML
     private void nextSong(ActionEvent event)
     {
         wm.fxmlNextSong();
     }
 
+    /**
+     * Clears the search bar
+     *
+     * @param event
+     */
     @FXML
     private void searchClear(ActionEvent event)
     {
