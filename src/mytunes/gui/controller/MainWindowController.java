@@ -154,6 +154,7 @@ public class MainWindowController implements Initializable
         // Labels
         lblmPlayerStatus.textProperty().bind(wm.getMediaplayerLabelTextProperty());
         lblTimer.disableProperty().bind(wm.getTimerDisableProperty());
+        lblTimer.textProperty().bind(wm.getTimerTextProperty());
         lblAlbum.textProperty().bind(wm.getAlbumProperty());
         lblAlbumCurrent.textProperty().bind(wm.getCurrentAlbumProperty());
         lblArtist.textProperty().bind(wm.getArtistProperty());

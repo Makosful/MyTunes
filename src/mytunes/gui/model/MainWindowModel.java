@@ -131,7 +131,7 @@ public class MainWindowModel
             this.volumeSlider = new JFXSlider();
             this.volumeSlider.setDisable(true);
             this.lblmPlayerStatus = new Label();
-            this.lblTimer = new Label("00:00");
+            this.lblTimer = new Label("00:00/13:37");
 
             this.lblAlbum = new Label();
             this.lblAlbumCurrent = new Label();
@@ -1354,6 +1354,11 @@ public class MainWindowModel
     public BooleanProperty getTimerDisableProperty()
     {
         return lblTimer.disableProperty();
+    }
+
+    public StringProperty getTimerTextProperty()
+    {
+        return lblTimer.textProperty();
     }
 
     public StringProperty getCurrentAlbumProperty()
