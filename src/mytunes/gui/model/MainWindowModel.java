@@ -1,14 +1,12 @@
 package mytunes.gui.model;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXToggleButton;
+import com.jfoenix.controls.*;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -28,6 +26,7 @@ import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -84,7 +83,6 @@ public class MainWindowModel
 
     //<editor-fold defaultstate="collapsed" desc="FXML Placeholder">
     private Slider progressSlider;
-    private Slider volumeSlider;
     private Label lblmPlayerStatus;
     private Label lblTimer;
     private Label lblAlbumCurrent;
@@ -96,6 +94,7 @@ public class MainWindowModel
     private Label lblYearCurrent;
     private ComboBox<String> playbackSpeed;
     private JFXButton btnPlayPause;
+    private JFXSlider volumeSlider;
     private JFXToggleButton btnLoop;
     //</editor-fold>
 
@@ -1368,4 +1367,281 @@ public class MainWindowModel
         return lblYearCurrent.textProperty();
     }
     //</editor-fold>
+
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @param searchTagTitle
+     * @param searchTagAlbum
+     * @param searchTagArtist
+     * @param searchTagGenre
+     * @param searchTagDesc
+     * @param searchTagYear
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    public ArrayList<String> getFilters(JFXCheckBox searchTagTitle,
+                                        JFXCheckBox searchTagAlbum,
+                                        JFXCheckBox searchTagArtist,
+                                        JFXCheckBox searchTagGenre,
+                                        JFXCheckBox searchTagDesc,
+                                        JFXCheckBox searchTagYear
+    )
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
+    }
+
+    private void resizeCellWidth(TableView<Music> tblSongList)
+    {
+        double cellWidth;
+
+        AtomicLong width = new AtomicLong();
+        tblSongList.getColumns().forEach(col ->
+        {
+            width.addAndGet((long) col.getWidth());
+        });
+
+        cellWidth = tblSongList.getWidth();
+
+        if (cellWidth > width.get())
+        {
+            tblSongList.getColumns().forEach((TableColumn<Music, ?> col) ->
+            {
+                col.setPrefWidth(col.getWidth() + ((cellWidth - width.get()) / tblSongList.getColumns().size()));
+            });
+        }
+    }
+
+    public void fxmlNextSong()
+    {
+        stopMediaPlayer();
+        skipToNextSong();
+        prepareAndPlay();
+    }
+
+    public void fxmlPrevSong()
+    {
+        stopMediaPlayer();
+        skipToPrevSong();
+        prepareAndPlay();
+    }
+
+    public void fxmlClearQueue()
+    {
+        // Checks if the queue is empty
+        if (!getQueueList().isEmpty())
+        // If it's not empty, stop all songs from playing
+        {
+            // Call the method to stop the song
+            fxmlSongStop();
+        }
+
+        // Clears the queue list
+        clearQueueList();
+
+        setPlaying(false);
+        btnPlayPause.setText("Play");
+    }
+
+    public void fxmlLoadMediaFiles(TableView tblSongList)
+    {
+        FileChooser fc = new FileChooser();
+
+        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
+        FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
+        FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
+        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 Files", "*.mp4");
+        FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
+        FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
+        FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
+
+        fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
+
+        List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+
+        if (chosenFiles != null)
+        {
+
+            try
+            {
+                List<Music> addedMusic;
+                addedMusic = setMetaData(chosenFiles);
+                loadSongList();
+                tblSongList.setItems(getSongList());
+                getQueueList().addAll(addedMusic);
+                prepareSetup();
+            }
+            catch (InvalidAudioFrameException
+                   | IOException
+                   | CannotReadException
+                   | ReadOnlyFileException
+                   | TagException
+                   | SQLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else
+        {
+            System.out.println("One or more invalid file(s) / None selected");
+            return;
+        }
+
+        if (!getQueueList().isEmpty())
+        {
+            prepareSetup();
+        }
+    }
+
+    public void fxmlDeletePlaylist(JFXListView playlistPanel)
+    {
+        ObservableList<Playlist> selectedItems = playlistPanel
+                .getSelectionModel().getSelectedItems();
+        deletePlaylists(selectedItems);
+    }
+
+    public void fxmlVolumeMixer()
+    {
+        //Creates a new volume slider and sets the default value to 50%
+        JFXSlider volSlide = volumeSlider;
+
+        // It was necessary to time it with 100 to be able to receive 100
+        // possible positions for the mixer. For each number is a %, so 0 is 0%,
+        // 1 is 1% --> 100 is 100%
+        volSlide.setValue(getVolume());
+
+        //Adds a listener on an observable in the volume slider, which allows
+        //users to tweak the volume of the player.
+        volSlide.valueProperty().addListener(
+                (javafx.beans.Observable observable) ->
+        {
+            setVolume(volSlide.getValue() / 100);
+        });
+    }
+
+    public void fxmlLoopAction()
+    {
+        reverseLooping();
+
+        // If our loop slide-button is enabled we change the text, set the cycle
+        // count to indefinite and reverse the boolean
+        if (btnLoop.isSelected() == true)
+        {
+            btnLoop.setText("Loop: ON");
+            setLooping();
+            System.out.println("Looping on");
+        }
+        else if (btnLoop.isSelected() != true)
+        {
+            btnLoop.setText("Loop: OFF");
+            reverseLooping();
+            System.out.println("Looping off");
+        }
+    }
+
+    public void fxmlMusicPlayPause()
+    {
+        if (getQueueList().isEmpty() && !isPlaying())
+        {
+            enableSettings();
+            addElevatorMusic();
+            prepareSetup();
+            startMediaPlayer();
+        }
+        else if (!isPlaying())
+        {
+            //Needs to set the BEFORE media is played (apparently?)
+            timeChangeListener();
+            startMediaPlayer();
+            setPlaying(true);
+            btnPlayPause.setText("Pause");
+            enableSettings();
+        }
+        // if the boolean is true we shall stop playing, reverse the boolean and edit the buttons text.
+        else
+        {
+            pauseMediaPlayer();
+            setPlaying(false);
+            btnPlayPause.setText("Play");
+        }
+    }
+
+    public void fxmlSongStop()
+    {
+        // Updates the status
+        updateStatus();
+
+        // Stores the status as a local variable
+        Status status = getMediaStatus();
+
+        // Check if the status is actuall exist
+        if (null != status)
+        {
+            switch (status)
+            {
+                case PLAYING:
+                    System.out.println("Status is: " + status);
+                    stopMediaPlayer();
+                    setPlaying(false);
+                    btnPlayPause.setText("Play");
+                    progressSlider.setValue(0.0);
+                    break;
+                case STOPPED:
+                    System.out.println("Status is: " + status);
+                    break;
+                case PAUSED:
+                    updateDuration();
+                    progressSlider.setValue(0.0);
+                    progressSlider.setMax(getMediaPlayer().getTotalDuration().toSeconds());
+                    getMediaPlayerStatus();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void fxmlPlaybackSpeed()
+    {
+        //an int to see where we are in the combobox' index.
+        int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
+
+        // Creating a list starting from 0 + 1 (convert index to number in list)
+        System.out.println("the line is #: " + (playbackIndex + 1));
+
+        /*
+         * switch case for all the possible playback speeds MAYBE convert to a
+         * slider in future instead (free choice and set the speed to the value
+         * of the bar)
+         */
+        setPlayckSpeed(playbackIndex);
+    }
 }
