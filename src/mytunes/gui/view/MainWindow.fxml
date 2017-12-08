@@ -10,7 +10,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
@@ -26,7 +25,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="window" fx:id="anchorPane" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane id="window" fx:id="anchorPane" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
@@ -52,7 +51,7 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXToggleButton fx:id="btnLoop" depthTest="DISABLE" graphicTextGap="0.0" minHeight="40.0" minWidth="100.0" mnemonicParsing="false" onAction="#LoopAction" pickOnBounds="false" prefHeight="40.0" prefWidth="125.0" style="-jfx-toggle-line-color: white; -jfx-toggle-color: #0E9654;" text="Loop" textFill="WHITE" wrapText="true">
+                        <JFXToggleButton fx:id="btnLoop" alignment="CENTER_LEFT" depthTest="DISABLE" graphicTextGap="0.0" minHeight="40.0" minWidth="100.0" mnemonicParsing="false" onAction="#LoopAction" pickOnBounds="false" prefHeight="40.0" prefWidth="105.0" style="-jfx-toggle-line-color: white; -jfx-toggle-color: #0E9654;" text="Loop" textFill="WHITE" wrapText="true">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
@@ -86,15 +85,6 @@
                                 <Insets left="5.0" />
                             </padding>
                         </Label>
-            
-                    <MenuButton fx:id="btnSettings" alignment="BOTTOM_RIGHT" contentDisplay="TOP" graphicTextGap="0.0" mnemonicParsing="false" popupSide="TOP" prefHeight="40.0" prefWidth="40.0" wrapText="true">
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Option 1" />
-                            <MenuItem mnemonicParsing="false" text="Option 2" />
-                            <MenuItem mnemonicParsing="false" text="Option 3" />
-                            <MenuItem mnemonicParsing="false" text="Option 4" />
-                        </items>
-                    </MenuButton>
 
                     </children>
                     <FlowPane.margin>
