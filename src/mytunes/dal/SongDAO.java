@@ -602,7 +602,7 @@ public class SongDAO
     public void editTitle(String newTitle, String oldTitle, Connection con) throws SQLException
     {
         // Title
-        String sqlTitle = "UPDATE Songs SET title = ? WHERE title like ?";
+        String sqlTitle = "UPDATE Songs SET title = ? WHERE title = ?";
 
         PreparedStatement preparedStatementTitle = con.prepareStatement(sqlTitle);
         preparedStatementTitle.setString(1, newTitle);
