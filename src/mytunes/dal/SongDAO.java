@@ -35,7 +35,16 @@ public class SongDAO
 
             List<Music> allSongs = new ArrayList<>();
 
-            String sql = "SELECT Songs.id, Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname, Location.location "
+            String sql = "SELECT Songs.id, "
+                         + "Songs.title, "
+                         + "Songs.releasedate, "
+                         + "Songs.description, "
+                         + "Songs.duration, "
+                         + "Artist.artist, "
+                         + "Albums.album, "
+                         + "Genre.genre, "
+                         + "Path.pathname, "
+                         + "Location.location "
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
