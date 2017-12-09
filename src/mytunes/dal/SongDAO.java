@@ -644,11 +644,11 @@ public class SongDAO
 
     public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
     {
-        int genreId = getExistingGenre(oldGenre+"/"+newGenre);
+        int genreId = getExistingGenre(newGenre);
         String sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
         if (genreId == 0)
         {
-            genreId = setGenre(oldGenre+"/"+newGenre);
+            genreId = setGenre(newGenre);
         }
 
         PreparedStatement preparedStatementGenre = con.prepareStatement(sqlGenre);
