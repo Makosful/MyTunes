@@ -61,6 +61,8 @@ public class EditSongController implements Initializable
     @FXML
     private JFXTextField txtFieldArtist;
     @FXML
+    private JFXTextField selectedGenres;
+    @FXML
     private Label lblError;
     @FXML
     private Label lblError2;
@@ -72,8 +74,6 @@ public class EditSongController implements Initializable
     EditSongModel esModel;
     // List that contains all the genres.
 
-
-    
     public EditSongController() throws IOException
     {
         esModel = new EditSongModel();
@@ -90,12 +90,14 @@ public class EditSongController implements Initializable
         setComboBoxData();
         noEditableTime();
     }
-    // Addings genres to the list, and making it observable.
+  
+    //<editor-fold defaultstate="collapsed" desc="Setters">
+     // Addings genres to the list, and making it observable.
     // Initializing the combobox with the obsv. list.
     private void setComboBoxData()
     {
         ObservableList comboBoxList = FXCollections.observableList(genreList());
-        comboBoxCategory.setItems(comboBoxList);   
+        comboBoxCategory.setItems(comboBoxList);
     }
     // Method to get genre from song, and place it first in combobox.
     private void setSongGenreFirstInComboBox(String genre)
@@ -107,7 +109,7 @@ public class EditSongController implements Initializable
     {
         // UserSelectedgenres to null everytime user wants to edit a new song.
         userSelectedGenres = null;
-
+        
         setSongGenreFirstInComboBox(genre);
         String timeString = Integer.toString(time);
         // Puts the text of the song into the textfields.
@@ -115,7 +117,7 @@ public class EditSongController implements Initializable
         txtFieldArtist.setText(artist);
         txtTime.setText(timeString);
         txtFile.setText(file);
-
+        
         // Getting the data from the current song
         // Before the values might change, based on users choices.
         oldGenre = genre;
@@ -123,8 +125,16 @@ public class EditSongController implements Initializable
         oldArtist = artist;
         oldFile = file;
     }
+//</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Getters">
+      // Goes through mainWindowModel, and then controller, takes the ID of the song from the table.
+    public int getSongIdFromMainController(int id)
+    {
+        songIdFromTable = id;
+        return id;
+    }
+    
     /**
      * Returns the new title, artist, etc.
      * @return
@@ -202,6 +212,18 @@ public class EditSongController implements Initializable
         stage = (Stage) anchorPane.getScene().getWindow();
         stage.close();
     }
+    /**
+     * If user regrets the genre he added, he can delete it again, by selecting it in the combobox, and press delete.
+     * @param event 
+     */
+        @FXML
+    private void deleteSpecificGenre(ActionEvent event)
+    {
+        String selectedGenre = comboBoxCategory.getSelectionModel().getSelectedItem();
+        userSelectedGenres = userSelectedGenres.replace(selectedGenre, "");
+        
+        selectedGenres.setText(userSelectedGenres);
+    }
     
     /**
      * Saves changes to song, based on users changes.
@@ -214,20 +236,7 @@ public class EditSongController implements Initializable
     }
 //</editor-fold>
     
-    // Goes through mainWindowModel, and then controller, takes the ID of the song from the table.
-    public int getSongIdFromMainController(int id)
-    {
-        songIdFromTable = id;
-        return id;
-    }
-    /**
-     * So that the time textfield cannot be editted.
-     */
-    public void noEditableTime()
-    {
-        esModel.noEditableTime(txtTime);
-    }
-    
+    //<editor-fold defaultstate="collapsed" desc="Command">
     private void slashInGenresOrNot()
     {
         if (userSelectedGenres == null)
@@ -239,20 +248,22 @@ public class EditSongController implements Initializable
             userSelectedGenres += "/" + comboBoxCategory.getSelectionModel().getSelectedItem();
         }
     }
+//</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Methods from model">
     /**
      * A confirmation dialog, on whether you want to save songs changes or not
      */
     private void confirmationDialog() throws SQLException
     {
         esModel.confirmationDialog(anchorPane, getOldTitle(), getTitle(),getOldArtist(),
-          getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
+                                                                         getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
     }
     
     /**
-     * Checks whether the textfields are empty or not. 
+     * Checks whether the textfields are empty or not.
      * Only the ones that can be modified obv.
-     * @return 
+     * @return
      */
     private boolean TxtFieldsFilled()
     {
@@ -261,7 +272,7 @@ public class EditSongController implements Initializable
     
     /**
      * Checks whether genres string is empty or not.
-     * @return 
+     * @return
      */
     private boolean genreNotEmpty()
     {
@@ -269,10 +280,19 @@ public class EditSongController implements Initializable
     }
     /**
      * Gets the genrelist for the combobox.
-     * @return 
+     * @return
      */
     private List<String> genreList()
     {
         return esModel.genreList();
     }
+    
+    /**
+     * So that the time textfield cannot be editted.
+     */
+    public void noEditableTime()
+    {
+        esModel.noEditableTime(txtTime);
+    }
+//</editor-fold>
 }   
