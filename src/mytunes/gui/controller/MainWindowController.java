@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
@@ -419,6 +421,24 @@ public class MainWindowController implements Initializable
             catch (SQLException ex)
             {
                 System.out.println("Cannot edit song");
+            }
+        });
+        
+        // Deletes the selected song from the db
+        MenuItem deleteSong = new MenuItem("Remove song");
+        cm.getItems().add(deleteSong);
+        deleteSong.setOnAction(action ->
+        {
+            musicInfo = tblSongList.getSelectionModel().getSelectedItem();
+            System.out.println(musicInfo.getId());
+            wm.deleteSong(musicInfo.getId());
+            try
+            {
+                wm.loadSongList();
+            }
+            catch (SQLException ex)
+            {
+                System.out.println(ex.getMessage());
             }
         });
     }
@@ -1236,7 +1256,6 @@ public class MainWindowController implements Initializable
             {
                 List<Music> addedMusic = wm.setMetaData(chosenFiles);
                 wm.loadSongList();
-                tblSongList.setItems(wm.getSongList());
                 wm.getQueueList().addAll(addedMusic);
                 prepareSetup();
             }

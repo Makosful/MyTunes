@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -898,6 +900,18 @@ public class MainWindowModel
         
         return minSec;
        
+    }
+
+    public void deleteSong(int id)
+    {
+        try
+        {
+            bllManager.deleteSong(id);
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
 }
