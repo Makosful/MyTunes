@@ -615,7 +615,7 @@ public class SongDAO
     {
 
         // Artist
-        int artistId = getExistingArtist(oldArtist);
+        int artistId = getExistingArtist(newArtist);
         String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
 
         if (artistId == 0)
