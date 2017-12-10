@@ -160,7 +160,29 @@ public class BLLManager
             ids.add(genreId);
             ids.add(pathId);
 
-            songDAO.setSong(song, ids);
+            int id = songDAO.setSong(song, ids);
+            
+            
+            int genreTestId;
+            String[] genres = song.getGenre().split(" ");
+            for(String g : genres)
+            {
+             
+                int getGenreTestId = songDAO.getExistingTestGenre(g);
+                if (getGenreTestId != 0)
+                {
+
+                    genreTestId = getGenreTestId;
+
+                }
+                else
+                {
+
+                    genreTestId = songDAO.setTestGenre(g);
+
+                }
+                songDAO.setTestGenre(id, genreTestId);
+            }
 
         }
 

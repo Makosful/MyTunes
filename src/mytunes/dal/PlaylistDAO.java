@@ -144,8 +144,8 @@ public class PlaylistDAO
 
             while (rs.next())
             {
-                Music song = sDAO.createSongFromDB(rs);
-                allSongs.add(song);
+              //  Music song = sDAO.createSongFromDB(rs);
+               // allSongs.add(song);
             }
 
             return allSongs;
