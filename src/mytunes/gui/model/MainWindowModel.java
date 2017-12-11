@@ -1026,6 +1026,7 @@ public class MainWindowModel
      */
     public void clearQueueList()
     {
+        this.queueMedia.clear();
         this.queue.clear();
     }
 
@@ -1515,6 +1516,8 @@ public class MainWindowModel
             // Double click - Single action
             if (event.getClickCount() == 2)
             {
+                stopMediaPlayer();
+                clearQueueList();
                 ObservableList<Music> playlist = playlistPanel
                         .getSelectionModel()
                         .getSelectedItem()
