@@ -71,10 +71,10 @@ public class BLLManager
     }
     // Changes the song's info.
 
-    public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
+    public void editSongDataBase(String newTitle, String newArtist, int songId,
                                  String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
     {
-        songDAO.editSong(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+        songDAO.editSong(newTitle, newArtist, songId, oldFile, newFile);
         if(addGenres == true)
         {
             insertGenres(songId, newGenre);

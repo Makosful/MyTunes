@@ -287,8 +287,9 @@ public class EditSongController implements Initializable
      */
     private void confirmationDialog() throws SQLException
     {
-        esModel.confirmationDialog(anchorPane, getOldTitle(), getTitle(),getOldArtist(),
-          getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre(), getAddOrReplace());
+        esModel.confirmationDialog(anchorPane, getTitle(), getArtist(),
+                                   getSongId(), getOldFile(), getFile(),
+                                   getOldGenre(), getGenre(), getAddOrReplace());
     }
     
     /**

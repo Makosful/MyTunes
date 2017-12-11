@@ -30,10 +30,10 @@ public class EditSongModel
         genreList = new ArrayList();
     }
      // Changes the song's info.
-    public void editSongDatabase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
+    public void editSongDatabase(String newTitle, String newArtist, int songId,
     String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
     {
-        bllManager.editSongDataBase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
+        bllManager.editSongDataBase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
     }
     
     
@@ -41,9 +41,7 @@ public class EditSongModel
      * A confirmation dialog, on whether you want to save songs changes or not.
      * If users answer is yet, the method editsongdatabase is called.
      * @param anchorPane
-     * @param oldTitle
      * @param newTitle
-     * @param oldArtist
      * @param newArtist
      * @param songId
      * @param oldFile
@@ -53,7 +51,7 @@ public class EditSongModel
      * @param addGenre
      * @throws java.sql.SQLException
      */
-    public void confirmationDialog(AnchorPane anchorPane, String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
+    public void confirmationDialog(AnchorPane anchorPane, String newTitle, String newArtist, int songId,
     String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenre) throws SQLException
     {
         
@@ -70,7 +68,7 @@ public class EditSongModel
         
         if (action.get() == btnYes)
         {
-            editSongDatabase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenre);
+            editSongDatabase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenre);
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.close();
         }

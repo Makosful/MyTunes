@@ -615,8 +615,8 @@ public class SongDAO
     }
 
     // Changes the song's info.
-    public void editSong(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-                         String oldFile, String newFile, String oldGenre, String newGenre) throws SQLServerException, SQLException
+    public void editSong(String newTitle, String newArtist, int songId,
+                         String oldFile, String newFile) throws SQLServerException, SQLException
     {
         try (Connection con = db.getConnection())
         {
@@ -628,8 +628,7 @@ public class SongDAO
             // Path
             editPath(newFile, oldFile, con);
 
-            // Genre
-            editGenre(oldGenre, newGenre, con, songId);
+            
         }
     }
 
@@ -677,21 +676,7 @@ public class SongDAO
         preparedStatementFile.execute();
     }
 
-    public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
-    {
-        int genreId = getExistingGenre(oldGenre+"/"+newGenre);
-        String sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
-        if (genreId == 0)
-        {
-            genreId = setGenre(oldGenre+"/"+newGenre);
-        }
-
-        PreparedStatement preparedStatementGenre = con.prepareStatement(sqlGenre);
-        preparedStatementGenre.setInt(1, genreId);
-        preparedStatementGenre.setInt(2, songId);
-        preparedStatementGenre.execute();
-    }
-    
+ 
     
     
     
