@@ -8,9 +8,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -25,14 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane
-    id="window"
-    maxHeight="1080.0" maxWidth="1920.0"
-    minHeight="480.0" minWidth="640.0"
-    prefHeight="900.0" prefWidth="1600.0"
-    stylesheets="@../../css/stylesheet.css"
-    xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="mytunes.gui.controller.MainWindowController">
+<AnchorPane id="window" maxHeight="1080.0" maxWidth="1920.0" minHeight="480.0" minWidth="640.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.MainWindowController">
     <children>
         <FlowPane fx:id="playbackPanel" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
@@ -58,7 +48,7 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </HBox.margin>
                         </JFXButton>
-                        <JFXToggleButton fx:id="btnLoop" alignment="CENTER_LEFT" depthTest="DISABLE" graphicTextGap="0.0" minHeight="40.0" minWidth="100.0" mnemonicParsing="false" onAction="#LoopAction" pickOnBounds="false" prefHeight="40.0" prefWidth="105.0" style="-jfx-toggle-line-color: white; -jfx-toggle-color: #0E9654;" text="Loop" textFill="WHITE" wrapText="true">
+                        <JFXToggleButton fx:id="btnLoop" alignment="CENTER_LEFT" depthTest="DISABLE" graphicTextGap="0.0" minHeight="40.0" minWidth="100.0" mnemonicParsing="false" onAction="#LoopAction" pickOnBounds="false" prefHeight="40.0" prefWidth="125.0" style="-jfx-toggle-line-color: white; -jfx-toggle-color: #0E9654;" text="Loop: OFF" textFill="WHITE" wrapText="true">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>

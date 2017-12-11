@@ -288,23 +288,26 @@ public class MainWindowModel
 
     /**
      * Toggles looping on the current track
+     *
+     * @param loop
+     * @param loop
      */
-    public void fxmlLoopAction()
+    public void fxmlLoopAction(JFXToggleButton loop)
     {
         // When called, reverse the current loop from whatever it is
         reverseLooping();
 
         // If our loop slide-button is enabled we change the text, set the cycle
         // count to indefinite and reverse the boolean
-        if (btnLoop.isSelected() == true)
+        if (loop.isSelected() == true)
         {
-            btnLoop.setText("Loop: ON");
+            loop.setText("Loop: ON");
             setLooping();
             System.out.println("Looping on");
         }
-        else if (btnLoop.isSelected() != true)
+        else if (loop.isSelected() != true)
         {
-            btnLoop.setText("Loop: OFF");
+            loop.setText("Loop: OFF");
             reverseLooping();
             System.out.println("Looping off");
         }
@@ -418,6 +421,7 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Property Getters">
+    //<editor-fold defaultstate="collapsed" desc="Slider">
     public DoubleProperty getProgressSliderValueProperty()
     {
         return progressSlider.valueProperty();
@@ -427,6 +431,17 @@ public class MainWindowModel
     {
         return progressSlider.disableProperty();
     }
+
+    public BooleanProperty getValueChangingProperty()
+    {
+        return progressSlider.valueChangingProperty();
+    }
+
+    public DoubleProperty getProgressSliderMaxProperty()
+    {
+        return progressSlider.maxProperty();
+    }
+    //</editor-fold>
 
     public StringProperty getMediaplayerLabelTextProperty()
     {
@@ -441,6 +456,11 @@ public class MainWindowModel
     public BooleanProperty getLoopDisableProperty()
     {
         return btnLoop.disableProperty();
+    }
+
+    public StringProperty getLoopButtonTextProperty()
+    {
+        return btnLoop.textProperty();
     }
 
     public BooleanProperty getPlaybackSpeedDisabledProperty()
@@ -458,6 +478,7 @@ public class MainWindowModel
         return lblTimer.textProperty();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Playing Song">
     public StringProperty getCurrentAlbumProperty()
     {
         return lblAlbumCurrent.textProperty();
@@ -492,7 +513,9 @@ public class MainWindowModel
     {
         return lblYearCurrent.textProperty();
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Selected Song">
     public StringProperty getArtistProperty()
     {
         return lblArtist.textProperty();
@@ -510,7 +533,7 @@ public class MainWindowModel
 
     public StringProperty getDescProperty()
     {
-        return lblDuration.textProperty();
+        return lblDescription.textProperty();
     }
 
     public StringProperty getGenreProperty()
@@ -527,6 +550,7 @@ public class MainWindowModel
     {
         return lblDuration.textProperty();
     }
+    //</editor-fold>
 
     public StringProperty getPlayPauseButton()
     {
@@ -1026,6 +1050,8 @@ public class MainWindowModel
      */
     public void clearQueueList()
     {
+        currentSong = 0;
+        this.queueMedia.clear();
         this.queue.clear();
     }
 
@@ -1075,9 +1101,12 @@ public class MainWindowModel
 
         // If queue does not have next stop playing
         // If queue has next play next
-        currentSong++;
-        setSong(this.queueMedia.get(currentSong).getMedia());
-        startMediaPlayer();
+        if (currentSong < queueSize)
+        {
+            currentSong++;
+            setSong(this.queueMedia.get(currentSong).getMedia());
+            startMediaPlayer();
+        }
     }
 
     public void currentSongNext()
@@ -1327,6 +1356,7 @@ public class MainWindowModel
             if (plCont.shouldSave())
             {
                 Playlist pl = new Playlist(plCont.getTitle());
+                savePlaylist(plCont.getTitle(), plCont.getPlaylist());
                 pl.setPlaylist(plCont.getPlaylist());
                 this.playlists.add(pl);
             }
@@ -1383,6 +1413,9 @@ public class MainWindowModel
                 playlist.getPlaylist().clear();
                 playlist.getPlaylist().addAll(plCont.getPlaylist());
                 bllManager.updatePlaylist(playlist);
+                int index = this.playlists.indexOf(playlist);
+                this.playlists.add(index, playlist);
+                this.playlists.remove(index + 1);
             }
         }
         catch (IOException ex)
@@ -1515,6 +1548,8 @@ public class MainWindowModel
             // Double click - Single action
             if (event.getClickCount() == 2)
             {
+                stopMediaPlayer();
+                clearQueueList();
                 ObservableList<Music> playlist = playlistPanel
                         .getSelectionModel()
                         .getSelectedItem()
@@ -1663,15 +1698,21 @@ public class MainWindowModel
         {
             case 0:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/Elevator (Control).mp3");
+                                  "./res/songs/placeholder",
+                                  "Elevator (Control).mp3"
+                );
                 break;
             case 1:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/Elevator (Caverns).mp3");
+                                  "./res/songs/placeholder",
+                                  "Elevator (Caverns).mp3"
+                );
                 break;
             default:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/elevatormusic.mp3");
+                                  "./res/songs/placeholder",
+                                  "elevatormusic.mp3"
+                );
                 break;
         }
 
@@ -1848,7 +1889,12 @@ public class MainWindowModel
         lblAlbumCurrent.setText(getQueueList().get(currentSong).getAlbum());
         lblArtistCurrent.setText(getQueueList().get(currentSong).getArtist());
         lblDescriptionCurrent.setText(getQueueList().get(currentSong).getDescription());
-        lblDurationCurrent.setText(String.valueOf(getQueueList().get(currentSong).getDuration()));
+        int[] minSec = getSecondsToMinAndHour(getQueueList().get(currentSong).getDuration());
+        lblDurationCurrent.setText(String.valueOf(minSec[2]
+                                                  + ":"
+                                                  + minSec[1]
+                                                  + ":"
+                                                  + minSec[0]));
         lblGenreCurrent.setText(getQueueList().get(currentSong).getGenre());
         lblTitleCurrent.setText(getQueueList().get(currentSong).getTitle());
         lblYearCurrent.setText(String.valueOf(getQueueList().get(currentSong).getYear()));

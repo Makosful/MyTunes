@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.exception.BLLException;
-import mytunes.dal.MockMusic;
 import mytunes.dal.PlaylistDAO;
 import mytunes.dal.SongDAO;
 
@@ -21,13 +20,11 @@ public class BLLManager
 
     private final SongDAO songDAO;
     private final PlaylistDAO plDAO;
-    private final MockMusic mm;
 
     public BLLManager() throws IOException
     {
         this.songDAO = new SongDAO();
         this.plDAO = new PlaylistDAO();
-        this.mm = new MockMusic();
     }
 
     public List<Music> getSongList() throws BLLException
@@ -213,6 +210,6 @@ public class BLLManager
 
     public void deleteSong(int id) throws SQLException
     {
-       songDAO.deleteSong(id);
+        songDAO.deleteSong(id);
     }
 }

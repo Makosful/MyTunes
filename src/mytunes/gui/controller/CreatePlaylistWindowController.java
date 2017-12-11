@@ -3,7 +3,6 @@ package mytunes.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -201,16 +200,8 @@ public class CreatePlaylistWindowController implements Initializable
         }
         else
         {
-            try
-            {
-                save = true;
-                cancel(event);
-                wm.savePlaylist(this.title, this.playlistBackup);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
+            save = true;
+            cancel(event);
         }
     }
 

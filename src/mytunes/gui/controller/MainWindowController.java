@@ -150,6 +150,7 @@ public class MainWindowController implements Initializable
         // Sliders
         progressSlider.valueProperty().bind(wm.getProgressSliderValueProperty());
         progressSlider.disableProperty().bind(wm.getProgressSliderDisableProperty());
+        progressSlider.maxProperty().bind(wm.getProgressSliderMaxProperty());
         volumeSlider.disableProperty().bind(wm.getVolumeDisableProperty());
 
         // Labels
@@ -309,7 +310,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoopAction(ActionEvent event)
     {
-        wm.fxmlLoopAction();
+        wm.fxmlLoopAction(btnLoop);
     }
 
     /**
