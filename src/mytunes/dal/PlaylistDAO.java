@@ -192,7 +192,7 @@ public class PlaylistDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "DELETE FROM Playlists "
+            String sql = "DELETE Playlists FROM Playlists "
                          + "INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
                          + "WHERE id = ?";
 
