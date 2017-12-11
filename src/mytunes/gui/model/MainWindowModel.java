@@ -1666,15 +1666,21 @@ public class MainWindowModel
         {
             case 0:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/Elevator (Control).mp3");
+                                  "./res/songs/placeholder",
+                                  "Elevator (Control).mp3"
+                );
                 break;
             case 1:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/Elevator (Caverns).mp3");
+                                  "./res/songs/placeholder",
+                                  "Elevator (Caverns).mp3"
+                );
                 break;
             default:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder/elevatormusic.mp3");
+                                  "./res/songs/placeholder",
+                                  "elevatormusic.mp3"
+                );
                 break;
         }
 
