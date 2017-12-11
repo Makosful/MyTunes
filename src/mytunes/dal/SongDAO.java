@@ -439,7 +439,7 @@ public class SongDAO
     public Music createSongFromDB(ResultSet rs) throws SQLException
     {
         Music song = new Music();
-
+        
         song.setId(rs.getInt("id"));
         song.setTitle(rs.getString("title"));
         song.setArtist(rs.getString("artist"));
@@ -450,7 +450,7 @@ public class SongDAO
         song.setSongPathName(rs.getString("pathname").trim());
         song.SetDescription(rs.getString("description"));
         song.setDuration(rs.getInt("duration"));
-
+        System.out.println(song.getId());
         return song;
     }
 
@@ -510,11 +510,8 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "DELETE Songs FROM Songs "
-                         + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                         + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                         + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER JOIN Path ON Songs.pathid = Path.id "
+            String sql = "DELETE Path FROM Path "
+                         + "INNER JOIN Songs ON Path.id = Songs.pathid "
                          + "WHERE Songs.id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
