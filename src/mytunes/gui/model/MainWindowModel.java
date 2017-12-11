@@ -1433,10 +1433,14 @@ public class MainWindowModel
     {
         if (playlists.isEmpty())
         {
-            // Do nothing
+            
         }
         else
         {
+            for(Playlist pl : playlists)
+            {
+               bllManager.deletePlaylist(pl.getId()); 
+            }
             this.playlists.removeAll(playlists);
         }
     }
