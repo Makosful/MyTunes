@@ -1076,9 +1076,12 @@ public class MainWindowModel
 
         // If queue does not have next stop playing
         // If queue has next play next
-        currentSong++;
-        setSong(this.queueMedia.get(currentSong).getMedia());
-        startMediaPlayer();
+        if (currentSong < queueSize)
+        {
+            currentSong++;
+            setSong(this.queueMedia.get(currentSong).getMedia());
+            startMediaPlayer();
+        }
     }
 
     public void currentSongNext()
