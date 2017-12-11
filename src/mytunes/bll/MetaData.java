@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.bll.exception.BLLException;
 import mytunes.dal.PlaylistDAO;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -44,25 +45,17 @@ public class MetaData
     }
 
     /**
-     * For each music file get the metadata, validate it, create the music objects 
+     * For each music file get the metadata, validate it, create the music
+     * objects
      * then return the music objects/songs/tracks and send them to the db
+     *
      * @param chosenFiles
      *
      * @return list of songs
      *
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws org.jaudiotagger.audio.exceptions.CannotReadException
-     * @throws org.jaudiotagger.audio.exceptions.ReadOnlyFileException
-     * @throws org.jaudiotagger.tag.TagException
-     * @throws org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
+     * @throws mytunes.bll.exception.BLLException
      */
-    public List<Music> MetaData(List<File> chosenFiles) throws FileNotFoundException,
-                                                               IOException,
-                                                               CannotReadException,
-                                                               TagException,
-                                                               ReadOnlyFileException,
-                                                               InvalidAudioFrameException
+    public List<Music> MetaData(List<File> chosenFiles) throws BLLException
     {
 
         List<Music> tracks = new ArrayList();
@@ -70,13 +63,24 @@ public class MetaData
         for (int i = 0; i < chosenFiles.size(); i++)
         {
 
-            setMetaData(chosenFiles.get(i));
+            try
+            {
+                setMetaData(chosenFiles.get(i));
 
-            validateMetaData(chosenFiles.get(i));
+                validateMetaData(chosenFiles.get(i));
 
-            Music track = createMusicObject();
+                Music track = createMusicObject();
 
-            tracks.add(track);
+                tracks.add(track);
+            }
+            catch (IOException
+                   | CannotReadException
+                   | TagException
+                   | ReadOnlyFileException
+                   | InvalidAudioFrameException ex)
+            {
+                throw new BLLException();
+            }
 
         }
 
@@ -84,13 +88,11 @@ public class MetaData
         {
             try
             {
-
                 bllManager.setRelationIds(track);
-
             }
             catch (SQLException ex)
             {
-                System.out.println(ex.getMessage());
+                System.out.println("");
             }
 
         });
@@ -100,6 +102,7 @@ public class MetaData
 
     /**
      * retrieve the meta data from the specific song
+     *
      * @param fileString
      *
      * @throws FileNotFoundException
@@ -133,7 +136,9 @@ public class MetaData
     }
 
     /**
-     * check if some meta data is missing and replace the emypy ones with placeholders
+     * check if some meta data is missing and replace the emypy ones with
+     * placeholders
+     *
      * @param chosenFile
      */
     private void validateMetaData(File chosenFile)
@@ -197,6 +202,7 @@ public class MetaData
 
     /**
      * Create the music object
+     *
      * @return the music object/song
      */
     private Music createMusicObject()

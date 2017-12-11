@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mytunes.gui.model;
 
 import java.io.IOException;
@@ -20,7 +15,8 @@ import mytunes.bll.BLLManager;
  * @author Hussain
  */
 public class EditSongModel
-{ 
+{
+
     BLLManager bllManager;
     List<String> genreList;
 
@@ -29,9 +25,10 @@ public class EditSongModel
         this.bllManager = new BLLManager();
         genreList = new ArrayList();
     }
-     // Changes the song's info.
+    // Changes the song's info.
+
     public void editSongDatabase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+                                 String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
     {
         bllManager.editSongDataBase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
     }
