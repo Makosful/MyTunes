@@ -12,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.util.Duration;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
 import mytunes.bll.exception.BLLException;
@@ -248,6 +249,36 @@ public class MainWindowController implements Initializable
 
         txtTableSearch.prefWidthProperty().bind(
                 searchBar.widthProperty().subtract(40));
+
+        dragListener();
+    }
+
+    /**
+     * Adds a listner to the ProgressSlider
+     *
+     * Whenever the ProgressSlider has been clicked, it'll unbind the value to
+     * allow it to be dragged.
+     * When the mouse has been released, it takes the value of where it's at and
+     * seeks it in the song, then rebinds itself with the Model's value
+     */
+    private void dragListener()
+    {
+        progressSlider.addEventHandler(MouseEvent.MOUSE_PRESSED,
+                                       (event) ->
+                               {
+                                   progressSlider.valueProperty().unbind();
+                               });
+
+        progressSlider
+                .addEventHandler(MouseEvent.MOUSE_RELEASED,
+                                 (event) ->
+                         {
+                             wm.seek(Duration.seconds(progressSlider.getValue()));
+                             progressSlider
+                                     .valueProperty()
+                                     .bind(wm.
+                                             getProgressSliderValueProperty());
+                         });
     }
 
     //<editor-fold defaultstate="collapsed" desc="FXML Callbackls">
