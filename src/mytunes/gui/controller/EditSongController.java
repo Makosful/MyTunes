@@ -7,12 +7,15 @@ package mytunes.gui.controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -63,14 +66,20 @@ public class EditSongController implements Initializable
     @FXML
     private Label lblError;
     @FXML
-    private Label lblError2;
-    @FXML
     private AnchorPane anchorPane;
 //</editor-fold>
 
     // Model of the controller.
     EditSongModel esModel;
     // List that contains all the genres.
+    @FXML
+    private JFXRadioButton radioBtnReplace;
+    @FXML
+    private JFXRadioButton radioBtnAdd;
+    @FXML
+    private ToggleGroup genreToggle;
+    @FXML
+    private Label lblChosenGenres;
 
 
     
@@ -89,6 +98,7 @@ public class EditSongController implements Initializable
     {
         setComboBoxData();
         noEditableTime();
+        setDefaultRadioButton();
     }
     // Addings genres to the list, and making it observable.
     // Initializing the combobox with the obsv. list.
@@ -102,6 +112,13 @@ public class EditSongController implements Initializable
     {
         comboBoxCategory.getSelectionModel().select(genre);
     }
+    
+    // Method to set the default radiobutton: replace
+    private void setDefaultRadioButton()
+    {
+        radioBtnReplace.selectedProperty().setValue(Boolean.TRUE);
+    }
+    
     // Method to set data in textfields and combobox.
     public void setData(String title, String artist, int time, String file, String genre)
     {
@@ -115,7 +132,7 @@ public class EditSongController implements Initializable
         txtFieldArtist.setText(artist);
         txtTime.setText(timeString);
         txtFile.setText(file);
-
+        lblChosenGenres.setText(genre);
         // Getting the data from the current song
         // Before the values might change, based on users choices.
         oldGenre = genre;
@@ -210,7 +227,21 @@ public class EditSongController implements Initializable
     @FXML
     private void saveGenre(ActionEvent event)
     {
-        slashInGenresOrNot();
+        
+        Toggle toggle = genreToggle.getSelectedToggle();
+        RadioButton rb = (RadioButton) toggle;
+        
+        if(rb.getId().equals("radioBtnReplace"))
+        {
+            userSelectedGenres = comboBoxCategory.getSelectionModel().getSelectedItem();
+        }
+        else
+        {
+            userSelectedGenres += " " + comboBoxCategory.getSelectionModel().getSelectedItem();
+        }                  
+
+        lblChosenGenres.setText(userSelectedGenres);
+       
     }
 //</editor-fold>
     
@@ -228,17 +259,6 @@ public class EditSongController implements Initializable
         esModel.noEditableTime(txtTime);
     }
     
-    private void slashInGenresOrNot()
-    {
-        if (userSelectedGenres == null)
-        {
-            userSelectedGenres = comboBoxCategory.getSelectionModel().getSelectedItem();
-        }
-        else
-        {
-            userSelectedGenres += "/" + comboBoxCategory.getSelectionModel().getSelectedItem();
-        }
-    }
     
     /**
      * A confirmation dialog, on whether you want to save songs changes or not
@@ -275,4 +295,15 @@ public class EditSongController implements Initializable
     {
         return esModel.genreList();
     }
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
 }   

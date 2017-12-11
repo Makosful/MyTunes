@@ -162,7 +162,24 @@ public class BLLManager
 
             int id = songDAO.setSong(song, ids);
             
-            
+            //insert the songs genres in the db
+            insertGenres(song, id);
+
+        }
+
+    }
+
+    /**
+     * Splits the genre string into separate genres.
+     * Inserts the specific songs genre, by testing if the genre already exsists 
+     * in the db, if it does use the id from this genre and relate it to this song 
+     * else create the genre in the db and link it to the song
+     * @param song
+     * @param id
+     * @throws SQLException 
+     */
+    public void insertGenres(Music song, int id) throws SQLException
+    {
             int genreTestId;
             String[] genres = song.getGenre().split(" ");
             for(String g : genres)
@@ -183,11 +200,9 @@ public class BLLManager
                 }
                 songDAO.setTestGenre(id, genreTestId);
             }
-
-        }
-
     }
-
+    
+    
     /**
      * Gets the index of an item in a List
      *

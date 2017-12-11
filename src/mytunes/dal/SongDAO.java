@@ -443,6 +443,7 @@ public class SongDAO
      * Creates a new song based on data from the database
      *
      * @param rs
+     * @param previousSong
      *
      * @return
      *
@@ -455,7 +456,7 @@ public class SongDAO
         if(previousSong.getId() == rs.getInt("id"))
         {
             previousSong.setGenre(previousSong.getGenre()+"/"+rs.getString("genre")); 
-            System.out.println("heheje");
+
             return previousSong;
         }
         else
@@ -498,25 +499,23 @@ public class SongDAO
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                         + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER JOIN Path ON Songs.pathid = path.id "
+                         + "INNER JOIN Path ON Songs.pathid = Path.id "
+                         + "INNER JOIN Location ON Path.locationid = Location.id "
+                         + "INNER JOIN Genre_test ON Songs.id = Genre_test.songid "
+                         + "INNER JOIN Genres_test ON Genre_test.genreid = Genres_test.id "
                          + "WHERE id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
 
-            if (rs.next())
-            {
-                //Music song = createSongFromDB(rs);
-
-                return null;
+            Music song = new Music();
+            while (rs.next())
+            {          
+                song = createSongFromDB(rs, song);
 
             }
-            else
-            {
-                return null;
-            }
+            return song;
 
         }
 
@@ -582,16 +581,13 @@ public class SongDAO
                          + "Genre.genre, "
                          + "Location.location, "
                          + "Path.pathname "
-                         //
                          + "FROM Songs "
-                         //
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                         + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER JOIN Path ON Songs.pathid = path.id "
-                         //+ "INNER JOIN Location on Songs.locationid = location.id "
-                         + "INNER JOIN Location on Path.locationid = location.id "
-                         //
+                         + "INNER JOIN Path ON Songs.pathid = Path.id "
+                         + "INNER JOIN Location ON Path.locationid = Location.id "
+                         + "INNER JOIN Genre_test ON Songs.id = Genre_test.songid "
+                         + "INNER JOIN Genres_test ON Genre_test.genreid = Genres_test.id "
                          + "WHERE " + sqlSearch;
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -601,15 +597,20 @@ public class SongDAO
             }
             ResultSet rs = preparedStatement.executeQuery();
 
-            List<Music> songs = new ArrayList();
+            List<Music> allSongs = new ArrayList();
 
+            Music song = new Music();
             while (rs.next())
             {
-               // Music song = createSongFromDB(rs);
-                //songs.add(song);
+                
+                song = createSongFromDB(rs, song);
+                if(!allSongs.contains(song))
+                {
+                    allSongs.add(song);
+                }
             }
 
-            return songs;
+            return allSongs;
         }
     }
 

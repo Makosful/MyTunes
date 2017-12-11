@@ -126,6 +126,14 @@ public class EditSongModel
         return genreNotEmpty;
     }
     
+    
+    public void genreRadioButtonEmpty(Label lblError)
+    {
+
+            lblError.setText("Chose if you want to replace the genre or add another one");
+       
+    }
+    
         /**
      * So that the time textfield cannot be editted.
      * @param txtTime

@@ -148,30 +148,10 @@
     -fx-text-fill: white;
 }
 
-#menuBar {
-    -fx-background-color: #38424b;
-}
 
-#btnSettings {
-    -fx-background-image: url('settings.png');
-    -fx-background-size: 25px;
-    -fx-background-repeat: no-repeat;
-    -fx-background-color: transparent;
-    -fx-background-position: center;
-}
-#btnSettings > .arrow-button > .arrow {
-    -fx-background-color: transparent;
-}
 
 .jfx-list-view .context-menu .menu-item .label {
     -fx-text-fill: black;
 }
 
-/*
-CSS For EditSongFXML
-*/
 
-#txtFieldTitle, #txtFieldArtist, #txtFieldTitle, #txtFile, #txtTime
-{
-    -fx-text-fill: white;
-}
