@@ -1348,6 +1348,7 @@ public class MainWindowModel
             if (plCont.shouldSave())
             {
                 Playlist pl = new Playlist(plCont.getTitle());
+                savePlaylist(plCont.getTitle(), plCont.getPlaylist());
                 pl.setPlaylist(plCont.getPlaylist());
                 this.playlists.add(pl);
             }
