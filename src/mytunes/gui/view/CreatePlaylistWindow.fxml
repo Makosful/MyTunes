@@ -55,9 +55,9 @@
                      </children>
                   </HBox>
                         <JFXListView fx:id="listPlaylist" prefHeight="350.0">
-                            <padding>
-                                <Insets bottom="20.0" />
-                            </padding>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
                         </JFXListView>
                     </children>
                 </VBox>
@@ -75,9 +75,9 @@
                      </children>
                   </HBox>
                         <JFXListView fx:id="listSonglist" prefHeight="350.0">
-                            <padding>
-                                <Insets bottom="20.0" />
-                            </padding>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
                         </JFXListView>
                     </children>
                 </VBox>

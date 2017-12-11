@@ -239,11 +239,10 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void removeSelectedFromPlaylist(ActionEvent event)
     {
-        ObservableList<Music> selectedItems = listPlaylist
-                .getSelectionModel().getSelectedItems();
+        int index = listPlaylist.getSelectionModel().getSelectedIndex();
 
-        this.playlist.removeAll(selectedItems);
-        this.playlistBackup.removeAll(selectedItems);
+        this.playlist.remove(index);
+        this.playlistBackup.remove(index);
     }
 
     @FXML
