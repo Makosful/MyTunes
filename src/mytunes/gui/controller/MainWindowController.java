@@ -150,6 +150,8 @@ public class MainWindowController implements Initializable
         // Sliders
         progressSlider.valueProperty().bind(wm.getProgressSliderValueProperty());
         progressSlider.disableProperty().bind(wm.getProgressSliderDisableProperty());
+        progressSlider.valueChangingProperty().bind(wm.getValueChangingProperty());
+        progressSlider.maxProperty().bind(wm.getProgressSliderMaxProperty());
         volumeSlider.disableProperty().bind(wm.getVolumeDisableProperty());
 
         // Labels

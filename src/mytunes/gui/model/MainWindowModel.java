@@ -428,6 +428,16 @@ public class MainWindowModel
         return progressSlider.disableProperty();
     }
 
+    public BooleanProperty getValueChangingProperty()
+    {
+        return progressSlider.valueChangingProperty();
+    }
+
+    public DoubleProperty getProgressSliderMaxProperty()
+    {
+        return progressSlider.maxProperty();
+    }
+
     public StringProperty getMediaplayerLabelTextProperty()
     {
         return lblmPlayerStatus.textProperty();
