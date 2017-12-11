@@ -519,7 +519,7 @@ public class SongDAO
             System.out.println(sql+id);
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
 
         }
     }
