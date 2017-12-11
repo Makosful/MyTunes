@@ -251,6 +251,10 @@ public class EditSongController implements Initializable
             if(!userSelectedGenres.equals(""))
             {
                 separator = " ";
+                
+            }
+            else
+            {
                 firstGenre = oldGenre;
             }
             userSelectedGenres += separator+comboBoxCategory.getSelectionModel().getSelectedItem();
