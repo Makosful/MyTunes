@@ -1405,6 +1405,9 @@ public class MainWindowModel
                 playlist.getPlaylist().clear();
                 playlist.getPlaylist().addAll(plCont.getPlaylist());
                 bllManager.updatePlaylist(playlist);
+                int index = this.playlists.indexOf(playlist);
+                this.playlists.add(index, playlist);
+                this.playlists.remove(index + 1);
             }
         }
         catch (IOException ex)
