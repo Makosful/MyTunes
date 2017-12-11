@@ -516,7 +516,7 @@ public class SongDAO
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
                          + "INNER JOIN Path ON Songs.pathid = Path.id "
                          + "WHERE Songs.id = ?";
-            System.out.println(sql+id);
+
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             preparedStatement.execute();

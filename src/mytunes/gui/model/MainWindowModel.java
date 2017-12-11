@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -948,6 +950,24 @@ public class MainWindowModel
             catch (SQLException ex)
             {
                 System.out.println("Cannot edit song");
+            }
+        });
+        
+                // Deletes the selected song from the db
+        MenuItem deleteSong = new MenuItem("Remove song");
+        cm.getItems().add(deleteSong);
+        deleteSong.setOnAction(action ->
+        {
+            Music musicInfo = table.getSelectionModel().getSelectedItem();
+            System.out.println(musicInfo.getId());
+            deleteSong(musicInfo.getId());
+            try
+            {
+                loadSongList();
+            }
+            catch (BLLException ex)
+            {
+                System.out.println(ex.getMessage());
             }
         });
 
@@ -1999,4 +2019,16 @@ public class MainWindowModel
         });
     }
     //</editor-fold>
+
+    private void deleteSong(int id)
+    {
+        try
+        {
+            bllManager.deleteSong(id);
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
 }
