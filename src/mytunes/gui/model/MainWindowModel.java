@@ -418,6 +418,7 @@ public class MainWindowModel
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Property Getters">
+    //<editor-fold defaultstate="collapsed" desc="Slider">
     public DoubleProperty getProgressSliderValueProperty()
     {
         return progressSlider.valueProperty();
@@ -437,6 +438,7 @@ public class MainWindowModel
     {
         return progressSlider.maxProperty();
     }
+    //</editor-fold>
 
     public StringProperty getMediaplayerLabelTextProperty()
     {
@@ -468,6 +470,7 @@ public class MainWindowModel
         return lblTimer.textProperty();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Playing Song">
     public StringProperty getCurrentAlbumProperty()
     {
         return lblAlbumCurrent.textProperty();
@@ -502,7 +505,9 @@ public class MainWindowModel
     {
         return lblYearCurrent.textProperty();
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Selected Song">
     public StringProperty getArtistProperty()
     {
         return lblArtist.textProperty();
@@ -520,7 +525,7 @@ public class MainWindowModel
 
     public StringProperty getDescProperty()
     {
-        return lblDuration.textProperty();
+        return lblDescription.textProperty();
     }
 
     public StringProperty getGenreProperty()
@@ -537,6 +542,7 @@ public class MainWindowModel
     {
         return lblDuration.textProperty();
     }
+    //</editor-fold>
 
     public StringProperty getPlayPauseButton()
     {
@@ -1870,7 +1876,12 @@ public class MainWindowModel
         lblAlbumCurrent.setText(getQueueList().get(currentSong).getAlbum());
         lblArtistCurrent.setText(getQueueList().get(currentSong).getArtist());
         lblDescriptionCurrent.setText(getQueueList().get(currentSong).getDescription());
-        lblDurationCurrent.setText(String.valueOf(getQueueList().get(currentSong).getDuration()));
+        int[] minSec = getSecondsToMinAndHour(getQueueList().get(currentSong).getDuration());
+        lblDurationCurrent.setText(String.valueOf(minSec[2]
+                                                  + ":"
+                                                  + minSec[1]
+                                                  + ":"
+                                                  + minSec[0]));
         lblGenreCurrent.setText(getQueueList().get(currentSong).getGenre());
         lblTitleCurrent.setText(getQueueList().get(currentSong).getTitle());
         lblYearCurrent.setText(String.valueOf(getQueueList().get(currentSong).getYear()));
