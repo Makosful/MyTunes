@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import mytunes.be.Music;
 
 /**
+ * Obsolete
  *
  * @author Storm
  */
