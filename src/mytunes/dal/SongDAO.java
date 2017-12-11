@@ -117,7 +117,7 @@ public class SongDAO
     }
 
     /**
-     * If the artist already exsists in the artist table get the id
+     * If the artist already exists in the artist table get the id
      *
      * @param artist
      *
@@ -180,7 +180,7 @@ public class SongDAO
     }
 
     /**
-     * If the album already exsists in the album table get the id
+     * If the album already exists in the album table get the id
      *
      * @param album
      *
@@ -244,7 +244,7 @@ public class SongDAO
     }
 
     /**
-     * If the genre already exsists in the genre table get the id
+     * If the genre already exists in the genre table get the id
      *
      * @param genre
      *
@@ -308,7 +308,7 @@ public class SongDAO
     }
 
     /**
-     * If the path already exsists in the path table get the id
+     * If the path already exists in the path table get the id
      *
      * @param path
      * @param locationid
@@ -376,7 +376,7 @@ public class SongDAO
     }
 
     /**
-     * If the loaction already exsists in the loaction table get the id
+     * If the loaction already exists in the loaction table get the id
      *
      * @param location
      *
@@ -455,7 +455,7 @@ public class SongDAO
 
         if(previousSong.getId() == rs.getInt("id"))
         {
-            previousSong.setGenre(previousSong.getGenre()+"/"+rs.getString("genre")); 
+            previousSong.setGenre(previousSong.getGenre()+" "+rs.getString("genre")); 
 
             return previousSong;
         }
@@ -542,7 +542,7 @@ public class SongDAO
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
-            preparedStatement.executeQuery();
+            preparedStatement.execute();
 
         }
     }
@@ -621,9 +621,9 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
             // Title
-            editTitle(newTitle, oldTitle, con);
+            editTitle(songId, newTitle, con);
             // Artist
-            editArtist(oldArtist, newArtist, con, songId);
+            editArtist(songId, newArtist, con);
 
             // Path
             editPath(newFile, oldFile, con);
@@ -634,23 +634,23 @@ public class SongDAO
     }
 
     // Methods to change title etc.
-    public void editTitle(String newTitle, String oldTitle, Connection con) throws SQLException
+    public void editTitle(int songId, String newTitle, Connection con) throws SQLException
     {
         // Title
-        String sqlTitle = "UPDATE Songs SET title = ? WHERE title like ?";
+        String sqlTitle = "UPDATE Songs SET title = ? WHERE Songs.id = ?";
 
         PreparedStatement preparedStatementTitle = con.prepareStatement(sqlTitle);
         preparedStatementTitle.setString(1, newTitle);
-        preparedStatementTitle.setString(2, oldTitle);
+        preparedStatementTitle.setInt(2, songId);
 
         preparedStatementTitle.execute();
     }
 
-    public void editArtist(String oldArtist, String newArtist, Connection con, int songId) throws SQLException
+    public void editArtist(int songId, String newArtist, Connection con) throws SQLException
     {
 
         // Artist
-        int artistId = getExistingArtist(oldArtist);
+        int artistId = getExistingArtist(newArtist);
         String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
 
         if (artistId == 0)
@@ -754,5 +754,20 @@ public class SongDAO
             return id;
         }
 
+    }
+
+    public void removeSongsGenre(int songId, int genreId) throws SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+
+            String sql = "DELETE Genre_test FROM Genre_test WHERE Genre_test.songid = ? AND Genre_test.genreid = ?";
+
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setInt(1, songId);
+            preparedStatement.setInt(2, genreId);
+            preparedStatement.execute();
+
+        }
     }
 }

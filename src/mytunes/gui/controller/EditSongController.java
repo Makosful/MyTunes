@@ -42,6 +42,7 @@ public class EditSongController implements Initializable
 //</editor-fold>
     
     private String userSelectedGenres;
+    private boolean addGenres;
     
     // SongID from MWController.
     private int songIdFromTable;
@@ -122,9 +123,10 @@ public class EditSongController implements Initializable
     // Method to set data in textfields and combobox.
     public void setData(String title, String artist, int time, String file, String genre)
     {
-        // UserSelectedgenres to null everytime user wants to edit a new song.
-        userSelectedGenres = null;
-
+        // UserSelectedgenres to empty everytime user wants to edit a new song.
+        userSelectedGenres = "";
+        addGenres = false;
+        
         setSongGenreFirstInComboBox(genre);
         String timeString = Integer.toString(time);
         // Puts the text of the song into the textfields.
@@ -193,6 +195,11 @@ public class EditSongController implements Initializable
     {
         return songIdFromTable;
     }
+    
+    private boolean getAddOrReplace()
+    {
+        return addGenres;
+    }
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="FXML methods">
@@ -210,7 +217,7 @@ public class EditSongController implements Initializable
         }
         confirmationDialog();
         
-        userSelectedGenres = null;
+        
     }
     // Cancels the changes / No changes made to song.
     @FXML
@@ -230,17 +237,28 @@ public class EditSongController implements Initializable
         
         Toggle toggle = genreToggle.getSelectedToggle();
         RadioButton rb = (RadioButton) toggle;
-        
+
         if(rb.getId().equals("radioBtnReplace"))
         {
             userSelectedGenres = comboBoxCategory.getSelectionModel().getSelectedItem();
+            addGenres = false;
+            lblChosenGenres.setText(userSelectedGenres);
         }
         else
         {
-            userSelectedGenres += " " + comboBoxCategory.getSelectionModel().getSelectedItem();
+            String separator = "";
+            String firstGenre = "";
+            if(!userSelectedGenres.equals(""))
+            {
+                separator = " ";
+                firstGenre = oldGenre;
+            }
+            userSelectedGenres += separator+comboBoxCategory.getSelectionModel().getSelectedItem();
+            addGenres = true;
+            lblChosenGenres.setText(firstGenre+" "+userSelectedGenres);
         }                  
 
-        lblChosenGenres.setText(userSelectedGenres);
+        
        
     }
 //</editor-fold>
@@ -266,7 +284,7 @@ public class EditSongController implements Initializable
     private void confirmationDialog() throws SQLException
     {
         esModel.confirmationDialog(anchorPane, getOldTitle(), getTitle(),getOldArtist(),
-          getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre());
+          getArtist(), getSongId(), getOldFile(), getFile(), getOldGenre(), getGenre(), getAddOrReplace());
     }
     
     /**

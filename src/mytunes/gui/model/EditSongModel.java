@@ -31,9 +31,9 @@ public class EditSongModel
     }
      // Changes the song's info.
     public void editSongDatabase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+    String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
     {
-        bllManager.editSongDataBase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+        bllManager.editSongDataBase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
     }
     
     
@@ -50,10 +50,11 @@ public class EditSongModel
      * @param newFile
      * @param oldGenre
      * @param newGenre
+     * @param addGenre
      * @throws java.sql.SQLException
      */
     public void confirmationDialog(AnchorPane anchorPane, String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+    String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenre) throws SQLException
     {
         
         ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -69,7 +70,7 @@ public class EditSongModel
         
         if (action.get() == btnYes)
         {
-            editSongDatabase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+            editSongDatabase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenre);
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.close();
         }
