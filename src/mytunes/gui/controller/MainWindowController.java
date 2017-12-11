@@ -143,7 +143,6 @@ public class MainWindowController implements Initializable
         // Buttons
         btnPlayPause.textProperty().bind(wm.getPlayPauseButton());
         btnLoop.disableProperty().bind(wm.getLoopDisableProperty());
-//        btnLoop.textProperty().bind(wm.getLoopButtonTextProperty());
 
         // ComboBox
         playbackSpeed.disableProperty().bind(wm.getPlaybackSpeedDisabledProperty());
@@ -151,7 +150,6 @@ public class MainWindowController implements Initializable
         // Sliders
         progressSlider.valueProperty().bind(wm.getProgressSliderValueProperty());
         progressSlider.disableProperty().bind(wm.getProgressSliderDisableProperty());
-        progressSlider.valueChangingProperty().bind(wm.getValueChangingProperty());
         progressSlider.maxProperty().bind(wm.getProgressSliderMaxProperty());
         volumeSlider.disableProperty().bind(wm.getVolumeDisableProperty());
 
