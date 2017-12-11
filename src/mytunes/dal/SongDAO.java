@@ -680,7 +680,7 @@ public class SongDAO
     
     
     
-    public void setTestGenre(int songid, int genreid) throws SQLException
+    public void setTestGenres(int songid, int genreid) throws SQLException
     {
         try (Connection con = db.getConnection())
         {

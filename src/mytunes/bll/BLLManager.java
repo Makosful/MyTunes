@@ -208,7 +208,7 @@ public class BLLManager
                 genreTestId = songDAO.setTestGenre(specificGenre);
 
             }
-            songDAO.setTestGenre(songId, genreTestId);
+            songDAO.setTestGenres(songId, genreTestId);
         }
         
     }
