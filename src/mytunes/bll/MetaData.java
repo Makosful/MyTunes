@@ -214,7 +214,7 @@ public class MetaData
         track.setGenre(genre);
         track.setAlbum(album);
         track.SetDescription(description);
-        track.setYear(Integer.parseInt(year));
+        track.setYear(Integer.parseInt(year.trim()));
         track.setDuration(duration);
         track.setSongPathName(songPathName);
         track.SetLocation(location);

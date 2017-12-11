@@ -66,7 +66,10 @@
 
 .table-row-cell:empty:odd, .table-row-cell:empty:even {
     -fx-background-color: transparent;
+    -fx-table-cell-border-color: transparent;
+
 }
+
 
 .list-view .list-cell {
     -fx-text-fill: white;

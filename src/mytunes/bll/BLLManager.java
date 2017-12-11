@@ -210,4 +210,9 @@ public class BLLManager
     {
         plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
     }
+
+    public void deleteSong(int id) throws SQLException
+    {
+       songDAO.deleteSong(id);
+    }
 }

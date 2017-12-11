@@ -35,7 +35,16 @@ public class SongDAO
 
             List<Music> allSongs = new ArrayList<>();
 
-            String sql = "SELECT Songs.id, Songs.title, Songs.releasedate, Songs.description, Songs.duration, Artist.artist, Albums.album, Genre.genre, Path.pathname, Location.location "
+            String sql = "SELECT Songs.id, "
+                         + "Songs.title, "
+                         + "Songs.releasedate, "
+                         + "Songs.description, "
+                         + "Songs.duration, "
+                         + "Artist.artist, "
+                         + "Albums.album, "
+                         + "Genre.genre, "
+                         + "Path.pathname, "
+                         + "Location.location "
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -501,12 +510,13 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "DELETE FROM Songs "
+            String sql = "DELETE Songs FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
                          + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+                         + "INNER JOIN Path ON Songs.pathid = Path.id "
                          + "WHERE Songs.id = ?";
-
+            System.out.println(sql+id);
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             preparedStatement.executeQuery();
@@ -602,7 +612,7 @@ public class SongDAO
     public void editTitle(String newTitle, String oldTitle, Connection con) throws SQLException
     {
         // Title
-        String sqlTitle = "UPDATE Songs SET title = ? WHERE title like ?";
+        String sqlTitle = "UPDATE Songs SET title = ? WHERE title = ?";
 
         PreparedStatement preparedStatementTitle = con.prepareStatement(sqlTitle);
         preparedStatementTitle.setString(1, newTitle);
@@ -615,7 +625,7 @@ public class SongDAO
     {
 
         // Artist
-        int artistId = getExistingArtist(oldArtist);
+        int artistId = getExistingArtist(newArtist);
         String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
 
         if (artistId == 0)
@@ -644,7 +654,7 @@ public class SongDAO
 
     public void editGenre(String oldGenre, String newGenre, Connection con, int songId) throws SQLException
     {
-        int genreId = getExistingGenre(oldGenre);
+        int genreId = getExistingGenre(newGenre);
         String sqlGenre = "UPDATE Songs set genreid = ? WHERE Songs.id = ?";
         if (genreId == 0)
         {
