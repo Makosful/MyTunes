@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
+import mytunes.bll.exception.BLLException;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -78,7 +79,7 @@ public class CreatePlaylistWindowController implements Initializable
             // Loads the song list
             wm.loadSongList();
         }
-        catch (SQLException ex)
+        catch (BLLException ex)
         {
             System.out.println(ex.getMessage());
         }

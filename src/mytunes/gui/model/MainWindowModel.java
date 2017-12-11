@@ -1,7 +1,10 @@
 package mytunes.gui.model;
 
 import com.jfoenix.controls.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +41,6 @@ import mytunes.bll.Search;
 import mytunes.bll.exception.BLLException;
 import mytunes.gui.controller.CreatePlaylistWindowController;
 import mytunes.gui.controller.EditSongController;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.TagException;
 
 /**
  *
@@ -741,21 +740,19 @@ public class MainWindowModel
      * @param chosenFiles
      *
      * @return
-     *
-     * @throws mytunes.bll.exception.BLLException
-     *
-     * @throws IOException
-     * @throws CannotReadException
-     * @throws FileNotFoundException
-     * @throws ReadOnlyFileException
-     * @throws TagException
-     * @throws InvalidAudioFrameException
      */
-    public List<Music> setMetaData(List<File> chosenFiles) throws BLLException
+    public List<Music> setMetaData(List<File> chosenFiles)
     {
 
-        return meta.MetaData(chosenFiles);
-
+        try
+        {
+            return meta.MetaData(chosenFiles);
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+            return null;
+        }
     }
 
     public void setPlayckSpeed(int playbackIndex)
@@ -1018,14 +1015,7 @@ public class MainWindowModel
                  String oldText,
                  String newText) ->
         {
-            try
-            {
-                songSearch(txtTableSearch.getText(), filters);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
+            songSearch(txtTableSearch.getText(), filters);
         });
     }
     //</editor-fold>
@@ -1080,16 +1070,14 @@ public class MainWindowModel
 
     private void playNextSong()
     {
-        int queueSize = getQueueList().size() - 1;
+        int queueSize = this.queue.size() - 1;
+        System.out.println(queueSize);
 
-        // If the currently playing song is at an index smaller than the queue
-        // size, then it has a next
-        if (getCurrentSong() < queueSize)
-        {
-            currentSongNext();
-            setSong(getQueueListMedia().get(getCurrentSong()).getMedia());
-            prepareAndPlay();
-        }
+        // If queue does not have next stop playing
+        // If queue has next play next
+        currentSong++;
+        setSong(this.queueMedia.get(currentSong).getMedia());
+        startMediaPlayer();
     }
 
     public void currentSongNext()
@@ -1611,39 +1599,6 @@ public class MainWindowModel
         if (playing)
         {
             this.queueMedia.get(currentSong).stop();
-
-            // Updates the status
-            updateStatus();
-
-            // Stores the status as a local variable
-            Status status = getMediaStatus();
-
-            // Check if the status is actuall exist
-            if (null != status)
-            {
-                switch (status)
-                {
-                    case PLAYING:
-                        System.out.println("Status is: " + status);
-                        setPlaying(false);
-                        btnPlayPause.setText("Play");
-                        progressSlider.setValue(0.0);
-                        break;
-                    case STOPPED:
-                        System.out.println("Status is: " + status);
-                        break;
-                    case PAUSED:
-                        updateDuration();
-                        progressSlider.setValue(0.0);
-                        progressSlider.setMax(getMediaPlayer()
-                                .getTotalDuration()
-                                .toSeconds());
-                        getMediaPlayerStatus();
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
     }
 
@@ -1708,18 +1663,15 @@ public class MainWindowModel
         {
             case 0:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("Elevator (Control).mp3");
+                                  "./res/songs/placeholder/Elevator (Control).mp3");
                 break;
             case 1:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("Elevator (Caverns).mp3");
+                                  "./res/songs/placeholder/Elevator (Caverns).mp3");
                 break;
             default:
                 track = new Music(0, title, album, artist, 2017,
-                                  "./res/songs/placeholder");
-                track.setSongPathName("elevatormusic.mp3");
+                                  "./res/songs/placeholder/elevatormusic.mp3");
                 break;
         }
 
@@ -1823,14 +1775,19 @@ public class MainWindowModel
      *
      * @param text    The text to search for
      * @param filters The filters to apply for the earch
-     *
-     * @throws java.sql.SQLException
      */
-    public void songSearch(String text, ArrayList<String> filters) throws SQLException
+    public void songSearch(String text, ArrayList<String> filters)
     {
-        List<Music> results = search.prepareSearch(filters, text);
-        this.allSongs.clear();
-        this.allSongs.addAll(results);
+        try
+        {
+            List<Music> results = search.prepareSearch(filters, text);
+            this.allSongs.clear();
+            this.allSongs.addAll(results);
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**

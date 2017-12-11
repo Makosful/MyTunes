@@ -99,12 +99,12 @@ public class MainWindowController implements Initializable
     private Label lblGenreCurrent;
     @FXML
     private Label lblDurationCurrent;
+    @FXML
+    private JFXButton btnPlayPause;
     //</editor-fold>
 
     // Model
     private MainWindowModel wm;
-    @FXML
-    private JFXButton btnPlayPause;
 
     /**
      * Constructor, for all intends and purposes
@@ -180,9 +180,9 @@ public class MainWindowController implements Initializable
         clmCover.setCellValueFactory(new PropertyValueFactory("album"));
         clmYear.setCellValueFactory(new PropertyValueFactory("year"));
 
-        // Attempts to laod the list of songs
         try
         {
+            // Attempts to laod the list of songs
             wm.loadSongList();
             tblSongList.setItems(wm.getSongList());
         }
@@ -365,20 +365,6 @@ public class MainWindowController implements Initializable
 
     /**
      * Clears the queue
-     * We check if queue is empty, if it is not we force all songs to stop,
-     * followed by a method to clear our queue and
-     * finally set the isPlaying boolean {
-     * }
-     *
-     * @FXML
-     * private void prevSong(ActionEvent event)
-     * {
-     * }
-     *
-     * @FXML
-     * private void nextSong(ActionEvent event)
-     * accordingly and the text of the
-     * Play/Pause button
      */
     @FXML
     private void clearQueue(ActionEvent event)
