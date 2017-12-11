@@ -176,7 +176,7 @@ public class MainWindowController implements Initializable
 
         //<editor-fold defaultstate="collapsed" desc="Table Setup">
         // Sets the Table colum IDs
-        clmNr.setCellValueFactory(new PropertyValueFactory("id"));
+        clmNr.setCellValueFactory(new PropertyValueFactory("number"));
         clmTitle.setCellValueFactory(new PropertyValueFactory("title"));
         clmArtist.setCellValueFactory(new PropertyValueFactory("artist"));
         clmCover.setCellValueFactory(new PropertyValueFactory("album"));

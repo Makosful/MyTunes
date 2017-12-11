@@ -8,6 +8,7 @@ public class Music
 {
 
     private int id;
+    private int number;
     private String title;
     private String artist;
     private String album;
@@ -53,6 +54,18 @@ public class Music
     public void setId(int id)
     {
         this.id = id;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Number">
+    public int getNumber()
+    {
+        return number;
+    }
+
+    public void setNumber(int num)
+    {
+        this.number = num;
     }
     //</editor-fold>
 
