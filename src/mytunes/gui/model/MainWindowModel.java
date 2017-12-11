@@ -1042,6 +1042,7 @@ public class MainWindowModel
      */
     public void clearQueueList()
     {
+        currentSong = 0;
         this.queueMedia.clear();
         this.queue.clear();
     }
