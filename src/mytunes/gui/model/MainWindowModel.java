@@ -288,23 +288,26 @@ public class MainWindowModel
 
     /**
      * Toggles looping on the current track
+     *
+     * @param loop
+     * @param loop
      */
-    public void fxmlLoopAction()
+    public void fxmlLoopAction(JFXToggleButton loop)
     {
         // When called, reverse the current loop from whatever it is
         reverseLooping();
 
         // If our loop slide-button is enabled we change the text, set the cycle
         // count to indefinite and reverse the boolean
-        if (btnLoop.isSelected() == true)
+        if (loop.isSelected() == true)
         {
-            btnLoop.setText("Loop: ON");
+            loop.setText("Loop: ON");
             setLooping();
             System.out.println("Looping on");
         }
-        else if (btnLoop.isSelected() != true)
+        else if (loop.isSelected() != true)
         {
-            btnLoop.setText("Loop: OFF");
+            loop.setText("Loop: OFF");
             reverseLooping();
             System.out.println("Looping off");
         }
@@ -453,6 +456,11 @@ public class MainWindowModel
     public BooleanProperty getLoopDisableProperty()
     {
         return btnLoop.disableProperty();
+    }
+
+    public StringProperty getLoopButtonTextProperty()
+    {
+        return btnLoop.textProperty();
     }
 
     public BooleanProperty getPlaybackSpeedDisabledProperty()

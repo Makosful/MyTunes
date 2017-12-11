@@ -143,6 +143,7 @@ public class MainWindowController implements Initializable
         // Buttons
         btnPlayPause.textProperty().bind(wm.getPlayPauseButton());
         btnLoop.disableProperty().bind(wm.getLoopDisableProperty());
+//        btnLoop.textProperty().bind(wm.getLoopButtonTextProperty());
 
         // ComboBox
         playbackSpeed.disableProperty().bind(wm.getPlaybackSpeedDisabledProperty());
@@ -311,7 +312,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoopAction(ActionEvent event)
     {
-        wm.fxmlLoopAction();
+        wm.fxmlLoopAction(btnLoop);
     }
 
     /**
