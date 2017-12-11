@@ -14,6 +14,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
+import mytunes.bll.exception.BLLException;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -185,7 +186,7 @@ public class MainWindowController implements Initializable
             wm.loadSongList();
             tblSongList.setItems(wm.getSongList());
         }
-        catch (SQLException ex)
+        catch (BLLException ex)
         {
             System.out.println(ex.getMessage());
         }
@@ -359,7 +360,7 @@ public class MainWindowController implements Initializable
     @FXML
     private void LoadMediaFiles(ActionEvent event)
     {
-        wm.fxmlLoadMediaFiles(tblSongList);
+        wm.fxmlLoadMediaFiles();
     }
 
     /**

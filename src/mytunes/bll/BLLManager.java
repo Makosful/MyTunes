@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
+import mytunes.bll.exception.BLLException;
 import mytunes.dal.MockMusic;
 import mytunes.dal.PlaylistDAO;
 import mytunes.dal.SongDAO;
@@ -29,9 +30,16 @@ public class BLLManager
         this.mm = new MockMusic();
     }
 
-    public List<Music> getSongList() throws IOException, SQLException
+    public List<Music> getSongList() throws BLLException
     {
-        return songDAO.getAllSongs();
+        try
+        {
+            return songDAO.getAllSongs();
+        }
+        catch (SQLException ex)
+        {
+            throw new BLLException();
+        }
     }
 
     public void createSongPath(String setPath) throws SQLException

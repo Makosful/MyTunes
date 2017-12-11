@@ -35,6 +35,7 @@ import mytunes.be.Playlist;
 import mytunes.bll.BLLManager;
 import mytunes.bll.MetaData;
 import mytunes.bll.Search;
+import mytunes.bll.exception.BLLException;
 import mytunes.gui.controller.CreatePlaylistWindowController;
 import mytunes.gui.controller.EditSongController;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
@@ -152,23 +153,698 @@ public class MainWindowModel
         }
     }
 
+    //<editor-fold defaultstate="collapsed" desc="FXML Method calls">
+    /**
+     * Skips to the next song in the queue
+     */
+    public void fxmlNextSong()
+    {
+        stopMediaPlayer();
+        skipToNextSong();
+        prepareAndPlay();
+    }
+
+    /**
+     * Skips to the previous song in the queue
+     */
+    public void fxmlPrevSong()
+    {
+        stopMediaPlayer();
+        skipToPrevSong();
+        prepareAndPlay();
+    }
+
+    /**
+     * Clears the queue
+     *
+     * IF any track is currently playing, stop said track before removing it
+     * from the queue, otherwise we'll lose control over said track
+     */
+    public void fxmlClearQueue()
+    {
+        // Checks if the queue is empty
+        if (!getQueueList().isEmpty())
+        {
+            // If the queue contains Music, stop it
+            fxmlSongStop();
+        }
+
+        // Clears the queue list
+        clearQueueList();
+    }
+
+    /**
+     * Opens the native file chooser
+     *
+     * Allows the user to add new files to the library of music.
+     * Currently supported files: MP3, MP4, FXM, FXL, WAV, HLS, AIF, AIFF
+     */
+    public void fxmlLoadMediaFiles()
+    {
+        // Creates a new FileChooser object
+        FileChooser fc = new FileChooser();
+
+        // Defines what files it will look for
+        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
+        FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
+        FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
+        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 Files", "*.mp4");
+        FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
+        FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
+        FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
+
+        // Adds the filters
+        fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
+
+        // Opens the FileChooser and saves the results in a list
+        List<File> chosenFiles = fc.showOpenMultipleDialog(null);
+
+        // Checks if any files where chosen
+        if (chosenFiles != null)
+        {
+            // If valid files were chosen, add them as music
+            try
+            {
+                List<Music> addedMusic;
+                addedMusic = setMetaData(chosenFiles);
+                loadSongList();
+                getQueueList().addAll(addedMusic);
+                prepareSetup();
+            }
+            catch (BLLException ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+        }
+        else
+        {
+            // Otherwise return
+            System.out.println("One or more invalid file(s) / None selected");
+            return;
+        }
+
+        // If the queue isn't empty, prepare the first media in the queue
+        if (!getQueueList().isEmpty())
+        {
+            prepareSetup();
+        }
+    }
+
+    /**
+     * Deletes the selected playlist
+     *
+     * @param listElement The List element containing the playlist objects
+     */
+    public void fxmlDeletePlaylist(JFXListView listElement)
+    {
+        // Create a new list based on all the selected items
+        ObservableList<Playlist> selectedItems = listElement
+                .getSelectionModel().getSelectedItems();
+
+        // Deletes the selected items from storage
+        deletePlaylists(selectedItems);
+    }
+
+    /**
+     * Handles the volume
+     */
+    public void fxmlVolumeMixer()
+    {
+        //Creates a new volume slider and sets the default value to 50%
+        JFXSlider volSlide = volumeSlider;
+
+        // It was necessary to time it with 100 to be able to receive 100
+        // possible positions for the mixer. For each number is a %, so 0 is 0%,
+        // 1 is 1% --> 100 is 100%
+        volSlide.setValue(getVolume());
+
+        //Adds a listener on an observable in the volume slider, which allows
+        //users to tweak the volume of the player.
+        volSlide.valueProperty().addListener(
+                (javafx.beans.Observable observable) ->
+        {
+            setVolume(volSlide.getValue() / 100);
+        });
+    }
+
+    /**
+     * Toggles looping on the current track
+     */
+    public void fxmlLoopAction()
+    {
+        // When called, reverse the current loop from whatever it is
+        reverseLooping();
+
+        // If our loop slide-button is enabled we change the text, set the cycle
+        // count to indefinite and reverse the boolean
+        if (btnLoop.isSelected() == true)
+        {
+            btnLoop.setText("Loop: ON");
+            setLooping();
+            System.out.println("Looping on");
+        }
+        else if (btnLoop.isSelected() != true)
+        {
+            btnLoop.setText("Loop: OFF");
+            reverseLooping();
+            System.out.println("Looping off");
+        }
+    }
+
+    /**
+     * Handles the Starting and Pausing of the current track
+     */
+    public void fxmlMusicPlayPause()
+    {
+        // If the queue is empty and nothing is playing
+        if (getQueueList().isEmpty() && !isPlaying())
+        {
+            // Enable contols
+            enableSettings();
+
+            // Adds a track to the list
+            addElevatorMusic();
+
+            // Prepare the track to be played and start it
+            prepareAndPlay();
+        }
+
+        // If nothing is playing
+        else if (!isPlaying())
+        {
+            // Adds a listener to the current media's duration
+            timeChangeListener();
+
+            // Starts the mediaplayer
+            startMediaPlayer();
+
+            // Indicates the media is playing
+            setPlaying(true);
+
+            // change the play button
+            btnPlayPause.setText("Pause");
+
+            // Enables the settings if they aren't
+            enableSettings();
+        }
+
+        // If theres' something in the queue and something is playing
+        else
+        {
+            // Pauses the media player
+            pauseMediaPlayer();
+
+            // Indicates that nothing is playing
+            setPlaying(false);
+
+            // changes the play button
+            btnPlayPause.setText("Play");
+        }
+    }
+
+    /**
+     * Stops the current playing song
+     */
+    public void fxmlSongStop()
+    {
+        // Updates the status
+        updateStatus();
+
+        // Stores the status as a local variable
+        Status status = getMediaStatus();
+
+        // Check if the status is actuall exist
+        if (null != status)
+        {
+            switch (status)
+            {
+                case PLAYING:
+                    System.out.println("Status is: " + status);
+                    stopMediaPlayer();
+                    setPlaying(false);
+                    btnPlayPause.setText("Play");
+                    progressSlider.setValue(0.0);
+                    break;
+                case STOPPED:
+                    System.out.println("Status is: " + status);
+                    break;
+                case PAUSED:
+                    updateDuration();
+                    progressSlider.setValue(0.0);
+                    progressSlider.setMax(getMediaPlayer().getTotalDuration().toSeconds());
+                    getMediaPlayerStatus();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Change the playback speed
+     */
+    public void fxmlPlaybackSpeed()
+    {
+        //an int to see where we are in the combobox' index.
+        int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
+
+        // Creating a list starting from 0 + 1 (convert index to number in list)
+        System.out.println("the line is #: " + (playbackIndex + 1));
+
+        // switch case for all the possible playback speeds MAYBE convert to a
+        // slider in future instead (free choice and set the speed to the value
+        // of the bar)
+        setPlayckSpeed(playbackIndex);
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Property Getters">
+    public DoubleProperty getProgressSliderValueProperty()
+    {
+        return progressSlider.valueProperty();
+    }
+
+    public BooleanProperty getProgressSliderDisableProperty()
+    {
+        return progressSlider.disableProperty();
+    }
+
+    public StringProperty getMediaplayerLabelTextProperty()
+    {
+        return lblmPlayerStatus.textProperty();
+    }
+
+    public BooleanProperty getVolumeDisableProperty()
+    {
+        return volumeSlider.disableProperty();
+    }
+
+    public BooleanProperty getLoopDisableProperty()
+    {
+        return btnLoop.disableProperty();
+    }
+
+    public BooleanProperty getPlaybackSpeedDisabledProperty()
+    {
+        return playbackSpeed.disableProperty();
+    }
+
+    public BooleanProperty getTimerDisableProperty()
+    {
+        return lblTimer.disableProperty();
+    }
+
+    public StringProperty getTimerTextProperty()
+    {
+        return lblTimer.textProperty();
+    }
+
+    public StringProperty getCurrentAlbumProperty()
+    {
+        return lblAlbumCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentArtistProperty()
+    {
+        return lblArtistCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentDescProperty()
+    {
+        return lblDescriptionCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentDurationProperty()
+    {
+        return lblDurationCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentGenreProperty()
+    {
+        return lblGenreCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentTitleProperty()
+    {
+        return lblTitleCurrent.textProperty();
+    }
+
+    public StringProperty getCurrentYearProperty()
+    {
+        return lblYearCurrent.textProperty();
+    }
+
+    public StringProperty getArtistProperty()
+    {
+        return lblArtist.textProperty();
+    }
+
+    public StringProperty getTitleProperty()
+    {
+        return lblTitle.textProperty();
+    }
+
+    public StringProperty getAlbumProperty()
+    {
+        return lblAlbum.textProperty();
+    }
+
+    public StringProperty getDescProperty()
+    {
+        return lblDuration.textProperty();
+    }
+
+    public StringProperty getGenreProperty()
+    {
+        return lblGenre.textProperty();
+    }
+
+    public StringProperty getYearProperty()
+    {
+        return lblYear.textProperty();
+    }
+
+    public StringProperty getDurationProperty()
+    {
+        return lblDuration.textProperty();
+    }
+
+    public StringProperty getPlayPauseButton()
+    {
+        return btnPlayPause.textProperty();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Getters">
+    /**
+     * Goes through song files, and gets their name. Returns a list with their
+     * name.
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public List<String> getPath(List<File> chosenFiles) throws SQLException
+    {
+        List<String> songPath = new ArrayList();
+        for (int i = 0; i < chosenFiles.size(); i++)
+        {
+            songPath.add(chosenFiles.get(i).getName());
+        }
+        return songPath;
+    }
+
+    /**
+     * Checks if a media is playing
+     *
+     * @return
+     */
+    public boolean isPlaying()
+    {
+        return playing;
+    }
+
+    /**
+     * Updates the status of the current media
+     */
+    public void updateStatus()
+    {
+        this.mStatus = this.queueMedia.get(currentSong).getStatus();
+    }
+
+    /**
+     * Gets the current status of the media
+     *
+     * @return
+     */
+    public Status getMediaStatus()
+    {
+        return this.mStatus;
+    }
+
+    /**
+     * Gets the status of the current mediaplayer
+     */
+    public void getMediaPlayerStatus()
+    {
+        getMediaPlayer().statusProperty().addListener((observable,
+                                                       oldValue,
+                                                       newValue)
+                -> lblmPlayerStatus.setText("MediaPlayer Status: "
+                                            + newValue.toString().toLowerCase()));
+    }
+
+    /**
+     * Gets the current mediaplayer
+     *
+     * @return
+     */
+    public MediaPlayer getMediaPlayer()
+    {
+        return this.queueMedia.get(currentSong);
+    }
+
+    /**
+     * Gets the volume
+     *
+     * @return
+     */
+    public double getVolume()
+    {
+        return (this.queueMedia.get(currentSong).getVolume() * 100.0) / 100.0;
+    }
+
+    /**
+     * Gets the current time from the mediaplayer
+     *
+     * @return
+     */
+    public Duration getCurrentTime()
+    {
+        return this.queueMedia.get(currentSong).getCurrentTime();
+    }
+
+    /**
+     * Gets the duration of the current MediaPlayer
+     *
+     * @return
+     */
+    public Duration getduration()
+    {
+        return this.mpduration;
+    }
+
+    /**
+     * Gets the speed settings for the playback
+     *
+     * @return
+     */
+    public ArrayList<String> getPlaybackSpeed()
+    {
+        ArrayList<String> settings = new ArrayList<>();
+        settings.add("50% speed");
+        settings.add("75% speed");
+        settings.add("Default speed");
+        settings.add("125% speed");
+        settings.add("125% speed");
+        settings.add("150% speed");
+        settings.add("200% speed");
+        return settings;
+    }
+
+    /**
+     * Gets the filters
+     *
+     * This method will check the current status of the filters and return an
+     * Arraylist of Strings containing the given filters
+     *
+     * @param searchTagTitle
+     * @param searchTagAlbum
+     * @param searchTagArtist
+     * @param searchTagGenre
+     * @param searchTagDesc
+     * @param searchTagYear
+     *
+     * @return Returns an ArrayList containing the filters
+     */
+    public ArrayList<String> getFilters(JFXCheckBox searchTagTitle,
+                                        JFXCheckBox searchTagAlbum,
+                                        JFXCheckBox searchTagArtist,
+                                        JFXCheckBox searchTagGenre,
+                                        JFXCheckBox searchTagDesc,
+                                        JFXCheckBox searchTagYear
+    )
+    {
+        ArrayList<String> filter = new ArrayList<>();
+        if (searchTagTitle.selectedProperty().get())
+        {
+            filter.add("title");
+        }
+        if (searchTagArtist.selectedProperty().get())
+        {
+            filter.add("artist");
+        }
+        if (searchTagAlbum.selectedProperty().get())
+        {
+            filter.add("album");
+        }
+        if (searchTagGenre.selectedProperty().get())
+        {
+            filter.add("genre");
+        }
+        if (searchTagDesc.selectedProperty().get())
+        {
+            filter.add("description");
+        }
+        if (searchTagYear.selectedProperty().get())
+        {
+            filter.add("year");
+        }
+        return filter;
+    }
+
+    /**
+     * Converts seconds into hours and minutes
+     *
+     * @param seconds
+     *
+     * @return
+     */
+    public int[] getSecondsToMinAndHour(int seconds)
+    {
+        int minutes = seconds / 60;
+
+        seconds -= minutes * 60;
+
+        int hours = minutes / 60;
+
+        minutes -= hours * 60;
+
+        int[] minSec = new int[3];
+
+        minSec[0] = seconds;
+
+        minSec[1] = minutes;
+
+        minSec[2] = hours;
+
+        return minSec;
+
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Setters">
+    /**
+     *
+     * @param chosenFiles
+     *
+     * @return
+     *
+     * @throws mytunes.bll.exception.BLLException
+     *
+     * @throws IOException
+     * @throws CannotReadException
+     * @throws FileNotFoundException
+     * @throws ReadOnlyFileException
+     * @throws TagException
+     * @throws InvalidAudioFrameException
+     */
+    public List<Music> setMetaData(List<File> chosenFiles) throws BLLException
+    {
+
+        return meta.MetaData(chosenFiles);
+
+    }
+
+    public void setPlayckSpeed(int playbackIndex)
+    {
+        switch (playbackIndex)
+        {
+            /*
+             * in the first case we set the text to 50% and set the play back
+             * rate to 0.5 (0 being 0% --> 2 being 200%)
+             */
+            case 0:
+                System.out.println("50%");
+                this.queueMedia.get(playbackIndex).setRate(0.5);
+                break;
+            case 1:
+                System.out.println("75%");
+                this.queueMedia.get(playbackIndex).setRate(0.75);
+                break;
+            case 2:
+                System.out.println("100%");
+                this.queueMedia.get(playbackIndex).setRate(1.0);
+                break;
+            case 3:
+                System.out.println("125%");
+                this.queueMedia.get(playbackIndex).setRate(1.25);
+                break;
+            case 4:
+                System.out.println("150%");
+                this.queueMedia.get(playbackIndex).setRate(1.5);
+                break;
+            case 5:
+                System.out.println("175%");
+                this.queueMedia.get(playbackIndex).setRate(1.75);
+                break;
+            case 6:
+                System.out.println("200%");
+                this.queueMedia.get(playbackIndex).setRate(2.0);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setPlaying(boolean isPlaying)
+    {
+        this.playing = isPlaying;
+    }
+
+    public void setMediaPlayer(MediaPlayer mediaPlayer)
+    {
+        this.mediaPlayer = mediaPlayer;
+    }
+
+    public void setLooping()
+    {
+//        this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        this.queueMedia.get(currentSong).setCycleCount(MediaPlayer.INDEFINITE);
+        this.looping = false;
+    }
+
+    public void setVolume(double value)
+    {
+//        this.mediaPlayer.setVolume(value);
+        this.queueMedia.get(currentSong).setVolume(value);
+        if (value > 3 && value < 0)
+        {
+//            mediaPlayer.setVolume(5);
+            this.queueMedia.get(currentSong).setVolume(5);
+        }
+    }
+
+    public void setSong(Media media)
+    {
+        this.song = media;
+
+        this.setMediaPlayer(new MediaPlayer(this.song));
+    }
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Song List">
     /**
      * Loads all the songs into the program
      *
-     * @throws java.sql.SQLException
+     * @throws mytunes.bll.exception.BLLException
      */
-    public void loadSongList() throws SQLException
+    public void loadSongList() throws BLLException
     {
-        try
-        {
-            allSongs.clear();
-            allSongs.addAll(bllManager.getSongList());
-        }
-        catch (IOException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
+        allSongs.clear();
+        allSongs.addAll(bllManager.getSongList());
     }
 
     /**
@@ -926,316 +1602,12 @@ public class MainWindowModel
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters">
-    /**
-     * Goes through song files, and gets their name. Returns a list with their
-     * name.
-     *
-     * @param chosenFiles
-     *
-     * @return
-     *
-     * @throws SQLException
-     */
-    public List<String> getPath(List<File> chosenFiles) throws SQLException
-    {
-        List<String> songPath = new ArrayList();
-        for (int i = 0; i < chosenFiles.size(); i++)
-        {
-            songPath.add(chosenFiles.get(i).getName());
-        }
-        return songPath;
-    }
-
-    /**
-     * Checks if a media is playing
-     *
-     * @return
-     */
-    public boolean isPlaying()
-    {
-        return playing;
-    }
-
-    /**
-     * Updates the status of the current media
-     */
-    public void updateStatus()
-    {
-//        this.mStatus = this.mPlayer.getStatus();
-        this.mStatus = this.queueMedia.get(currentSong).getStatus();
-    }
-
-    /**
-     * Gets the current status of the media
-     *
-     * @return
-     */
-    public Status getMediaStatus()
-    {
-        return this.mStatus;
-    }
-
-    /**
-     * Gets the status of the current mediaplayer
-     */
-    public void getMediaPlayerStatus()
-    {
-        getMediaPlayer().statusProperty().addListener((observable,
-                                                       oldValue,
-                                                       newValue)
-                -> lblmPlayerStatus.setText("MediaPlayer Status: "
-                                            + newValue.toString().toLowerCase()));
-    }
-
-    /**
-     * Gets the current mediaplayer
-     *
-     * @return
-     */
-    public MediaPlayer getMediaPlayer()
-    {
-        return this.queueMedia.get(currentSong);
-    }
-
-    /**
-     * Gets the volume
-     *
-     * @return
-     */
-    public double getVolume()
-    {
-//        return (this.mPlayer.getVolume() * 100.0) / 100.0;
-        return (this.queueMedia.get(currentSong).getVolume() * 100.0) / 100.0;
-    }
-
-    /**
-     * Gets the current time from the mediaplayer
-     *
-     * @return
-     */
-    public Duration getCurrentTime()
-    {
-//        return this.mPlayer.getCurrentTime();
-        return this.queueMedia.get(currentSong).getCurrentTime();
-    }
-
-    /**
-     * Gets the duration of the current MediaPlayer
-     *
-     * @return
-     */
-    public Duration getduration()
-    {
-        return this.mpduration;
-    }
-
-    /**
-     * Gets the speed settings for the playback
-     *
-     * @return
-     */
-    public ArrayList<String> getPlaybackSpeed()
-    {
-        ArrayList<String> settings = new ArrayList<>();
-        settings.add("50% speed");
-        settings.add("75% speed");
-        settings.add("Default speed");
-        settings.add("125% speed");
-        settings.add("125% speed");
-        settings.add("150% speed");
-        settings.add("200% speed");
-        return settings;
-    }
-
-    /**
-     * Gets the filters
-     *
-     * This method will check the current status of the filters and return an
-     * Arraylist of Strings containing the given filters
-     *
-     * @param searchTagTitle
-     * @param searchTagAlbum
-     * @param searchTagArtist
-     * @param searchTagGenre
-     * @param searchTagDesc
-     * @param searchTagYear
-     *
-     * @return Returns an ArrayList containing the filters
-     */
-    public ArrayList<String> getFilters(JFXCheckBox searchTagTitle,
-                                        JFXCheckBox searchTagAlbum,
-                                        JFXCheckBox searchTagArtist,
-                                        JFXCheckBox searchTagGenre,
-                                        JFXCheckBox searchTagDesc,
-                                        JFXCheckBox searchTagYear
-    )
-    {
-        ArrayList<String> filter = new ArrayList<>();
-        if (searchTagTitle.selectedProperty().get())
-        {
-            filter.add("title");
-        }
-        if (searchTagArtist.selectedProperty().get())
-        {
-            filter.add("artist");
-        }
-        if (searchTagAlbum.selectedProperty().get())
-        {
-            filter.add("album");
-        }
-        if (searchTagGenre.selectedProperty().get())
-        {
-            filter.add("genre");
-        }
-        if (searchTagDesc.selectedProperty().get())
-        {
-            filter.add("description");
-        }
-        if (searchTagYear.selectedProperty().get())
-        {
-            filter.add("year");
-        }
-        return filter;
-    }
-
-    /**
-     * Converts seconds into hours and minutes
-     *
-     * @param seconds
-     *
-     * @return
-     */
-    public int[] getSecondsToMinAndHour(int seconds)
-    {
-        int minutes = seconds / 60;
-
-        seconds -= minutes * 60;
-
-        int hours = minutes / 60;
-
-        minutes -= hours * 60;
-
-        int[] minSec = new int[3];
-
-        minSec[0] = seconds;
-
-        minSec[1] = minutes;
-
-        minSec[2] = hours;
-
-        return minSec;
-
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Setters">
-    /**
-     *
-     * @param chosenFiles
-     *
-     * @return
-     *
-     * @throws IOException
-     * @throws CannotReadException
-     * @throws FileNotFoundException
-     * @throws ReadOnlyFileException
-     * @throws TagException
-     * @throws InvalidAudioFrameException
-     */
-    public List<Music> setMetaData(List<File> chosenFiles) throws IOException,
-                                                                  CannotReadException,
-                                                                  FileNotFoundException,
-                                                                  ReadOnlyFileException,
-                                                                  TagException,
-                                                                  InvalidAudioFrameException
-    {
-
-        return meta.MetaData(chosenFiles);
-
-    }
-
-    public void setPlayckSpeed(int playbackIndex)
-    {
-        switch (playbackIndex)
-        {
-            /*
-             * in the first case we set the text to 50% and set the play back
-             * rate to 0.5 (0 being 0% --> 2 being 200%)
-             */
-            case 0:
-                System.out.println("50%");
-                this.queueMedia.get(playbackIndex).setRate(0.5);
-                break;
-            case 1:
-                System.out.println("75%");
-                this.queueMedia.get(playbackIndex).setRate(0.75);
-                break;
-            case 2:
-                System.out.println("100%");
-                this.queueMedia.get(playbackIndex).setRate(1.0);
-                break;
-            case 3:
-                System.out.println("125%");
-                this.queueMedia.get(playbackIndex).setRate(1.25);
-                break;
-            case 4:
-                System.out.println("150%");
-                this.queueMedia.get(playbackIndex).setRate(1.5);
-                break;
-            case 5:
-                System.out.println("175%");
-                this.queueMedia.get(playbackIndex).setRate(1.75);
-                break;
-            case 6:
-                System.out.println("200%");
-                this.queueMedia.get(playbackIndex).setRate(2.0);
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void setPlaying(boolean isPlaying)
-    {
-        this.playing = isPlaying;
-    }
-
-    public void setMediaPlayer(MediaPlayer mediaPlayer)
-    {
-        this.mediaPlayer = mediaPlayer;
-    }
-
-    public void setLooping()
-    {
-//        this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        this.queueMedia.get(currentSong).setCycleCount(MediaPlayer.INDEFINITE);
-        this.looping = false;
-    }
-
-    public void setVolume(double value)
-    {
-//        this.mediaPlayer.setVolume(value);
-        this.queueMedia.get(currentSong).setVolume(value);
-        if (value > 3 && value < 0)
-        {
-//            mediaPlayer.setVolume(5);
-            this.queueMedia.get(currentSong).setVolume(5);
-        }
-    }
-
-    public void setSong(Media media)
-    {
-        this.song = media;
-
-        this.setMediaPlayer(new MediaPlayer(this.song));
-    }
-    //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="Commands">
+    /**
+     * Stops the current MediaPlayer
+     */
     public void stopMediaPlayer()
     {
-//        this.mediaPlayer.stop();
         if (playing)
         {
             this.queueMedia.get(currentSong).stop();
@@ -1275,32 +1647,45 @@ public class MainWindowModel
         }
     }
 
+    /**
+     * Updates the duration based on the current song
+     */
     public void updateDuration()
     {
-//        this.mpduration = this.mediaPlayer.getTotalDuration();
         this.mpduration = this.queueMedia.get(currentSong).getTotalDuration();
     }
 
+    /**
+     * Starts the current MediaPlayer
+     */
     public void startMediaPlayer()
     {
-//        this.mediaPlayer.play();
         this.queueMedia.get(currentSong).play();
     }
 
+    /**
+     * Reverses the current looping boolean
+     */
     public void reverseLooping()
     {
         this.looping = !this.looping;
     }
 
+    /**
+     * Pauses the current MediaPlayer
+     */
     public void pauseMediaPlayer()
     {
-//        this.mediaPlayer.pause();
         this.queueMedia.get(currentSong).pause();
     }
 
+    /**
+     * Skips to the given point in the song
+     *
+     * @param seconds The given point in seconds
+     */
     public void seek(Duration seconds)
     {
-//        this.mediaPlayer.seek(seconds);
         this.queueMedia.get(currentSong).seek(seconds);
     }
 
@@ -1343,6 +1728,14 @@ public class MainWindowModel
     }
 
     // COPY PASTED METHOD TO FORMAT TIME PROPERLY
+    /**
+     * Correctly formats the Duration into mm:ss format
+     *
+     * @param elapsed
+     * @param duration
+     *
+     * @return
+     */
     public static String formatTime(Duration elapsed, Duration duration)
     {
         int intElapsed = (int) Math.floor(elapsed.toSeconds());
@@ -1386,6 +1779,13 @@ public class MainWindowModel
         }
     }
 
+    /**
+     * Creates a grid for the Equalizer
+     * Currently out of comission
+     *
+     * @param gridEqualizer
+     * @param mPlayer
+     */
     private void createEqualizerGrid(GridPane gridEqualizer, MediaPlayer mPlayer)
     {
         ObservableList<EqualizerBand> bands = mPlayer.getAudioEqualizer().getBands();
@@ -1518,8 +1918,6 @@ public class MainWindowModel
      */
     private void setupMediaPlayer()
     {
-        //choosingFiles(); //Needs a fix as mentioned in the method
-
         // As soon as the media player is ready to play a song we allow for
         // manipulating the media file (playback speed, volume etc.)
         getMediaPlayer().setOnReady(() ->
@@ -1592,355 +1990,6 @@ public class MainWindowModel
         {
             seek(Duration.seconds(progressSlider.getValue()));
         });
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="FXML Method calls">
-    public void fxmlNextSong()
-    {
-        stopMediaPlayer();
-        skipToNextSong();
-        prepareAndPlay();
-    }
-
-    public void fxmlPrevSong()
-    {
-        stopMediaPlayer();
-        skipToPrevSong();
-        prepareAndPlay();
-    }
-
-    public void fxmlClearQueue()
-    {
-        // Checks if the queue is empty
-        if (!getQueueList().isEmpty())
-        // If it's not empty, stop all songs from playing
-        {
-            // Call the method to stop the song
-            fxmlSongStop();
-        }
-
-        // Clears the queue list
-        clearQueueList();
-
-        setPlaying(false);
-        btnPlayPause.setText("Play");
-    }
-
-    public void fxmlLoadMediaFiles(TableView tblSongList)
-    {
-        FileChooser fc = new FileChooser();
-
-        FileChooser.ExtensionFilter mp3Filter = new FileChooser.ExtensionFilter("MP3 Files", "*.mp3");
-        FileChooser.ExtensionFilter fxmFilter = new FileChooser.ExtensionFilter("FXM Files", "*.fxm");
-        FileChooser.ExtensionFilter flvFilter = new FileChooser.ExtensionFilter("FXL Files", "*.flv");
-        FileChooser.ExtensionFilter mp4Filter = new FileChooser.ExtensionFilter("MP4 Files", "*.mp4");
-        FileChooser.ExtensionFilter wavFilter = new FileChooser.ExtensionFilter("WAV Files", "*.wav");
-        FileChooser.ExtensionFilter hlsFilter = new FileChooser.ExtensionFilter("HLS Files", "*.hls");
-        FileChooser.ExtensionFilter aiffFilter = new FileChooser.ExtensionFilter("AIF(F) Files", "*.aif", "*.aiff");
-
-        fc.getExtensionFilters().addAll(mp3Filter, fxmFilter, flvFilter, mp4Filter, wavFilter, hlsFilter, aiffFilter);
-
-        List<File> chosenFiles = fc.showOpenMultipleDialog(null);
-
-        if (chosenFiles != null)
-        {
-
-            try
-            {
-                List<Music> addedMusic;
-                addedMusic = setMetaData(chosenFiles);
-                loadSongList();
-                tblSongList.setItems(getSongList());
-                getQueueList().addAll(addedMusic);
-                prepareSetup();
-            }
-            catch (InvalidAudioFrameException
-                   | IOException
-                   | CannotReadException
-                   | ReadOnlyFileException
-                   | TagException
-                   | SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
-        }
-        else
-        {
-            System.out.println("One or more invalid file(s) / None selected");
-            return;
-        }
-
-        if (!getQueueList().isEmpty())
-        {
-            prepareSetup();
-        }
-    }
-
-    public void fxmlDeletePlaylist(JFXListView playlistPanel)
-    {
-        ObservableList<Playlist> selectedItems = playlistPanel
-                .getSelectionModel().getSelectedItems();
-        deletePlaylists(selectedItems);
-    }
-
-    public void fxmlVolumeMixer()
-    {
-        //Creates a new volume slider and sets the default value to 50%
-        JFXSlider volSlide = volumeSlider;
-
-        // It was necessary to time it with 100 to be able to receive 100
-        // possible positions for the mixer. For each number is a %, so 0 is 0%,
-        // 1 is 1% --> 100 is 100%
-        volSlide.setValue(getVolume());
-
-        //Adds a listener on an observable in the volume slider, which allows
-        //users to tweak the volume of the player.
-        volSlide.valueProperty().addListener(
-                (javafx.beans.Observable observable) ->
-        {
-            setVolume(volSlide.getValue() / 100);
-        });
-    }
-
-    public void fxmlLoopAction()
-    {
-        reverseLooping();
-
-        // If our loop slide-button is enabled we change the text, set the cycle
-        // count to indefinite and reverse the boolean
-        if (btnLoop.isSelected() == true)
-        {
-            btnLoop.setText("Loop: ON");
-            setLooping();
-            System.out.println("Looping on");
-        }
-        else if (btnLoop.isSelected() != true)
-        {
-            btnLoop.setText("Loop: OFF");
-            reverseLooping();
-            System.out.println("Looping off");
-        }
-    }
-
-    /**
-     * Handles the Starting and Pausing of the current track
-     */
-    public void fxmlMusicPlayPause()
-    {
-        //btnPlayPause.setText("Test");
-        // If the queue is empty and nothing is playing
-        if (getQueueList().isEmpty() && !isPlaying())
-        {
-            // Enable contols
-            enableSettings();
-
-            // Adds a track to the list
-            addElevatorMusic();
-
-            // Prepare the track to be played and start it
-            prepareAndPlay();
-        }
-
-        // If nothing is playing
-        else if (!isPlaying())
-        {
-            // Adds a listener to the current media's duration
-            timeChangeListener();
-
-            // Starts the mediaplayer
-            startMediaPlayer();
-
-            // Indicates the media is playing
-            setPlaying(true);
-
-            // change the play button
-            btnPlayPause.setText("Pause");
-
-            // Enables the settings if they aren't
-            enableSettings();
-        }
-
-        // If theres' something in the queue and something is playing
-        else
-        {
-            // Pauses the media player
-            pauseMediaPlayer();
-
-            // Indicates that nothing is playing
-            setPlaying(false);
-
-            // changes the play button
-            btnPlayPause.setText("Play");
-        }
-    }
-
-    public void fxmlSongStop()
-    {
-        // Updates the status
-        updateStatus();
-
-        // Stores the status as a local variable
-        Status status = getMediaStatus();
-
-        // Check if the status is actuall exist
-        if (null != status)
-        {
-            switch (status)
-            {
-                case PLAYING:
-                    System.out.println("Status is: " + status);
-                    stopMediaPlayer();
-                    setPlaying(false);
-                    btnPlayPause.setText("Play");
-                    progressSlider.setValue(0.0);
-                    break;
-                case STOPPED:
-                    System.out.println("Status is: " + status);
-                    break;
-                case PAUSED:
-                    updateDuration();
-                    progressSlider.setValue(0.0);
-                    progressSlider.setMax(getMediaPlayer().getTotalDuration().toSeconds());
-                    getMediaPlayerStatus();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    public void fxmlPlaybackSpeed()
-    {
-        //an int to see where we are in the combobox' index.
-        int playbackIndex = playbackSpeed.getSelectionModel().getSelectedIndex();
-
-        // Creating a list starting from 0 + 1 (convert index to number in list)
-        System.out.println("the line is #: " + (playbackIndex + 1));
-
-        /*
-         * switch case for all the possible playback speeds MAYBE convert to a
-         * slider in future instead (free choice and set the speed to the value
-         * of the bar)
-         */
-        setPlayckSpeed(playbackIndex);
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Property Getters">
-    public DoubleProperty getProgressSliderValueProperty()
-    {
-        return progressSlider.valueProperty();
-    }
-
-    public BooleanProperty getProgressSliderDisableProperty()
-    {
-        return progressSlider.disableProperty();
-    }
-
-    public StringProperty getMediaplayerLabelTextProperty()
-    {
-        return lblmPlayerStatus.textProperty();
-    }
-
-    public BooleanProperty getVolumeDisableProperty()
-    {
-        return volumeSlider.disableProperty();
-    }
-
-    public BooleanProperty getLoopDisableProperty()
-    {
-        return btnLoop.disableProperty();
-    }
-
-    public BooleanProperty getPlaybackSpeedDisabledProperty()
-    {
-        return playbackSpeed.disableProperty();
-    }
-
-    public BooleanProperty getTimerDisableProperty()
-    {
-        return lblTimer.disableProperty();
-    }
-
-    public StringProperty getTimerTextProperty()
-    {
-        return lblTimer.textProperty();
-    }
-
-    public StringProperty getCurrentAlbumProperty()
-    {
-        return lblAlbumCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentArtistProperty()
-    {
-        return lblArtistCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentDescProperty()
-    {
-        return lblDescriptionCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentDurationProperty()
-    {
-        return lblDurationCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentGenreProperty()
-    {
-        return lblGenreCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentTitleProperty()
-    {
-        return lblTitleCurrent.textProperty();
-    }
-
-    public StringProperty getCurrentYearProperty()
-    {
-        return lblYearCurrent.textProperty();
-    }
-
-    public StringProperty getArtistProperty()
-    {
-        return lblArtist.textProperty();
-    }
-
-    public StringProperty getTitleProperty()
-    {
-        return lblTitle.textProperty();
-    }
-
-    public StringProperty getAlbumProperty()
-    {
-        return lblAlbum.textProperty();
-    }
-
-    public StringProperty getDescProperty()
-    {
-        return lblDuration.textProperty();
-    }
-
-    public StringProperty getGenreProperty()
-    {
-        return lblGenre.textProperty();
-    }
-
-    public StringProperty getYearProperty()
-    {
-        return lblYear.textProperty();
-    }
-
-    public StringProperty getDurationProperty()
-    {
-        return lblDuration.textProperty();
-    }
-
-    public StringProperty getPlayPauseButton()
-    {
-        return btnPlayPause.textProperty();
     }
     //</editor-fold>
 }
