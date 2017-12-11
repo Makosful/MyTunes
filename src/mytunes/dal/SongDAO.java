@@ -94,7 +94,7 @@ public class SongDAO
 
         try (Connection con = db.getConnection())
         {
-
+            
             String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, song.getTitle());
@@ -107,11 +107,12 @@ public class SongDAO
             preparedStatementInsert.setInt(8, song.getYear());
             
             preparedStatementInsert.executeUpdate();
+
             ResultSet rs = preparedStatementInsert.getGeneratedKeys();
             
-            rs.next();
             int id;
-            id = rs.getInt("id");
+            rs.next();
+            id = rs.getInt(1);
             return id;
         }
     }
