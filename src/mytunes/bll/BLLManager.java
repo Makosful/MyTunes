@@ -152,26 +152,11 @@ public class BLLManager
                 albumId = songDAO.setAlbum(song.getAlbum());
             }
 
-            //Determine if the genre already is in the db, and get the resulting id
-            int getGenreId = songDAO.getExistingGenre(song.getGenre());
-            if (getGenreId != 0)
-            {
-
-                genreId = getGenreId;
-
-            }
-            else
-            {
-
-                genreId = songDAO.setGenre(song.getGenre());
-
-            }
 
             pathId = songDAO.setPath(song.getSongPathName(), locationId);
 
             ids.add(artistId);
             ids.add(albumId);
-            ids.add(genreId);
             ids.add(pathId);
 
             int songId = songDAO.setSong(song, ids);

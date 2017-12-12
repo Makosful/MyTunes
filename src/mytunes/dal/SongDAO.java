@@ -90,22 +90,20 @@ public class SongDAO
 
         int artistId = relationIds.get(0);
         int albumId = relationIds.get(1);
-        int genreId = relationIds.get(2);
-        int pathId = relationIds.get(3);
+        int pathId = relationIds.get(2);
 
         try (Connection con = db.getConnection())
         {
             
-            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, song.getTitle());
             preparedStatementInsert.setInt(2, artistId);
             preparedStatementInsert.setInt(3, albumId);
-            preparedStatementInsert.setInt(4, genreId);
-            preparedStatementInsert.setInt(5, pathId);
-            preparedStatementInsert.setString(6, song.getDescription());
-            preparedStatementInsert.setInt(7, song.getDuration());
-            preparedStatementInsert.setInt(8, song.getYear());
+            preparedStatementInsert.setInt(4, pathId);
+            preparedStatementInsert.setString(5, song.getDescription());
+            preparedStatementInsert.setInt(6, song.getDuration());
+            preparedStatementInsert.setInt(7, song.getYear());
             
             preparedStatementInsert.executeUpdate();
 
@@ -245,69 +243,7 @@ public class SongDAO
 
     }
 
-    /**
-     * If the genre already exists in the genre table get the id
-     *
-     * @param genre
-     *
-     * @return
-     *
-     * @throws SQLServerException
-     * @throws SQLException
-     */
-    public int getExistingGenre(String genre) throws SQLServerException, SQLException
-    {
-        try (Connection con = db.getConnection())
-        {
-            int id = 0;
 
-            String sqlSelect = "SELECT id FROM Genre WHERE genre = ?";
-            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, genre);
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next())
-            {
-                id = rs.getInt("id");
-
-            }
-
-            return id;
-        }
-    }
-
-    /**
-     * Insert the genre and get the genreId
-     *
-     * @param genre
-     *
-     * @return
-     *
-     * @throws SQLServerException
-     * @throws SQLException
-     */
-    public int setGenre(String genre) throws SQLServerException, SQLException
-    {
-
-        try (Connection con = db.getConnection())
-        {
-            int id;
-
-            String sqlInsert = "INSERT INTO Genre (genre) VALUES (?)";
-            PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-            preparedStatementInsert.setString(1, genre);
-            preparedStatementInsert.executeUpdate();
-
-            ResultSet rsi = preparedStatementInsert.getGeneratedKeys();
-
-            rsi.next();
-
-            id = rsi.getInt(1);
-
-            return id;
-        }
-
-    }
 
     /**
      * If the path already exists in the path table get the id
@@ -497,7 +433,7 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genre.genre, Path.pathname "
+            String sql = "SELECT Songs.title, Songs.releasedate, Artist.artist, Albums.album, Genres_test.genre, Path.pathname "
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
@@ -578,7 +514,7 @@ public class SongDAO
                          + "Songs.duration, "
                          + "Artist.artist, "
                          + "Albums.album, "
-                         + "Genre.genre, "
+                         + "Genres_test.genre, "
                          + "Location.location, "
                          + "Path.pathname "
                          + "FROM Songs "

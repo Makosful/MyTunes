@@ -124,6 +124,7 @@ public class PlaylistDAO
                          + "Albums.album, "
                          + "Songs.releasedate, "
                          + "Location.location, "
+                         + "Genres_test.genre "
                          + "Path.pathname, "
                          + "Songs.description, "
                          + "Songs.duration "
