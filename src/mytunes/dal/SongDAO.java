@@ -763,7 +763,7 @@ public class SongDAO
             ResultSet rs = preparedStatement.executeQuery();
 
             List<String> allGenres = new ArrayList();
-            if (rs.next())
+            while(rs.next())
             {
                 allGenres.add(rs.getString("genre"));
 
