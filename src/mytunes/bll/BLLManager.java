@@ -7,7 +7,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
-import mytunes.dal.MockMusic;
+import mytunes.bll.exception.BLLException;
 import mytunes.dal.PlaylistDAO;
 import mytunes.dal.SongDAO;
 
@@ -20,18 +20,23 @@ public class BLLManager
 
     private final SongDAO songDAO;
     private final PlaylistDAO plDAO;
-    private final MockMusic mm;
 
     public BLLManager() throws IOException
     {
         this.songDAO = new SongDAO();
         this.plDAO = new PlaylistDAO();
-        this.mm = new MockMusic();
     }
 
-    public List<Music> getSongList() throws IOException, SQLException
+    public List<Music> getSongList() throws BLLException
     {
-        return songDAO.getAllSongs();
+        try
+        {
+            return songDAO.getAllSongs();
+        }
+        catch (SQLException ex)
+        {
+            throw new BLLException();
+        }
     }
 
     public void createSongPath(String setPath) throws SQLException
@@ -273,12 +278,31 @@ public class BLLManager
         plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
     }
 
+
     public List<String> getAllGenres() throws SQLException
     {
         
         List<String> allGenres = songDAO.getAllGenres();
         
         return allGenres;
-        
+    }  
+
+    public void deleteSong(int id) throws SQLException
+    {
+        songDAO.deleteSong(id);
+    }
+
+    public void deletePlaylist(int id) throws BLLException
+    {
+        try
+        {
+            plDAO.deletePlaylist(id);
+        }
+        catch (SQLException ex)
+        {
+            //System.out.println("Playlisten blev ikke slettet, fejl: "+ex.getMessage());
+            throw new BLLException();
+        }
+
     }
 }

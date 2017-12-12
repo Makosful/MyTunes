@@ -35,6 +35,7 @@ public class SongDAO
 
             List<Music> allSongs = new ArrayList<>();
 
+
             String sql = "SELECT "
                          + "Songs.id, "
                          + "Songs.title, "
@@ -535,10 +536,8 @@ public class SongDAO
         try (Connection con = db.getConnection())
         {
 
-            String sql = "DELETE FROM Songs "
-                         + "INNER JOIN Artist ON Songs.artistid = Artist.id "
-                         + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                         + "INNER JOIN Genre ON Songs.genreid = Genre.id "
+            String sql = "DELETE Path FROM Path "
+                         + "INNER JOIN Songs ON Path.id = Songs.pathid "
                          + "WHERE Songs.id = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -746,14 +745,12 @@ public class SongDAO
     {
         try (Connection con = db.getConnection())
         {
-
             String sql = "DELETE Genre_test FROM Genre_test WHERE Genre_test.songid = ? AND Genre_test.genreid = ?";
 
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.setInt(1, songId);
             preparedStatement.setInt(2, genreId);
             preparedStatement.execute();
-
         }
     }
 

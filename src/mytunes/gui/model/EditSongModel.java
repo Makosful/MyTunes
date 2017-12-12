@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mytunes.gui.model;
 
 import java.io.IOException;
@@ -10,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -20,18 +17,22 @@ import mytunes.bll.BLLManager;
  * @author Hussain
  */
 public class EditSongModel
-{ 
+{
+
     BLLManager bllManager;
     List<String> genreList;
+    ObservableList comboBoxList;
 
     public EditSongModel() throws IOException
     {
         this.bllManager = new BLLManager();
         genreList = new ArrayList();
     }
+
      // Changes the song's info.
     public void editSongDatabase(String newTitle, String newArtist, int songId,
     String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
+
     {
         bllManager.editSongDataBase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
     }
@@ -150,6 +151,25 @@ public class EditSongModel
         genreList.addAll(bllManager.getAllGenres());
         
         return genreList;
+    }
+    
+    public ObservableList<String> genreListObv()
+    {
+        return comboBoxList;
+    }
+       
+    // Addings genres to the list, and making it observable.
+    // Initializing the combobox with the obsv. list.
+    public void setComboBoxData(ComboBox comboBoxCategory)
+    {
+        comboBoxList = FXCollections.observableList(genreList());
+        comboBoxCategory.setItems(comboBoxList);
+    }
+    
+        // Method to get genre from song, and place it first in combobox.
+    public void setSongGenreFirstInComboBox(ComboBox comboBoxCategory, String genre)
+    {
+        comboBoxCategory.getSelectionModel().select(genre);
     }
     
 }

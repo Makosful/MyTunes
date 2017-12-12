@@ -3,7 +3,8 @@ package mytunes.gui.controller;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import java.net.URL;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ResourceBundle;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
+import mytunes.bll.exception.BLLException;
 import mytunes.gui.model.MainWindowModel;
 
 /**
@@ -25,7 +27,7 @@ import mytunes.gui.model.MainWindowModel;
  *
  * @author Axl
  */
-public class CreatePlaylistWindowController implements Initializable
+public class PlaylistWindowController implements Initializable
 {
 
     @FXML
@@ -78,7 +80,7 @@ public class CreatePlaylistWindowController implements Initializable
             // Loads the song list
             wm.loadSongList();
         }
-        catch (SQLException ex)
+        catch (BLLException ex)
         {
             System.out.println(ex.getMessage());
         }
@@ -200,16 +202,8 @@ public class CreatePlaylistWindowController implements Initializable
         }
         else
         {
-            try
-            {
-                save = true;
-                cancel(event);
-                wm.savePlaylist(this.title, this.playlistBackup);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
+            save = true;
+            cancel(event);
         }
     }
 
@@ -247,11 +241,23 @@ public class CreatePlaylistWindowController implements Initializable
     @FXML
     private void removeSelectedFromPlaylist(ActionEvent event)
     {
-        ObservableList<Music> selectedItems = listPlaylist
-                .getSelectionModel().getSelectedItems();
+        ObservableList<Integer> ind = listPlaylist.getSelectionModel().getSelectedIndices();
 
-        this.playlist.removeAll(selectedItems);
-        this.playlistBackup.removeAll(selectedItems);
+        ArrayList<Integer> writeable = new ArrayList();
+
+        for (int i = 0; i < ind.size(); i++)
+        {
+            writeable.add(ind.get(i));
+        }
+
+        Collections.sort(writeable, Collections.reverseOrder());
+
+        writeable.forEach((integer) ->
+        {
+            this.playlist.remove(integer.intValue());
+        });
+
+        listPlaylist.getSelectionModel().clearSelection();
     }
 
     @FXML

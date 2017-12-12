@@ -8,6 +8,7 @@ public class Music
 {
 
     private int id;
+    private int number;
     private String title;
     private String artist;
     private String album;
@@ -18,7 +19,7 @@ public class Music
     private String genre;
     private String songPathName;
 
-    public Music(int id, String title, String album, String artist, int year, String location)
+    public Music(int id, String title, String album, String artist, int year, String location, String songPathName)
     {
         this.id = id;
         this.title = title;
@@ -26,6 +27,7 @@ public class Music
         this.artist = artist;
         this.year = year;
         this.location = location;
+        this.songPathName = songPathName;
     }
 
     public Music()
@@ -52,6 +54,18 @@ public class Music
     public void setId(int id)
     {
         this.id = id;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Number">
+    public int getNumber()
+    {
+        return number;
+    }
+
+    public void setNumber(int num)
+    {
+        this.number = num;
     }
     //</editor-fold>
 
