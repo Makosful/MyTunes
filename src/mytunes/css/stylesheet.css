@@ -171,7 +171,7 @@
 CSS For EditSongFXML
 */
 
-#txtFieldTitle, #txtFieldArtist, #txtFieldTitle, #txtFile, #txtTime
+#txtFieldTitle, #txtFieldArtist, #txtFieldTitle, #txtFile, #txtTime, #selectedGenres
 {
     -fx-text-fill: white;
 }
