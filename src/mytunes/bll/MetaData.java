@@ -130,7 +130,7 @@ public class MetaData
         songPathName = chosenFile.getName();
         location = "res/songs";
         //chosenFile.getAbsolutePath().replace(songPathName, "");
-
+        //COuld use users own filepath(absolutepath) but dosent make sense now when we are all using it
     }
 
     /**
