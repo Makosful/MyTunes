@@ -145,18 +145,9 @@ public class EditSongModel
      * Adding genres to list.
      * @return 
      */
-    public List<String> genreList()
+    public List<String> genreList() throws SQLException
     {
-        genreList.add("HipHop");
-        genreList.add("Classic");
-        genreList.add("Jazz");
-        genreList.add("Pop");
-        genreList.add("Latin");
-        genreList.add("R&B Soul");
-        genreList.add("Rock");
-        genreList.add("Metal");
-        genreList.add("J-POP");
-        genreList.add("Malthe The G");
+        genreList.addAll(bllManager.getAllGenres());
         
         return genreList;
     }

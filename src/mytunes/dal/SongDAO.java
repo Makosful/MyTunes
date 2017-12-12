@@ -756,4 +756,23 @@ public class SongDAO
 
         }
     }
+
+    public List<String> getAllGenres() throws SQLServerException, SQLException
+    {
+        try (Connection con = db.getConnection())
+        {
+            String sqlSelect = "SELECT genre FROM Genres_test";
+            PreparedStatement preparedStatement = con.prepareStatement(sqlSelect, Statement.RETURN_GENERATED_KEYS);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            List<String> allGenres = new ArrayList();
+            if (rs.next())
+            {
+                allGenres.add(rs.getString("genre"));
+
+            }
+            
+            return allGenres;
+        }
+    }
 }

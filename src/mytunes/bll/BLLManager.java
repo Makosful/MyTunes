@@ -272,4 +272,13 @@ public class BLLManager
     {
         plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
     }
+
+    public List<String> getAllGenres() throws SQLException
+    {
+        
+        List<String> allGenres = songDAO.getAllGenres();
+        
+        return allGenres;
+        
+    }
 }
