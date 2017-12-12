@@ -140,7 +140,7 @@ public class MainWindowController implements Initializable
         playbackSpeed.setDisable(true);
         progressSlider.setDisable(true);
         lblTimer.setDisable(true);
-        //Forces the table to adapt its height to the list (no empty rows) - TODO understand why
+        //Forces the table to adapt its height to the list (no empty rows)
         tblSongList.setFixedCellSize(30);
         
         wm.getAnchorPaneController(anchorPane);
