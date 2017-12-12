@@ -9,8 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -1885,7 +1883,6 @@ public class MainWindowModel
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(btnPlayPause.getScene().getWindow());
         stage.show();
-        controller.closeWindow();
     }
 
     /**
