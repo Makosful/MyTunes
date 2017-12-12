@@ -13,8 +13,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -38,13 +36,19 @@ public class EditSongController implements Initializable
     String oldGenre;
 //</editor-fold>
 
+    // The genre the user has selects for his song,
+    // that he wants to edit.
     private String userSelectedGenres;
-
+    
     // SongID from MWController.
     private int songIdFromTable;
+    
     // Stage of this controller's window.
     Stage stage;
-
+    
+    // Model of the controller.
+    EditSongModel esModel;
+    
     //<editor-fold defaultstate="collapsed" desc="FXML variables">
     @FXML
     private JFXTextField txtTime;
@@ -70,10 +74,6 @@ public class EditSongController implements Initializable
     private AnchorPane anchorPane;
 //</editor-fold>
 
-    // Model of the controller.
-    EditSongModel esModel;
-    // List that contains all the genres.
-
     public EditSongController() throws IOException
     {
         esModel = new EditSongModel();
@@ -97,14 +97,13 @@ public class EditSongController implements Initializable
     // Initializing the combobox with the obsv. list.
     private void setComboBoxData()
     {
-        ObservableList comboBoxList = FXCollections.observableList(genreList());
-        comboBoxCategory.setItems(comboBoxList);
+       esModel.setComboBoxData(comboBoxCategory);
     }
 
     // Method to get genre from song, and place it first in combobox.
     private void setSongGenreFirstInComboBox(String genre)
     {
-        comboBoxCategory.getSelectionModel().select(genre);
+        esModel.setSongGenreFirstInComboBox(comboBoxCategory, genre);
     }
 
     // Method to set data in textfields and combobox.
@@ -310,8 +309,4 @@ public class EditSongController implements Initializable
     }
 //</editor-fold>
 
-    public void closeWindow()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

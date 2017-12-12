@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -149,6 +151,20 @@ public class EditSongModel
         genreList.add("Malthe The G");
         
         return genreList;
+    }
+       
+    // Addings genres to the list, and making it observable.
+    // Initializing the combobox with the obsv. list.
+    public void setComboBoxData(ComboBox comboBoxCategory)
+    {
+        ObservableList comboBoxList = FXCollections.observableList(genreList());
+        comboBoxCategory.setItems(comboBoxList);
+    }
+    
+        // Method to get genre from song, and place it first in combobox.
+    public void setSongGenreFirstInComboBox(ComboBox comboBoxCategory, String genre)
+    {
+        comboBoxCategory.getSelectionModel().select(genre);
     }
     
 }
