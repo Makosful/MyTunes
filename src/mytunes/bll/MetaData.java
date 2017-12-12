@@ -92,9 +92,7 @@ public class MetaData
             }
             catch (SQLException ex)
             {
-                System.out.println("");
             }
-
         });
 
         return tracks;

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
@@ -215,7 +213,7 @@ public class BLLManager
         songDAO.deleteSong(id);
     }
 
-    public void deletePlaylist(int id)
+    public void deletePlaylist(int id) throws BLLException
     {
         try
         {
@@ -223,7 +221,8 @@ public class BLLManager
         }
         catch (SQLException ex)
         {
-            System.out.println("Playlisten blev ikke slettet, fejl: "+ex.getMessage());
+            //System.out.println("Playlisten blev ikke slettet, fejl: "+ex.getMessage());
+            throw new BLLException();
         }
     }
 }
