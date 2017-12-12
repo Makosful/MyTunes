@@ -21,6 +21,7 @@ public class EditSongModel
 
     BLLManager bllManager;
     List<String> genreList;
+    ObservableList comboBoxList;
 
     public EditSongModel() throws IOException
     {
@@ -152,12 +153,17 @@ public class EditSongModel
         
         return genreList;
     }
+    
+    public ObservableList<String> genreListObv()
+    {
+        return comboBoxList;
+    }
        
     // Addings genres to the list, and making it observable.
     // Initializing the combobox with the obsv. list.
     public void setComboBoxData(ComboBox comboBoxCategory)
     {
-        ObservableList comboBoxList = FXCollections.observableList(genreList());
+        comboBoxList = FXCollections.observableList(genreList());
         comboBoxCategory.setItems(comboBoxList);
     }
     

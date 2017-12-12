@@ -111,6 +111,7 @@ public class EditSongController implements Initializable
     {
         // UserSelectedgenres to null everytime user wants to edit a new song.
         userSelectedGenres = null;
+        genreListObv().add(genre);
 
         setSongGenreFirstInComboBox(genre);
         String timeString = Integer.toString(time);
@@ -241,23 +242,21 @@ public class EditSongController implements Initializable
     @FXML
     private void saveGenre(ActionEvent event)
     {
-        slashInGenresOrNot();
+        seperatorForGenres();
+        selectedGenres.setText(userSelectedGenres);
     }
-//</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Command">
-    private void slashInGenresOrNot()
+    
+    private void seperatorForGenres()
     {
-        if (userSelectedGenres == null)
+        if(userSelectedGenres == null)
         {
             userSelectedGenres = comboBoxCategory.getSelectionModel().getSelectedItem();
         }
         else
         {
-            userSelectedGenres += "/" + comboBoxCategory.getSelectionModel().getSelectedItem();
+            userSelectedGenres += " " + comboBoxCategory.getSelectionModel().getSelectedItem();
         }
     }
-//</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Methods from model">
     /**
@@ -295,9 +294,9 @@ public class EditSongController implements Initializable
      *
      * @return
      */
-    private List<String> genreList()
+    private List<String> genreListObv()
     {
-        return esModel.genreList();
+        return esModel.genreListObv();
     }
 
     /**
