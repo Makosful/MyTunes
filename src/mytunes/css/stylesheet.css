@@ -3,9 +3,6 @@
     Author     : Storm
 */
 
-/***************************************/
-/* THE FOLLOWING IS FOR Main Window fxml*/
-
 .root {
     -fx-background-color: #090a0c, linear-gradient(#38424b 0%, #22272c 100%);
 }
@@ -91,12 +88,6 @@
     -fx-text-fill: -fx-text-inner-color;
 }
 
-/*
-.list-view .list-cell:filled:hover { 
-    -fx-background-color: #00f;
-    -fx-text-fill: white;
-}*/
-
 .combo-box-popup .list-view .list-cell:even {
     -fx-background-color: #666666;
 }    
@@ -166,10 +157,6 @@
 .jfx-list-view .context-menu .menu-item .label {
     -fx-text-fill: black;
 }
-
-/*
-CSS For EditSongFXML
-*/
 
 #txtFieldTitle, #txtFieldArtist, #txtFieldTitle, #txtFile, #txtTime
 {
