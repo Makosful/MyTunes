@@ -10,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
@@ -106,6 +107,8 @@ public class MainWindowController implements Initializable
 
     // Model
     private MainWindowModel wm;
+    @FXML
+    private AnchorPane anchorPane;
 
     /**
      * Constructor, for all intends and purposes
@@ -139,6 +142,8 @@ public class MainWindowController implements Initializable
         lblTimer.setDisable(true);
         //Forces the table to adapt its height to the list (no empty rows) - TODO understand why
         tblSongList.setFixedCellSize(30);
+        
+        wm.getAnchorPaneController(anchorPane);
 
         //<editor-fold defaultstate="collapsed" desc="Bindinggs">
         // Buttons

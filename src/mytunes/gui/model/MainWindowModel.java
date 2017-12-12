@@ -24,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.media.EqualizerBand;
 import javafx.scene.media.Media;
@@ -48,6 +49,8 @@ import mytunes.gui.controller.EditSongController;
  */
 public class MainWindowModel
 {
+    
+    AnchorPane controllerAnchorPane;
 
     // Lists
     private ObservableList<Music> allSongs;
@@ -939,7 +942,7 @@ public class MainWindowModel
                 String genre = musicInfo.getGenre();
                 String pathName = musicInfo.getSongPathName();
 
-                openEditSongWindow(title, artist, time, pathName, genre);
+                openEditSongWindow(title, artist, time, pathName, genre, controllerAnchorPane);
             }
             catch (IOException ex)
             {
@@ -1861,11 +1864,12 @@ public class MainWindowModel
      * @param time
      * @param file
      * @param genre
+     * @param anchorPane
      *
      * @throws IOException
      * @throws SQLException
      */
-    public void openEditSongWindow(String title, String artist, int time, String file, String genre) throws IOException, SQLException
+    public void openEditSongWindow(String title, String artist, int time, String file, String genre, AnchorPane anchorPane) throws IOException, SQLException
     {
         File fxml = new File("src/mytunes/gui/view/EditSong.fxml");
         FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
@@ -1881,7 +1885,7 @@ public class MainWindowModel
         controller.setData(title, artist, time, file, genre);
         controller.getSongIdFromMainController(songIdFromTable);
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(btnPlayPause.getScene().getWindow());
+        stage.initOwner(anchorPane.getScene().getWindow());
         stage.show();
     }
 
@@ -2027,5 +2031,16 @@ public class MainWindowModel
         {
             System.out.println(ex.getMessage());
         }
+    }
+    
+    /**
+     *
+     * @param anchorPane
+     * @return
+     */
+    public AnchorPane getAnchorPaneController(AnchorPane anchorPane)
+    {
+        controllerAnchorPane = anchorPane;
+        return anchorPane;
     }
 }
