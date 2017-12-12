@@ -28,12 +28,13 @@ public class EditSongModel
         this.bllManager = new BLLManager();
         genreList = new ArrayList();
     }
-    // Changes the song's info.
 
-    public void editSongDatabase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-                                 String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+     // Changes the song's info.
+    public void editSongDatabase(String newTitle, String newArtist, int songId,
+    String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
+
     {
-        bllManager.editSongDataBase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+        bllManager.editSongDataBase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
     }
     
     
@@ -41,19 +42,18 @@ public class EditSongModel
      * A confirmation dialog, on whether you want to save songs changes or not.
      * If users answer is yet, the method editsongdatabase is called.
      * @param anchorPane
-     * @param oldTitle
      * @param newTitle
-     * @param oldArtist
      * @param newArtist
      * @param songId
      * @param oldFile
      * @param newFile
      * @param oldGenre
      * @param newGenre
+     * @param addGenre
      * @throws java.sql.SQLException
      */
-    public void confirmationDialog(AnchorPane anchorPane, String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-    String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+    public void confirmationDialog(AnchorPane anchorPane, String newTitle, String newArtist, int songId,
+    String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenre) throws SQLException
     {
         
         ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -69,7 +69,7 @@ public class EditSongModel
         
         if (action.get() == btnYes)
         {
-            editSongDatabase(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+            editSongDatabase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenre);
             Stage stage = (Stage) anchorPane.getScene().getWindow();
             stage.close();
         }
@@ -126,6 +126,14 @@ public class EditSongModel
         return genreNotEmpty;
     }
     
+    
+    public void genreRadioButtonEmpty(Label lblError)
+    {
+
+            lblError.setText("Chose if you want to replace the genre or add another one");
+       
+    }
+    
         /**
      * So that the time textfield cannot be editted.
      * @param txtTime
@@ -138,18 +146,9 @@ public class EditSongModel
      * Adding genres to list.
      * @return 
      */
-    public List<String> genreList()
+    public List<String> genreList() throws SQLException
     {
-        genreList.add("HipHop");
-        genreList.add("Classic");
-        genreList.add("Jazz");
-        genreList.add("Pop");
-        genreList.add("Latin");
-        genreList.add("R&B Soul");
-        genreList.add("Rock");
-        genreList.add("Metal");
-        genreList.add("J-POP");
-        genreList.add("Malthe The G");
+        genreList.addAll(bllManager.getAllGenres());
         
         return genreList;
     }

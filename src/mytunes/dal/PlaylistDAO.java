@@ -122,7 +122,6 @@ public class PlaylistDAO
                          + "Songs.title, "
                          + "Artist.artist, "
                          + "Albums.album, "
-                         + "Genre.genre, "
                          + "Songs.releasedate, "
                          + "Location.location, "
                          + "Path.pathname, "
@@ -131,10 +130,10 @@ public class PlaylistDAO
                          + "FROM Songs "
                          + "INNER JOIN Artist ON Songs.artistid = Artist.id "
                          + "INNER JOIN Albums ON Songs.albumid = Albums.id "
-                         + "INNER JOIN Genre ON Songs.genreid = Genre.id "
-                         + "INNER JOIN Path ON Songs.pathid = path.id "
-                         //+ "INNER JOIN Location on Songs.locationid = location.id "
-                         + "INNER JOIN Location on Path.locationid = location.id "
+                         + "INNER JOIN Path ON Songs.pathid = Path.id "
+                         + "INNER JOIN Location ON Path.locationid = Location.id "
+                         + "INNER JOIN Genre_test ON Songs.id = Genre_test.songid "
+                         + "INNER JOIN Genres_test ON Genre_test.genreid = Genres_test.id "
                          + "INNER JOIN playlist_with_songs ON Songs.id = playlist_with_songs.songid "
                          + "WHERE playlist_with_songs.playlistid = ?";
 
@@ -142,10 +141,15 @@ public class PlaylistDAO
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
 
+            Music song = new Music();
             while (rs.next())
             {
-                Music song = sDAO.createSongFromDB(rs);
-                allSongs.add(song);
+                
+                song = sDAO.createSongFromDB(rs, song);
+                if(!allSongs.contains(song))
+                {
+                    allSongs.add(song);
+                }
             }
 
             return allSongs;

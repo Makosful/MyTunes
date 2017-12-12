@@ -76,10 +76,19 @@ public class BLLManager
     }
     // Changes the song's info.
 
-    public void editSongDataBase(String oldTitle, String newTitle, String oldArtist, String newArtist, int songId,
-                                 String oldFile, String newFile, String oldGenre, String newGenre) throws SQLException
+    public void editSongDataBase(String newTitle, String newArtist, int songId,
+                                 String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
     {
-        songDAO.editSong(oldTitle, newTitle, oldArtist, newArtist, songId, oldFile, newFile, oldGenre, newGenre);
+        songDAO.editSong(newTitle, newArtist, songId, oldFile, newFile);
+        if(addGenres == true)
+        {
+            insertGenres(songId, newGenre);
+        }
+        else
+        {
+            replaceGenre(songId, oldGenre, newGenre);
+        }
+        
     }
 
     /**
@@ -113,7 +122,7 @@ public class BLLManager
         }
 
         // Determine if the location already is in the db, and get the resulting id
-        // If the location(path) and pathname(something.mp3) already exsists in the
+        // If the location(path) and pathname(something.mp3) already exists in the
         // db stop the proccess of uploading to the db
         int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
         if (getPathId == 0)
@@ -165,12 +174,73 @@ public class BLLManager
             ids.add(genreId);
             ids.add(pathId);
 
-            songDAO.setSong(song, ids);
+            int songId = songDAO.setSong(song, ids);
+            
+            //insert the songs genres in the db
+            insertGenres(songId, song.getGenre());
 
         }
 
     }
 
+    /**
+     * Splits the genre string into separate genres.
+     * Inserts the specific songs genre, by testing if the genre already exists 
+     * in the db, if it does use the id from this genre and relate it to this song 
+     * else create the genre in the db and link it to the song
+     * @param songId
+     * @param genre
+     * @throws SQLException 
+     */
+    public void insertGenres(int songId, String genre) throws SQLException
+    {
+        
+        int genreTestId;
+        String[] genres = genre.split(" ");
+        for(String specificGenre : genres)
+        {
+
+            int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
+            if (getGenreTestId != 0)
+            {
+
+                genreTestId = getGenreTestId;
+
+            }
+            else
+            {
+
+                genreTestId = songDAO.setTestGenre(specificGenre);
+
+            }
+            songDAO.setTestGenres(songId, genreTestId);
+        }
+        
+    }
+    
+    
+    /**
+     * Deletes the songs reference to the old genre, then calls insertGenres to 
+     * either create or use existing genre as the specific songs genre reference
+     * @param songId
+     * @param oldGenre
+     * @param newGenre
+     * @throws SQLException 
+     */
+    public void replaceGenre(int songId, String oldGenre, String newGenre) throws SQLException
+    {
+        String[] genres = oldGenre.split(" ");
+        for(String specificGenre : genres)
+        {
+            int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
+            songDAO.removeSongsGenre(songId, getGenreTestId);
+        }
+        
+        insertGenres(songId, newGenre);
+        
+    }
+    
+    
     /**
      * Gets the index of an item in a List
      *
@@ -208,6 +278,15 @@ public class BLLManager
         plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
     }
 
+
+    public List<String> getAllGenres() throws SQLException
+    {
+        
+        List<String> allGenres = songDAO.getAllGenres();
+        
+        return allGenres;
+    }  
+
     public void deleteSong(int id) throws SQLException
     {
         songDAO.deleteSong(id);
@@ -224,5 +303,6 @@ public class BLLManager
             //System.out.println("Playlisten blev ikke slettet, fejl: "+ex.getMessage());
             throw new BLLException();
         }
+
     }
 }

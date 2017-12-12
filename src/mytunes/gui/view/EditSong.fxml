@@ -2,32 +2,35 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="303.0" prefWidth="435.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.EditSongController">
+
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="456.0" prefWidth="678.0" style="-fx-background-color: #090a0c, linear-gradient(#38424b 0%, #22272c 100%);" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.EditSongController">
     <children>
-        <GridPane layoutX="10.0" layoutY="44.0" prefHeight="200.0" prefWidth="400.0">
+        <GridPane layoutX="14.0" layoutY="57.0" prefHeight="342.0" prefWidth="650.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.0" minWidth="10.0" prefWidth="92.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="258.0" minWidth="10.0" prefWidth="258.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.599951171875" minWidth="10.0" prefWidth="13.599973297119135" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="560.0000328063965" minWidth="10.0" prefWidth="558.4000267028808" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="140.39996948242185" minHeight="10.0" prefHeight="121.20001831054687" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="128.40001831054684" minHeight="10.0" prefHeight="30.79998168945309" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="97.79999389648438" minHeight="10.0" prefHeight="29.800024414062477" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label prefHeight="21.0" prefWidth="69.0" text="Title:">
+                <Label prefHeight="21.0" prefWidth="69.0" text="Title:" textFill="WHITE">
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -35,7 +38,7 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label prefHeight="21.0" prefWidth="59.0" text="Artist:" GridPane.rowIndex="1">
+                <Label prefHeight="21.0" prefWidth="59.0" text="Artist:" textFill="WHITE" GridPane.rowIndex="1">
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -43,7 +46,7 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label text="Genre:" GridPane.rowIndex="2">
+                <Label text="Genre" textFill="WHITE" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -51,7 +54,7 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label text="Time:" GridPane.rowIndex="4">
+                <Label text="Time:" textFill="WHITE" GridPane.rowIndex="3">
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -59,7 +62,9 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label text="File:" GridPane.rowIndex="5">
+
+                <Label prefHeight="100.0" prefWidth="81.0" text="File:" textFill="WHITE" GridPane.rowIndex="4">
+
                     <GridPane.margin>
                         <Insets bottom="-20.0" />
                     </GridPane.margin>
@@ -67,42 +72,66 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <JFXTextField fx:id="txtFieldTitle" focusColor="WHITE" prefHeight="25.0" prefWidth="234.0" GridPane.columnIndex="1" />
-                <JFXTextField fx:id="txtFieldArtist" focusColor="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <JFXTextField fx:id="selectedGenres" focusColor="WHITE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="149.0" style="-fx-text-fill: white;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+
+                <JFXTextField fx:id="txtFieldTitle" focusColor="WHITE" prefWidth="181.0" style="-fx-text-fill: white;" GridPane.columnIndex="1" />
+                <JFXTextField fx:id="txtFieldArtist" focusColor="WHITE" prefHeight="26.0" prefWidth="306.0" style="-fx-text-fill: white;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <JFXTextField fx:id="txtTime" focusColor="WHITE" style="-fx-text-fill: white;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <JFXTextField fx:id="txtFile" focusColor="WHITE" prefHeight="26.0" prefWidth="361.0" style="-fx-text-fill: white;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <JFXComboBox fx:id="comboBoxCategory" editable="true" focusColor="WHITE" prefHeight="30.0" prefWidth="137.0" style="-fx-background-color: lightgrey;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+
                <GridPane.margin>
-                  <Insets right="150.0" />
-               </GridPane.margin>
-            </JFXTextField>
-                <JFXTextField fx:id="txtTime" focusColor="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <JFXTextField fx:id="txtFile" focusColor="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <JFXComboBox fx:id="comboBoxCategory" editable="true" focusColor="WHITE" prefHeight="29.0" prefWidth="148.0" style="-fx-background-color: #666666;" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <GridPane.margin>
-                  <Insets />
+                  <Insets top="10.0" />
                </GridPane.margin></JFXComboBox>
-            <JFXButton onAction="#saveGenre" prefHeight="27.0" prefWidth="99.0" text="Add Genre" GridPane.columnIndex="1" GridPane.rowIndex="2">
+
+            <JFXButton onAction="#saveGenre" prefHeight="27.0" prefWidth="77.0" style="-fx-background-color: green;" text="Edit Genre" GridPane.columnIndex="1" GridPane.rowIndex="2">
+
                <GridPane.margin>
                   <Insets left="158.0" top="10.0" />
                </GridPane.margin>
             </JFXButton>
-            <JFXButton onAction="#deleteSpecificGenre" prefHeight="27.0" prefWidth="99.0" text="Delete Genre" GridPane.columnIndex="1" GridPane.rowIndex="3">
+
+            <Label style="-fx-text-fill: white;" text="Chosen genres:" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
-                  <Insets left="158.0" top="5.0" />
+                  <Insets bottom="90.0" left="250.0" />
                </GridPane.margin>
-            </JFXButton>
-            <Label text="Selected Genres:" GridPane.rowIndex="3">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            </Label>
+            <JFXRadioButton fx:id="radioBtnReplace" style="-fx-text-fill: white;" text="Replace" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
-                  <Insets top="20.0" />
+                  <Insets bottom="90.0" />
+               </GridPane.margin>
+               <toggleGroup>
+                  <ToggleGroup fx:id="genreToggle" />
+               </toggleGroup>
+            </JFXRadioButton>
+            <JFXRadioButton fx:id="radioBtnAdd" layoutX="100.0" layoutY="148.0" style="-fx-text-fill: white;" text="Add" toggleGroup="$genreToggle" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="90.0" left="120.0" />
+               </GridPane.margin>
+            </JFXRadioButton>
+            <Label layoutX="350.0" layoutY="148.0" style="-fx-text-fill: grey;" text="OR" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets bottom="90.0" left="100.0" />
+               </GridPane.margin>
+            </Label>
+            <Label prefHeight="36.0" prefWidth="235.0" style="-fx-text-fill: grey;" text="If you can't find the genre, simply write it yourself" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets top="80.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="lblChosenGenres" alignment="TOP_LEFT" prefHeight="97.0" prefWidth="304.0" style="-fx-text-fill: white;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets left="250.0" top="20.0" />
+
                </GridPane.margin>
             </Label>
             </children>
         </GridPane>
-        <JFXButton fx:id="btnSave" layoutX="305.0" layoutY="255.0" onAction="#saveChanges" prefHeight="27.0" prefWidth="59.0" text="Save" />
-        <JFXButton fx:id="btnCancel" layoutX="235.0" layoutY="255.0" onAction="#cancelChanges" text="Cancel" />
-        <Label alignment="TOP_CENTER" layoutX="6.0" layoutY="6.0" prefHeight="38.0" prefWidth="243.0" text="Edit Song" textAlignment="CENTER">
+
+        <JFXButton fx:id="btnSave" layoutX="604.0" layoutY="418.0" onAction="#saveChanges" prefHeight="27.0" prefWidth="59.0" text="Save" />
+        <JFXButton fx:id="btnCancel" layoutX="536.0" layoutY="418.0" onAction="#cancelChanges" text="Cancel" />
+        <MenuBar layoutY="-74.0" prefHeight="115.0" prefWidth="510.0" style="-fx-background-color: 20;" />
+        <Label alignment="TOP_CENTER" style="-fx-text-fill: white;" text="Edit Song" textAlignment="CENTER">
+
             <font>
                 <Font size="22.0" />
             </font>
@@ -110,10 +139,6 @@
             <Insets left="150.0" />
          </padding>
         </Label>
-      <Label fx:id="lblError" layoutX="6.0" layoutY="258.0" prefHeight="38.0" prefWidth="214.0" />
-      <Label fx:id="lblError2" layoutX="6.0" layoutY="272.0" prefHeight="21.0" prefWidth="194.0">
-         <font>
-            <Font size="13.0" />
-         </font></Label>
+      <Label fx:id="lblError" layoutX="102.0" layoutY="412.0" prefHeight="38.0" prefWidth="414.0" />
     </children>
 </AnchorPane>
