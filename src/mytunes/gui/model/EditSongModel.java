@@ -160,7 +160,7 @@ public class EditSongModel
        
     // Addings genres to the list, and making it observable.
     // Initializing the combobox with the obsv. list.
-    public void setComboBoxData(ComboBox comboBoxCategory)
+    public void setComboBoxData(ComboBox comboBoxCategory) throws SQLException
     {
         comboBoxList = FXCollections.observableList(genreList());
         comboBoxCategory.setItems(comboBoxList);
