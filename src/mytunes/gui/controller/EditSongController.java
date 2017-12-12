@@ -14,6 +14,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -97,13 +99,20 @@ public class EditSongController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
-        setComboBoxData();
+        try
+        {
+            setComboBoxData();
+        }
+        catch (SQLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
         noEditableTime();
         setDefaultRadioButton();
     }
     // Addings genres to the list, and making it observable.
     // Initializing the combobox with the obsv. list.
-    private void setComboBoxData()
+    private void setComboBoxData() throws SQLException
     {
         ObservableList comboBoxList = FXCollections.observableList(genreList());
         comboBoxCategory.setItems(comboBoxList);   
@@ -314,7 +323,7 @@ public class EditSongController implements Initializable
      * Gets the genrelist for the combobox.
      * @return 
      */
-    private List<String> genreList()
+    private List<String> genreList() throws SQLException
     {
         return esModel.genreList();
     }
