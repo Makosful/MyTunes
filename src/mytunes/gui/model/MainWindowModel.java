@@ -40,8 +40,8 @@ import mytunes.bll.BLLManager;
 import mytunes.bll.MetaData;
 import mytunes.bll.Search;
 import mytunes.bll.exception.BLLException;
-import mytunes.gui.controller.CreatePlaylistWindowController;
 import mytunes.gui.controller.EditSongController;
+import mytunes.gui.controller.PlaylistWindowController;
 
 /**
  *
@@ -49,7 +49,7 @@ import mytunes.gui.controller.EditSongController;
  */
 public class MainWindowModel
 {
-    
+
     AnchorPane controllerAnchorPane;
 
     // Lists
@@ -953,8 +953,8 @@ public class MainWindowModel
                 System.out.println("Cannot edit song");
             }
         });
-        
-                // Deletes the selected song from the db
+
+        // Deletes the selected song from the db
         MenuItem deleteSong = new MenuItem("Remove song");
         cm.getItems().add(deleteSong);
         deleteSong.setOnAction(action ->
@@ -1349,7 +1349,7 @@ public class MainWindowModel
         try
         {
             // Gets a hold of the FXML and controller
-            File fxml = new File("src/mytunes/gui/view/CreatePlaylistWindow.fxml");
+            File fxml = new File("src/mytunes/gui/view/PlaylistWindow.fxml");
             FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
 
             // Loads the window
@@ -1359,7 +1359,7 @@ public class MainWindowModel
 
             // Gets the controller for the window, so we can retrieve data after
             // it's been closed
-            CreatePlaylistWindowController plCont = fxLoader.getController();
+            PlaylistWindowController plCont = fxLoader.getController();
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
@@ -1400,7 +1400,7 @@ public class MainWindowModel
         try
         {
             // Gets a hold of the FXML and controller
-            File fxml = new File("src/mytunes/gui/view/CreatePlaylistWindow.fxml");
+            File fxml = new File("src/mytunes/gui/view/PlaylistWindow.fxml");
             FXMLLoader fxLoader = new FXMLLoader(fxml.toURL());
 
             // Loads the window
@@ -1410,7 +1410,7 @@ public class MainWindowModel
 
             // Gets the controller for the window, so we can retrieve data after
             // it's been closed
-            CreatePlaylistWindowController plCont = fxLoader.getController();
+            PlaylistWindowController plCont = fxLoader.getController();
             plCont.setPlaylist(playlist);
             System.out.println("");
             plCont.setSaveButton("Save");
@@ -1454,13 +1454,20 @@ public class MainWindowModel
     {
         if (playlists.isEmpty())
         {
-            
+
         }
         else
         {
-            for(Playlist pl : playlists)
+            for (Playlist pl : playlists)
             {
-               bllManager.deletePlaylist(pl.getId()); 
+                try
+                {
+                    bllManager.deletePlaylist(pl.getId());
+                }
+                catch (BLLException ex)
+                {
+                    System.out.println(ex.getMessage());
+                }
             }
             this.playlists.removeAll(playlists);
         }
@@ -2032,10 +2039,11 @@ public class MainWindowModel
             System.out.println(ex.getMessage());
         }
     }
-    
+
     /**
      *
      * @param anchorPane
+     *
      * @return
      */
     public AnchorPane getAnchorPaneController(AnchorPane anchorPane)

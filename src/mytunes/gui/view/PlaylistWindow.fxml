@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" minHeight="480.0" minWidth="640.0" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.CreatePlaylistWindowController">
+<AnchorPane id="AnchorPane" minHeight="480.0" minWidth="640.0" prefHeight="680.0" prefWidth="690.0" stylesheets="@../../css/stylesheet.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mytunes.gui.controller.PlaylistWindowController">
     <children>
         <Label alignment="CENTER" layoutX="286.0" layoutY="31.0" text="Create a new Playlist" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <font>
@@ -48,16 +48,16 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
-                  <HBox spacing="10.0">
-                     <children>
-                              <TextField fx:id="txtPlaylistSearch" prefWidth="210.0" />
-                        <JFXButton onAction="#clearPlaylistSearch" text="X" />
-                     </children>
-                  </HBox>
+                        <HBox spacing="10.0">
+                            <children>
+                                <TextField fx:id="txtPlaylistSearch" prefWidth="210.0" />
+                                <JFXButton onAction="#clearPlaylistSearch" text="X" />
+                            </children>
+                        </HBox>
                         <JFXListView fx:id="listPlaylist" prefHeight="350.0">
-                     <VBox.margin>
-                        <Insets bottom="20.0" />
-                     </VBox.margin>
+                            <VBox.margin>
+                                <Insets bottom="20.0" />
+                            </VBox.margin>
                         </JFXListView>
                     </children>
                 </VBox>
@@ -68,16 +68,16 @@
                                 <Font size="24.0" />
                             </font>
                         </Label>
-                  <HBox spacing="10.0">
-                     <children>
-                              <TextField fx:id="txtSongSearch" prefWidth="210.0" />
-                        <JFXButton onAction="#clearSonglistSearch" text="X" />
-                     </children>
-                  </HBox>
+                        <HBox spacing="10.0">
+                            <children>
+                                <TextField fx:id="txtSongSearch" prefWidth="210.0" />
+                                <JFXButton onAction="#clearSonglistSearch" text="X" />
+                            </children>
+                        </HBox>
                         <JFXListView fx:id="listSonglist" prefHeight="350.0">
-                     <VBox.margin>
-                        <Insets bottom="20.0" />
-                     </VBox.margin>
+                            <VBox.margin>
+                                <Insets bottom="20.0" />
+                            </VBox.margin>
                         </JFXListView>
                     </children>
                 </VBox>

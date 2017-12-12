@@ -27,7 +27,7 @@ import mytunes.gui.model.MainWindowModel;
  *
  * @author Axl
  */
-public class CreatePlaylistWindowController implements Initializable
+public class PlaylistWindowController implements Initializable
 {
 
     @FXML
