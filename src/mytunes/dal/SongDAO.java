@@ -1,11 +1,11 @@
 package mytunes.dal;
 
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
+import mytunes.dal.exception.DALException;
 
 /**
  *
@@ -22,19 +22,20 @@ public class SongDAO
     }
 
     /**
-     * Gets all the songs from the db then calls a method that creates song objects
+     * Gets all the songs from the db then calls a method that creates song
+     * objects
      * then it returns these songs
+     *
      * @return list of songs
-     * @throws SQLServerException
-     * @throws SQLException 
+     *
+     * @throws mytunes.dal.exception.DALException
      */
-    public List<Music> getAllSongs() throws SQLServerException, SQLException
+    public List<Music> getAllSongs() throws DALException
     {
         try (Connection con = db.getConnection())
         {
 
             List<Music> allSongs = new ArrayList<>();
-
 
             String sql = "SELECT "
                          + "Songs.id, "
@@ -57,13 +58,13 @@ public class SongDAO
 
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
+
             Music song = new Music();
             while (rs.next())
             {
-                
+
                 song = createSongFromDB(rs, song);
-                if(!allSongs.contains(song))
+                if (!allSongs.contains(song))
                 {
                     allSongs.add(song);
                 }
@@ -71,6 +72,10 @@ public class SongDAO
 
             return allSongs;
 
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
         }
     }
 
@@ -80,12 +85,12 @@ public class SongDAO
      *
      * @param song
      * @param relationIds
-     * @return 
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @return
+     *
+     * @throws mytunes.dal.exception.DALException
      */
-    public int setSong(Music song, List<Integer> relationIds) throws SQLServerException, SQLException
+    public int setSong(Music song, List<Integer> relationIds) throws DALException
     {
 
         int artistId = relationIds.get(0);
@@ -94,7 +99,7 @@ public class SongDAO
 
         try (Connection con = db.getConnection())
         {
-            
+
             String sqlInsert = "INSERT INTO Songs VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatementInsert = con.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
             preparedStatementInsert.setString(1, song.getTitle());
@@ -104,15 +109,19 @@ public class SongDAO
             preparedStatementInsert.setString(5, song.getDescription());
             preparedStatementInsert.setInt(6, song.getDuration());
             preparedStatementInsert.setInt(7, song.getYear());
-            
+
             preparedStatementInsert.executeUpdate();
 
             ResultSet rs = preparedStatementInsert.getGeneratedKeys();
-            
+
             int id;
             rs.next();
             id = rs.getInt(1);
             return id;
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
         }
     }
 
@@ -123,10 +132,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int getExistingArtist(String artist) throws SQLServerException, SQLException
+    public int getExistingArtist(String artist) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -144,6 +152,10 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
@@ -153,10 +165,9 @@ public class SongDAO
      *
      * @return id
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int setArtist(String artist) throws SQLServerException, SQLException
+    public int setArtist(String artist) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -176,6 +187,10 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
@@ -186,10 +201,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int getExistingAlbum(String album) throws SQLServerException, SQLException
+    public int getExistingAlbum(String album) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -208,6 +222,10 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
@@ -217,10 +235,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int setAlbum(String album) throws SQLServerException, SQLException
+    public int setAlbum(String album) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -240,10 +257,11 @@ public class SongDAO
 
             return id;
         }
-
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
-
-
 
     /**
      * If the path already exists in the path table get the id
@@ -253,10 +271,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int getExistingPath(String path, int locationid) throws SQLServerException, SQLException
+    public int getExistingPath(String path, int locationid) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -276,6 +293,10 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
@@ -286,10 +307,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int setPath(String songPathName, int locationId) throws SQLServerException, SQLException
+    public int setPath(String songPathName, int locationId) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -310,6 +330,10 @@ public class SongDAO
             return id;
 
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
@@ -320,10 +344,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int getExistingLocation(String location) throws SQLServerException, SQLException
+    public int getExistingLocation(String location) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -342,6 +365,10 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
@@ -351,10 +378,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int setLocation(String location) throws SQLServerException, SQLException
+    public int setLocation(String location) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -374,6 +400,10 @@ public class SongDAO
             return id;
 
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
@@ -385,37 +415,42 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public Music createSongFromDB(ResultSet rs, Music previousSong) throws SQLException
+    public Music createSongFromDB(ResultSet rs, Music previousSong) throws DALException
     {
-        
 
-        if(previousSong.getId() == rs.getInt("id"))
+        try
         {
-            previousSong.setGenre(previousSong.getGenre()+" "+rs.getString("genre")); 
+            if (previousSong.getId() == rs.getInt("id"))
+            {
+                previousSong.setGenre(previousSong.getGenre() + " " + rs.getString("genre"));
 
-            return previousSong;
+                return previousSong;
+            }
+            else
+            {
+                Music song = new Music();
+
+                song.setId(rs.getInt("id"));
+                song.setTitle(rs.getString("title"));
+                song.setArtist(rs.getString("artist"));
+                song.setAlbum(rs.getString("album"));
+                song.setGenre(rs.getString("genre"));
+                song.setYear(rs.getInt("releasedate"));
+                song.SetLocation(rs.getString("location").trim());
+                song.setSongPathName(rs.getString("pathname").trim());
+                song.SetDescription(rs.getString("description"));
+                song.setDuration(rs.getInt("duration"));
+
+                return song;
+            }
         }
-        else
+        catch (SQLException sQLException)
         {
-            Music song = new Music();
-            
-            song.setId(rs.getInt("id"));
-            song.setTitle(rs.getString("title"));
-            song.setArtist(rs.getString("artist"));
-            song.setAlbum(rs.getString("album"));
-            song.setGenre(rs.getString("genre"));
-            song.setYear(rs.getInt("releasedate"));
-            song.SetLocation(rs.getString("location").trim());
-            song.setSongPathName(rs.getString("pathname").trim());
-            song.SetDescription(rs.getString("description"));
-            song.setDuration(rs.getInt("duration"));
-            
-            return song;
+            throw new DALException();
         }
-        
-        
+
     }
 
     /**
@@ -424,10 +459,9 @@ public class SongDAO
      *
      * @return
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public Music getSong(int id) throws SQLServerException, SQLException
+    public Music getSong(int id) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -449,12 +483,16 @@ public class SongDAO
 
             Music song = new Music();
             while (rs.next())
-            {          
+            {
                 song = createSongFromDB(rs, song);
 
             }
             return song;
 
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
         }
 
     }
@@ -463,10 +501,9 @@ public class SongDAO
      *
      * @param id
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public void deleteSong(int id) throws SQLServerException, SQLException
+    public void deleteSong(int id) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -481,26 +518,32 @@ public class SongDAO
             preparedStatement.execute();
 
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
      * Gets the parameter length, which defines how many tables to search in
-     * and the parameter which specifies which tables to search in with the sql string
-     * then calls the method that creates the song objects and then returns all the 
+     * and the parameter which specifies which tables to search in with the sql
+     * string
+     * then calls the method that creates the song objects and then returns all
+     * the
      * songs corresponds with the searchtext
+     *
      * @param length
      * @param sqlSearch
      * @param searchText
      *
      * @return list of songs
      *
-     * @throws SQLServerException
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
     public List<Music> getSongsFromSearch(int length,
                                           String sqlSearch,
                                           String searchText)
-            throws SQLServerException, SQLException
+            throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -538,9 +581,9 @@ public class SongDAO
             Music song = new Music();
             while (rs.next())
             {
-                
+
                 song = createSongFromDB(rs, song);
-                if(!allSongs.contains(song))
+                if (!allSongs.contains(song))
                 {
                     allSongs.add(song);
                 }
@@ -548,11 +591,25 @@ public class SongDAO
 
             return allSongs;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     // Changes the song's info.
+    /**
+     *
+     * @param newTitle
+     * @param newArtist
+     * @param songId
+     * @param oldFile
+     * @param newFile
+     *
+     * @throws DALException
+     */
     public void editSong(String newTitle, String newArtist, int songId,
-                         String oldFile, String newFile) throws SQLServerException, SQLException
+                         String oldFile, String newFile) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -564,59 +621,109 @@ public class SongDAO
             // Path
             editPath(newFile, oldFile, con);
 
-            
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
         }
     }
 
     // Methods to change title etc.
-    public void editTitle(int songId, String newTitle, Connection con) throws SQLException
+    /**
+     *
+     * @param songId
+     * @param newTitle
+     * @param con
+     *
+     * @throws DALException
+     */
+    public void editTitle(int songId, String newTitle, Connection con) throws DALException
     {
-        // Title
-        String sqlTitle = "UPDATE Songs SET title = ? WHERE Songs.id = ?";
-
-        PreparedStatement preparedStatementTitle = con.prepareStatement(sqlTitle);
-        preparedStatementTitle.setString(1, newTitle);
-        preparedStatementTitle.setInt(2, songId);
-
-        preparedStatementTitle.execute();
-    }
-
-    public void editArtist(int songId, String newArtist, Connection con) throws SQLException
-    {
-
-        // Artist
-        int artistId = getExistingArtist(newArtist);
-        String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
-
-        if (artistId == 0)
+        try
         {
-            artistId = setArtist(newArtist);
+            // Title
+            String sqlTitle = "UPDATE Songs SET title = ? WHERE Songs.id = ?";
+
+            PreparedStatement preparedStatementTitle = con.prepareStatement(sqlTitle);
+            preparedStatementTitle.setString(1, newTitle);
+            preparedStatementTitle.setInt(2, songId);
+
+            preparedStatementTitle.execute();
         }
-
-        PreparedStatement preparedStatementArtist = con.prepareStatement(sqlArtist);
-
-        preparedStatementArtist.setInt(1, artistId);
-        preparedStatementArtist.setInt(2, songId);
-        preparedStatementArtist.execute();
+        catch (SQLException sQLException)
+        {
+            throw new DALException();
+        }
     }
 
-    public void editPath(String newFile, String oldFile, Connection con) throws SQLException
+    /**
+     *
+     * @param songId
+     * @param newArtist
+     * @param con
+     *
+     * @throws DALException
+     */
+    public void editArtist(int songId, String newArtist, Connection con) throws DALException
     {
-        // Path
 
-        String sqlFile = "UPDATE Path SET pathname = ? WHERE pathname like ?";
+        try
+        {
+            // Artist
+            int artistId = getExistingArtist(newArtist);
+            String sqlArtist = "UPDATE Songs set artistid = ? WHERE songs.id = ?";
 
-        PreparedStatement preparedStatementFile = con.prepareStatement(sqlFile);
-        preparedStatementFile.setString(1, newFile);
-        preparedStatementFile.setString(2, oldFile);
-        preparedStatementFile.execute();
+            if (artistId == 0)
+            {
+                artistId = setArtist(newArtist);
+            }
+
+            PreparedStatement preparedStatementArtist = con.prepareStatement(sqlArtist);
+
+            preparedStatementArtist.setInt(1, artistId);
+            preparedStatementArtist.setInt(2, songId);
+            preparedStatementArtist.execute();
+        }
+        catch (DALException | SQLException dALException)
+        {
+            throw new DALException();
+        }
     }
 
- 
-    
-    
-    
-    public void setTestGenres(int songid, int genreid) throws SQLException
+    /**
+     *
+     * @param newFile
+     * @param oldFile
+     * @param con
+     *
+     * @throws DALException
+     */
+    public void editPath(String newFile, String oldFile, Connection con) throws DALException
+    {
+        try
+        {
+            // Path
+            String sqlFile = "UPDATE Path SET pathname = ? WHERE pathname like ?";
+
+            PreparedStatement preparedStatementFile = con.prepareStatement(sqlFile);
+            preparedStatementFile.setString(1, newFile);
+            preparedStatementFile.setString(2, oldFile);
+            preparedStatementFile.execute();
+        }
+        catch (SQLException sQLException)
+        {
+            throw new DALException();
+        }
+    }
+
+    /**
+     *
+     * @param songid
+     * @param genreid
+     *
+     * @throws DALException
+     */
+    public void setTestGenres(int songid, int genreid) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -626,12 +733,21 @@ public class SongDAO
             preparedStatementInsert.setInt(2, genreid);
             preparedStatementInsert.executeUpdate();
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
-    
-    
-    
-    
-    public int getExistingTestGenre(String genre) throws SQLServerException, SQLException
+
+    /**
+     *
+     * @param genre
+     *
+     * @return
+     *
+     * @throws DALException
+     */
+    public int getExistingTestGenre(String genre) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -650,11 +766,21 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
-    
-    
-    
-    public int setTestGenre(String genre) throws SQLServerException, SQLException
+
+    /**
+     *
+     * @param genre
+     *
+     * @return
+     *
+     * @throws DALException
+     */
+    public int setTestGenre(String genre) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -674,10 +800,21 @@ public class SongDAO
 
             return id;
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
-    public void removeSongsGenre(int songId, int genreId) throws SQLException
+    /**
+     *
+     * @param songId
+     * @param genreId
+     *
+     * @throws DALException
+     */
+    public void removeSongsGenre(int songId, int genreId) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -688,9 +825,18 @@ public class SongDAO
             preparedStatement.setInt(2, genreId);
             preparedStatement.execute();
         }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
-    public List<String> getAllGenres() throws SQLServerException, SQLException
+    /**
+     *
+     * @return
+     * @throws DALException
+     */
+    public List<String> getAllGenres() throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -699,13 +845,17 @@ public class SongDAO
             ResultSet rs = preparedStatement.executeQuery();
 
             List<String> allGenres = new ArrayList();
-            while(rs.next())
+            while (rs.next())
             {
                 allGenres.add(rs.getString("genre"));
 
             }
-            
+
             return allGenres;
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
         }
     }
 }
