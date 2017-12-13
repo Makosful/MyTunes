@@ -5,12 +5,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import mytunes.bll.BLLManager;
+import mytunes.bll.exception.BLLException;
 
 /**
  *
@@ -25,7 +28,14 @@ public class EditSongModel
 
     public EditSongModel() throws IOException
     {
-        this.bllManager = new BLLManager();
+        try
+        {
+            this.bllManager = new BLLManager();
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
         genreList = new ArrayList();
     }
 
@@ -34,7 +44,14 @@ public class EditSongModel
     String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
 
     {
-        bllManager.editSongDataBase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
+        try
+        {
+            bllManager.editSongDataBase(newTitle, newArtist, songId, oldFile, newFile, oldGenre, newGenre, addGenres);
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
     
     
@@ -146,9 +163,16 @@ public class EditSongModel
      * Adding genres to list.
      * @return 
      */
-    public List<String> genreList() throws SQLException
+    public List<String> genreList()
     {
-        genreList.addAll(bllManager.getAllGenres());
+        try
+        {
+            genreList.addAll(bllManager.getAllGenres());
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
         
         return genreList;
     }

@@ -227,15 +227,8 @@ public class MainWindowController implements Initializable
         playlistPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         // Loads the playlist
-        try
-        {
-            wm.loadPlaylists();
-            playlistPanel.setItems(wm.getPlaylists());
-        }
-        catch (SQLException ex)
-        {
-            System.out.println(ex.getMessage());
-        }
+        wm.loadPlaylists();
+        playlistPanel.setItems(wm.getPlaylists());
 
         wm.setPlaylistMouseListener(playlistPanel);
         //</editor-fold>

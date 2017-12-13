@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -152,6 +154,10 @@ public class MainWindowModel
         catch (IOException ex)
         {
             System.out.println(ex.getMessage());
+        }
+        catch (BLLException ex)
+        {
+           System.out.println(ex.getMessage());
         }
     }
 
@@ -1331,11 +1337,17 @@ public class MainWindowModel
     /**
      * Loads the playlist from storage
      *
-     * @throws java.sql.SQLException
      */
-    public void loadPlaylists() throws SQLException
+    public void loadPlaylists()
     {
-        playlists.addAll(bllManager.getPlaylists());
+        try
+        {
+            playlists.addAll(bllManager.getPlaylists());
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -1380,7 +1392,7 @@ public class MainWindowModel
                 this.playlists.add(pl);
             }
         }
-        catch (IOException | SQLException ex)
+        catch (IOException ex)
         {
             ex.printStackTrace();
         }
@@ -1391,7 +1403,6 @@ public class MainWindowModel
      *
      * @param playlist
      *
-     * @throws java.sql.SQLException
      */
     public void createPlaylistWindow(Playlist playlist)
     {
@@ -1438,7 +1449,11 @@ public class MainWindowModel
                 this.playlists.remove(index + 1);
             }
         }
-        catch (IOException | SQLException ex)
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+        catch (BLLException ex)
         {
             System.out.println(ex.getMessage());
         }
@@ -1554,11 +1569,17 @@ public class MainWindowModel
      * @param title    The title of the playlist
      * @param playlist A List containing the songs of the playlist
      *
-     * @throws SQLException
      */
-    public void savePlaylist(String title, ObservableList<Music> playlist) throws SQLException
+    public void savePlaylist(String title, ObservableList<Music> playlist)
     {
-        bllManager.savePlaylist(title, playlist);
+        try
+        {
+            bllManager.savePlaylist(title, playlist);
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -2026,7 +2047,7 @@ public class MainWindowModel
         {
             bllManager.deleteSong(id);
         }
-        catch (SQLException ex)
+        catch (BLLException ex)
         {
             System.out.println(ex.getMessage());
         }

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mytunes.be.Music;
 import mytunes.bll.exception.BLLException;
 import mytunes.dal.PlaylistDAO;
@@ -38,10 +40,24 @@ public class MetaData
     BLLManager bllManager;
     PlaylistDAO pDAO;
 
-    public MetaData() throws IOException
+    public MetaData()
     {
-        this.bllManager = new BLLManager();
-        this.pDAO = new PlaylistDAO();
+        try
+        {
+            this.bllManager = new BLLManager();
+        }
+        catch (BLLException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+        try
+        {
+            this.pDAO = new PlaylistDAO();
+        }
+        catch (IOException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
 
     /**
@@ -86,13 +102,16 @@ public class MetaData
 
         tracks.forEach((track) ->
         {
+
             try
             {
                 bllManager.setRelationIds(track);
             }
-            catch (SQLException ex)
+            catch (BLLException ex)
             {
+                System.out.println(ex.getMessage());
             }
+        
         });
 
         return tracks;
