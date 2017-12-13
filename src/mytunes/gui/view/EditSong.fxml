@@ -82,10 +82,10 @@
                   <Insets top="10.0" />
                </GridPane.margin></JFXComboBox>
 
-            <JFXButton onAction="#saveGenre" prefHeight="27.0" prefWidth="77.0" style="-fx-background-color: green;" text="Edit Genre" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <JFXButton onAction="#saveGenre" prefHeight="27.0" prefWidth="98.0" style="-fx-background-color: green;" text="Edit Genre" GridPane.columnIndex="1" GridPane.rowIndex="2">
 
                <GridPane.margin>
-                  <Insets left="158.0" top="10.0" />
+                  <Insets left="145.0" top="10.0" />
                </GridPane.margin>
             </JFXButton>
 
@@ -102,17 +102,17 @@
                   <ToggleGroup fx:id="genreToggle" />
                </toggleGroup>
             </JFXRadioButton>
-            <JFXRadioButton fx:id="radioBtnAdd" layoutX="100.0" layoutY="148.0" style="-fx-text-fill: white;" text="Add" toggleGroup="$genreToggle" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <JFXRadioButton fx:id="radioBtnAdd" layoutX="100.0" layoutY="148.0" prefHeight="18.0" prefWidth="26.0" style="-fx-text-fill: white;" text="Add" toggleGroup="$genreToggle" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="90.0" left="120.0" />
                </GridPane.margin>
             </JFXRadioButton>
             <Label layoutX="350.0" layoutY="148.0" style="-fx-text-fill: grey;" text="OR" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
-                  <Insets bottom="90.0" left="100.0" />
+                  <Insets bottom="90.0" left="105.0" />
                </GridPane.margin>
             </Label>
-            <Label prefHeight="36.0" prefWidth="235.0" style="-fx-text-fill: grey;" text="If you can't find the genre, simply write it yourself" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <Label prefHeight="48.0" prefWidth="235.0" style="-fx-text-fill: grey;" text="If you can't find the genre, simply write it yourself" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets top="80.0" />
                </GridPane.margin>
