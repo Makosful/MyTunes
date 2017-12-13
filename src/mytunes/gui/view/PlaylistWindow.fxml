@@ -94,7 +94,7 @@
         <HBox alignment="CENTER" layoutX="155.0" layoutY="679.0" spacing="270.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
             <children>
                 <JFXButton fx:id="btnSave" onAction="#createPlaylist" text="Create" />
-                <JFXButton onAction="#cancel" text="Cancel" />
+                <JFXButton fx:id="btnClose" onAction="#cancel" text="Cancel" />
             </children>
         </HBox>
     </children>

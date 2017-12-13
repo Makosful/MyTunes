@@ -293,7 +293,6 @@ public class MainWindowModel
      * Toggles looping on the current track
      *
      * @param loop
-     * @param loop
      */
     public void fxmlLoopAction(JFXToggleButton loop)
     {
@@ -1341,10 +1340,8 @@ public class MainWindowModel
 
     /**
      * Displays the window for creating new playlists
-     *
-     * @throws java.sql.SQLException
      */
-    public void createPlaylistWindow() throws SQLException
+    public void createPlaylistWindow()
     {
         try
         {
@@ -1359,7 +1356,8 @@ public class MainWindowModel
 
             // Gets the controller for the window, so we can retrieve data after
             // it's been closed
-            PlaylistWindowController plCont = fxLoader.getController();
+            PlaylistWindowController controller = fxLoader.getController();
+            PlaylistWindowModel plModel = controller.getModel();
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
@@ -1374,17 +1372,17 @@ public class MainWindowModel
             // Waits for the user to give the playlist a name
 
             // Adds the new playlist to the list of lists, dawg
-            if (plCont.shouldSave())
+            if (plModel.shouldSave())
             {
-                Playlist pl = new Playlist(plCont.getTitle());
-                savePlaylist(plCont.getTitle(), plCont.getPlaylist());
-                pl.setPlaylist(plCont.getPlaylist());
+                Playlist pl = new Playlist(plModel.getTitle());
+                savePlaylist(plModel.getTitle(), plModel.getPlaylist());
+                pl.setPlaylist(plModel.getPlaylist());
                 this.playlists.add(pl);
             }
         }
-        catch (IOException ex)
+        catch (IOException | SQLException ex)
         {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -1395,7 +1393,7 @@ public class MainWindowModel
      *
      * @throws java.sql.SQLException
      */
-    public void createPlaylistWindow(Playlist playlist) throws SQLException
+    public void createPlaylistWindow(Playlist playlist)
     {
         try
         {
@@ -1410,10 +1408,11 @@ public class MainWindowModel
 
             // Gets the controller for the window, so we can retrieve data after
             // it's been closed
-            PlaylistWindowController plCont = fxLoader.getController();
-            plCont.setPlaylist(playlist);
-            System.out.println("");
-            plCont.setSaveButton("Save");
+            PlaylistWindowController controller = fxLoader.getController();
+            PlaylistWindowModel plModel = controller.getModel();
+
+            controller.setPlaylist(playlist);
+            plModel.setSaveButton("Save");
 
             // Sets the icon for the new window
             File ico = new File("./res/icon/TrollTunes56x56.png");
@@ -1421,25 +1420,25 @@ public class MainWindowModel
             stage.getIcons().add(icon);
 
             // Sets the title for the new window
-            stage.setTitle("Create Playlist");
+            stage.setTitle("Update Playlist");
 
             stage.setScene(scene);
             stage.showAndWait();
             // Waits for the user to give the playlist a name
 
             // Adds the new playlist to the list of lists, dawg
-            if (plCont.shouldSave())
+            if (plModel.shouldSave())
             {
-                playlist.setTitle(plCont.getTitle());
+                playlist.setTitle(plModel.getTitle());
                 playlist.getPlaylist().clear();
-                playlist.getPlaylist().addAll(plCont.getPlaylist());
+                playlist.getPlaylist().addAll(plModel.getPlaylist());
                 bllManager.updatePlaylist(playlist);
                 int index = this.playlists.indexOf(playlist);
                 this.playlists.add(index, playlist);
                 this.playlists.remove(index + 1);
             }
         }
-        catch (IOException ex)
+        catch (IOException | SQLException ex)
         {
             System.out.println(ex.getMessage());
         }
@@ -1458,7 +1457,7 @@ public class MainWindowModel
         }
         else
         {
-            for (Playlist pl : playlists)
+            playlists.forEach((pl) ->
             {
                 try
                 {
@@ -1468,7 +1467,7 @@ public class MainWindowModel
                 {
                     System.out.println(ex.getMessage());
                 }
-            }
+            });
             this.playlists.removeAll(playlists);
         }
     }
@@ -1643,14 +1642,7 @@ public class MainWindowModel
             // Gets the selected playlist
             Playlist pl = plp.getSelectionModel().getSelectedItem();
 
-            try
-            {
-                createPlaylistWindow(pl);
-            }
-            catch (SQLException ex)
-            {
-                System.out.println(ex.getMessage());
-            }
+            createPlaylistWindow(pl);
         });
 
         return cm;
