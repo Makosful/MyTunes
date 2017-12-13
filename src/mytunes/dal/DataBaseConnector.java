@@ -2,7 +2,6 @@ package mytunes.dal;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
-import java.io.IOException;
 import java.sql.Connection;
 
 /**
@@ -16,10 +15,8 @@ public class DataBaseConnector
 
     /**
      * Setting the relevant info to the database connection.
-     *
-     * @throws IOException
      */
-    public DataBaseConnector() throws IOException
+    public DataBaseConnector()
     {
         dataSource = new SQLServerDataSource();
 

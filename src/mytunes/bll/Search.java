@@ -1,12 +1,12 @@
 package mytunes.bll;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import mytunes.be.Music;
 import mytunes.bll.exception.BLLException;
 import mytunes.dal.SongDAO;
+import mytunes.dal.exception.DALException;
 
 /**
  *
@@ -122,7 +122,7 @@ public class Search
             List<Music> songs = sDAO.getSongsFromSearch(searchTables.size(), sqlSearch, searchText);
             return songs;
         }
-        catch (SQLException ex)
+        catch (DALException ex)
         {
             throw new BLLException();
         }

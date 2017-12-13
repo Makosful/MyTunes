@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mytunes.be.Music;
 import mytunes.be.Playlist;
+import mytunes.dal.exception.DALException;
 
 /**
  *
@@ -33,9 +34,9 @@ public class PlaylistDAO
      *
      * @return all playlists in a ArrayList
      *
-     * @throws SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public List<Playlist> getPlaylists() throws SQLException
+    public List<Playlist> getPlaylists() throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -57,6 +58,14 @@ public class PlaylistDAO
             return playlists;
 
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
     /**
@@ -66,9 +75,9 @@ public class PlaylistDAO
      *
      * @return id of inserted playlist
      *
-     * @throws com.microsoft.sqlserver.jdbc.SQLServerException
+     * @throws mytunes.dal.exception.DALException
      */
-    public int addPlaylist(String playlistTitle) throws SQLServerException, SQLException
+    public int addPlaylist(String playlistTitle) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -87,6 +96,14 @@ public class PlaylistDAO
 
             return id;
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
@@ -95,10 +112,9 @@ public class PlaylistDAO
      *
      * @param id
      *
-     * @throws com.microsoft.sqlserver.jdbc.SQLServerException
-     * @throws java.sql.SQLException
+     * @throws mytunes.dal.exception.DALException
      */
-    public void removePlaylist(int id) throws SQLServerException, SQLException
+    public void removePlaylist(int id) throws DALException
     {
 
         try (Connection con = db.getConnection())
@@ -108,10 +124,26 @@ public class PlaylistDAO
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
-    public ObservableList<Music> getPlaylistSongs(int id) throws SQLServerException, SQLException
+    /**
+     *
+     * @param id
+     *
+     * @return
+     *
+     * @throws DALException
+     */
+    public ObservableList<Music> getPlaylistSongs(int id) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -145,9 +177,9 @@ public class PlaylistDAO
             Music song = new Music();
             while (rs.next())
             {
-                
+
                 song = sDAO.createSongFromDB(rs, song);
-                if(!allSongs.contains(song))
+                if (!allSongs.contains(song))
                 {
                     allSongs.add(song);
                 }
@@ -156,10 +188,24 @@ public class PlaylistDAO
             return allSongs;
 
         }
-
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
-    public void insertPlaylistSong(int playlistid, int songid) throws SQLServerException, SQLException
+    /**
+     *
+     * @param playlistid
+     * @param songid
+     *
+     * @throws DALException
+     */
+    public void insertPlaylistSong(int playlistid, int songid) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -173,10 +219,25 @@ public class PlaylistDAO
             preparedStatement.executeUpdate();
 
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
 
     }
 
-    public void updatePlaylist(int id, String playlist) throws SQLException
+    /**
+     *
+     * @param id
+     * @param playlist
+     *
+     * @throws DALException
+     */
+    public void updatePlaylist(int id, String playlist) throws DALException
     {
         try (Connection con = db.getConnection())
         {
@@ -190,13 +251,26 @@ public class PlaylistDAO
             preparedStatement.executeUpdate();
 
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
-    public void deletePlaylist(int id) throws SQLServerException, SQLException
+    /**
+     *
+     * @param id
+     *
+     * @throws DALException
+     */
+    public void deletePlaylist(int id) throws DALException
     {
         try (Connection con = db.getConnection())
         {
-  
 
             String sql = "DELETE Playlists FROM Playlists "
                          + "INNER JOIN playlist_with_songs ON Playlists.id = playlist_with_songs.playlistid "
@@ -207,15 +281,30 @@ public class PlaylistDAO
             preparedStatement.execute();
 
         }
+        catch (SQLServerException ex)
+        {
+            throw new DALException();
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 
-    private Playlist createPlaylistFromDB(ResultSet rs) throws SQLException
+    private Playlist createPlaylistFromDB(ResultSet rs) throws DALException
     {
-        Playlist pl = new Playlist();
+        try
+        {
+            Playlist pl = new Playlist();
 
-        pl.setId(rs.getInt("id"));
-        pl.setTitle(rs.getString("playlist"));
+            pl.setId(rs.getInt("id"));
+            pl.setTitle(rs.getString("playlist"));
 
-        return pl;
+            return pl;
+        }
+        catch (SQLException ex)
+        {
+            throw new DALException();
+        }
     }
 }

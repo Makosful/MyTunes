@@ -1,7 +1,6 @@
 package mytunes.bll;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
@@ -10,6 +9,7 @@ import mytunes.be.Playlist;
 import mytunes.bll.exception.BLLException;
 import mytunes.dal.PlaylistDAO;
 import mytunes.dal.SongDAO;
+import mytunes.dal.exception.DALException;
 
 /**
  *
@@ -21,36 +21,65 @@ public class BLLManager
     private final SongDAO songDAO;
     private final PlaylistDAO plDAO;
 
-    public BLLManager() throws IOException
+    /**
+     *
+     * @throws BLLException
+     */
+    public BLLManager() throws BLLException
     {
-        this.songDAO = new SongDAO();
-        this.plDAO = new PlaylistDAO();
+        try
+        {
+            this.songDAO = new SongDAO();
+            this.plDAO = new PlaylistDAO();
+        }
+        catch (IOException ex)
+        {
+            throw new BLLException();
+        }
     }
 
+    /**
+     *
+     * @return
+     * @throws BLLException
+     */
     public List<Music> getSongList() throws BLLException
     {
         try
         {
             return songDAO.getAllSongs();
         }
-        catch (SQLException ex)
+        catch (DALException ex)
         {
             throw new BLLException();
         }
     }
 
 
-    public List<Playlist> getPlaylists() throws SQLException
+
+    /**
+     *
+     * @return
+     * @throws BLLException
+     */
+    public List<Playlist> getPlaylists() throws BLLException
     {
-        List<Playlist> playlists = plDAO.getPlaylists();
-        for (int i = 0; i < playlists.size(); i++)
+        try
         {
-            playlists.get(i).setPlaylist(
-                    plDAO.getPlaylistSongs(
-                            playlists.get(i).getId()
-                    ));
+            List<Playlist> playlists = plDAO.getPlaylists();
+            for (int i = 0; i < playlists.size(); i++)
+            {
+                playlists.get(i).setPlaylist(
+                        plDAO.getPlaylistSongs(
+                                playlists.get(i).getId()
+                        ));
+            }
+            return playlists;
         }
-        return playlists;
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
     }
 
     /**
@@ -58,27 +87,54 @@ public class BLLManager
      *
      * @param playlist
      *
-     * @throws java.sql.SQLException
+     * @throws mytunes.bll.exception.BLLException
      */
-    public void removePlaylist(Playlist playlist) throws SQLException
+    public void removePlaylist(Playlist playlist) throws BLLException
     {
-        plDAO.removePlaylist(playlist.getId());
+        try
+        {
+            plDAO.removePlaylist(playlist.getId());
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
     }
     // Changes the song's info.
 
+    /**
+     *
+     * @param newTitle
+     * @param newArtist
+     * @param songId
+     * @param oldFile
+     * @param newFile
+     * @param oldGenre
+     * @param newGenre
+     * @param addGenres
+     *
+     * @throws BLLException
+     */
     public void editSongDataBase(String newTitle, String newArtist, int songId,
-                                 String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws SQLException
+                                 String oldFile, String newFile, String oldGenre, String newGenre, boolean addGenres) throws BLLException
     {
-        songDAO.editSong(newTitle, newArtist, songId, oldFile, newFile);
-        if(addGenres == true)
+        try
         {
-            insertGenres(songId, newGenre);
+            songDAO.editSong(newTitle, newArtist, songId, oldFile, newFile);
+            if (addGenres == true)
+            {
+                insertGenres(songId, newGenre);
+            }
+            else
+            {
+                replaceGenre(songId, oldGenre, newGenre);
+            }
         }
-        else
+        catch (DALException ex)
         {
-            replaceGenre(songId, oldGenre, newGenre);
+            throw new BLLException();
         }
-        
+
     }
 
     /**
@@ -88,133 +144,157 @@ public class BLLManager
      *
      * @param song
      *
-     * @throws SQLException
+     * @throws mytunes.bll.exception.BLLException
      */
-    public void setRelationIds(Music song) throws SQLException
+    public void setRelationIds(Music song) throws BLLException
     {
-        List<Integer> ids = new ArrayList();
 
-        int artistId;
-        int albumId;
-        int pathId;
-        int locationId;
-
-        //Determine if the location already is in the db, and get the resulting id
-        int getLocationId = songDAO.getExistingLocation(song.getLocation());
-        if (getLocationId != 0)
+        try
         {
-            locationId = getLocationId;
-        }
-        else
-        {
-            locationId = songDAO.setLocation(song.getLocation());
-        }
+            List<Integer> ids = new ArrayList();
 
-        // Determine if the location already is in the db, and get the resulting id
-        // If the location(path) and pathname(something.mp3) already exists in the
-        // db stop the proccess of uploading to the db
-        int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
-        if (getPathId == 0)
-        {
+            int artistId;
+            int albumId;
+            int pathId;
+            int locationId;
 
-            //Determine if the artist already is in the db, and get the resulting id
-            int getArtistId = songDAO.getExistingArtist(song.getArtist());
-            if (getArtistId != 0)
+            //Determine if the location already is in the db, and get the resulting id
+            int getLocationId = songDAO.getExistingLocation(song.getLocation());
+            if (getLocationId != 0)
             {
-
-                artistId = getArtistId;
+                locationId = getLocationId;
             }
             else
             {
-                artistId = songDAO.setArtist(song.getArtist());
+                locationId = songDAO.setLocation(song.getLocation());
             }
 
-            //Determine if the album already is in the db, and get the resulting id
-            int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
-            if (getAlbumId != 0)
+            // Determine if the location already is in the db, and get the resulting id
+            // If the location(path) and pathname(something.mp3) already exists in the
+            // db stop the proccess of uploading to the db
+            int getPathId = songDAO.getExistingPath(song.getSongPathName(), getLocationId);
+            if (getPathId == 0)
             {
 
-                albumId = getAlbumId;
+                //Determine if the artist already is in the db, and get the resulting id
+                int getArtistId = songDAO.getExistingArtist(song.getArtist());
+                if (getArtistId != 0)
+                {
+
+                    artistId = getArtistId;
+                }
+                else
+                {
+                    artistId = songDAO.setArtist(song.getArtist());
+                }
+
+                //Determine if the album already is in the db, and get the resulting id
+                int getAlbumId = songDAO.getExistingAlbum(song.getAlbum());
+                if (getAlbumId != 0)
+                {
+
+                    albumId = getAlbumId;
+                }
+                else
+                {
+                    albumId = songDAO.setAlbum(song.getAlbum());
+                }
+
+                pathId = songDAO.setPath(song.getSongPathName(), locationId);
+
+                ids.add(artistId);
+                ids.add(albumId);
+                ids.add(pathId);
+
+                int songId = songDAO.setSong(song, ids);
+
+                //insert the songs genres in the db
+                insertGenres(songId, song.getGenre());
+
             }
-            else
-            {
-                albumId = songDAO.setAlbum(song.getAlbum());
-            }
-
-
-            pathId = songDAO.setPath(song.getSongPathName(), locationId);
-
-            ids.add(artistId);
-            ids.add(albumId);
-            ids.add(pathId);
-
-            int songId = songDAO.setSong(song, ids);
-            
-            //insert the songs genres in the db
-            insertGenres(songId, song.getGenre());
-
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
         }
 
     }
 
     /**
      * Splits the genre string into separate genres.
-     * Inserts the specific songs genre, by testing if the genre already exists 
-     * in the db, if it does use the id from this genre and relate it to this song 
+     * Inserts the specific songs genre, by testing if the genre already exists
+     * in the db, if it does use the id from this genre and relate it to this
+     * song
      * else create the genre in the db and link it to the song
+     *
      * @param songId
      * @param genre
-     * @throws SQLException 
+     *
+     * @throws mytunes.bll.exception.BLLException
      */
-    public void insertGenres(int songId, String genre) throws SQLException
+    public void insertGenres(int songId, String genre) throws BLLException
     {
-        
-        int genreTestId;
-        String[] genres = genre.split(" ");
-        for(String specificGenre : genres)
+
+        try
         {
-
-            int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
-            if (getGenreTestId != 0)
+            int genreTestId;
+            String[] genres = genre.split(" ");
+            for (String specificGenre : genres)
             {
 
-                genreTestId = getGenreTestId;
+                int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
+                if (getGenreTestId != 0)
+                {
 
+                    genreTestId = getGenreTestId;
+
+                }
+                else
+                {
+
+                    genreTestId = songDAO.setTestGenre(specificGenre);
+
+                }
+                songDAO.setTestGenres(songId, genreTestId);
             }
-            else
-            {
-
-                genreTestId = songDAO.setTestGenre(specificGenre);
-
-            }
-            songDAO.setTestGenres(songId, genreTestId);
         }
-        
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
+
     }
-    
-    
+
     /**
-     * Deletes the songs reference to the old genre, then calls insertGenres to 
+     * Deletes the songs reference to the old genre, then calls insertGenres to
      * either create or use existing genre as the specific songs genre reference
+     *
      * @param songId
      * @param oldGenre
      * @param newGenre
-     * @throws SQLException 
+     *
+     * @throws mytunes.bll.exception.BLLException
      */
-    public void replaceGenre(int songId, String oldGenre, String newGenre) throws SQLException
+    public void replaceGenre(int songId, String oldGenre, String newGenre) throws BLLException
     {
-        String[] genres = oldGenre.split(" ");
-        for(String specificGenre : genres)
+        try
         {
-            int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
-            songDAO.removeSongsGenre(songId, getGenreTestId);
+            String[] genres = oldGenre.split(" ");
+            for (String specificGenre : genres)
+            {
+                int getGenreTestId = songDAO.getExistingTestGenre(specificGenre);
+                songDAO.removeSongsGenre(songId, getGenreTestId);
+            }
+
+            insertGenres(songId, newGenre);
         }
-        
-        insertGenres(songId, newGenre);
-        
+        catch (DALException | BLLException ex)
+        {
+            throw new BLLException();
+        }
+
     }
-    
-    
+
     /**
      * Gets the index of an item in a List
      *
@@ -237,44 +317,100 @@ public class BLLManager
         return -1;
     }
 
-    public void savePlaylist(String title, ObservableList<Music> playlist) throws SQLException
+    /**
+     *
+     * @param title
+     * @param playlist
+     *
+     * @throws BLLException
+     */
+    public void savePlaylist(String title, ObservableList<Music> playlist) throws BLLException
     {
-        int playId = plDAO.addPlaylist(title);
-
-        for (int i = 0; i < playlist.size(); i++)
+        try
         {
-            plDAO.insertPlaylistSong(playId, playlist.get(i).getId());
+            int playId = plDAO.addPlaylist(title);
+
+            for (int i = 0; i < playlist.size(); i++)
+            {
+                plDAO.insertPlaylistSong(playId, playlist.get(i).getId());
+            }
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
         }
     }
 
-    public void updatePlaylist(Playlist playlist) throws SQLException
+    /**
+     *
+     * @param playlist
+     *
+     * @throws BLLException
+     */
+    public void updatePlaylist(Playlist playlist) throws BLLException
     {
-        plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
+        try
+        {
+            plDAO.updatePlaylist(playlist.getId(), playlist.getTitle());
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
     }
 
-
-    public List<String> getAllGenres() throws SQLException
+    /**
+     *
+     * @return
+     * @throws BLLException
+     */
+    public List<String> getAllGenres() throws BLLException
     {
-        
-        List<String> allGenres = songDAO.getAllGenres();
-        
-        return allGenres;
-    }  
 
-    public void deleteSong(int id) throws SQLException
-    {
-        songDAO.deleteSong(id);
+        try
+        {
+            List<String> allGenres = songDAO.getAllGenres();
+
+            return allGenres;
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
     }
 
+    /**
+     *
+     * @param id
+     *
+     * @throws BLLException
+     */
+    public void deleteSong(int id) throws BLLException
+    {
+        try
+        {
+            songDAO.deleteSong(id);
+        }
+        catch (DALException ex)
+        {
+            throw new BLLException();
+        }
+    }
+
+    /**
+     *
+     * @param id
+     *
+     * @throws BLLException
+     */
     public void deletePlaylist(int id) throws BLLException
     {
         try
         {
             plDAO.deletePlaylist(id);
         }
-        catch (SQLException ex)
+        catch (DALException ex)
         {
-            //System.out.println("Playlisten blev ikke slettet, fejl: "+ex.getMessage());
             throw new BLLException();
         }
 
