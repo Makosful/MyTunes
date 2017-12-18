@@ -89,7 +89,7 @@ public class Search
                     if (criteria.equalsIgnoreCase("Genre"))
                     {
                         // If so, apply it
-                        searchTables.add("Genre.genre");
+                        searchTables.add("Genres_test.genre");
                     }
 
                     // Then check if the Description has been checked
