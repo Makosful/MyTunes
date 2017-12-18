@@ -147,9 +147,9 @@ public class MetaData
         description = tag.getFirst(FieldKey.COMMENT);
         duration = f.getAudioHeader().getTrackLength();
         songPathName = chosenFile.getName();
-        location = "res/songs";
-        //chosenFile.getAbsolutePath().replace(songPathName, "");
-        //COuld use users own filepath(absolutepath) but dosent make sense now when we are all using it
+        location = chosenFile.getAbsolutePath().replace(songPathName, ""); 
+        //"res/songs";
+        
     }
 
     /**
