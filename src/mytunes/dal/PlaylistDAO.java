@@ -136,7 +136,7 @@ public class PlaylistDAO
     }
 
     /**
-     *
+     * Get all songs from a specific playlist
      * @param id
      *
      * @return
@@ -199,7 +199,7 @@ public class PlaylistDAO
     }
 
     /**
-     *
+     * Add a song to a specific playlist
      * @param playlistid
      * @param songid
      *
@@ -231,7 +231,7 @@ public class PlaylistDAO
     }
 
     /**
-     *
+     * Update the playlists name 
      * @param id
      * @param playlist
      *
@@ -262,7 +262,7 @@ public class PlaylistDAO
     }
 
     /**
-     *
+     * Deletes a specific playlist
      * @param id
      *
      * @throws DALException
@@ -291,6 +291,12 @@ public class PlaylistDAO
         }
     }
 
+    /**
+     * Create a playlist object
+     * @param rs
+     * @return
+     * @throws DALException 
+     */
     private Playlist createPlaylistFromDB(ResultSet rs) throws DALException
     {
         try
@@ -307,4 +313,5 @@ public class PlaylistDAO
             throw new DALException();
         }
     }
+    
 }
